@@ -4,89 +4,55 @@ package require aMSN2_Protocols
 
 snit::type AccountManager {
 	# TODO, these should definitely change to something non-protocol related... 
-	variable ONLINE "NLN"
-	variable AWAY "AWY"
-	variable IDLE "IDL"
-	variable BUSY "BSY"
-	variable OFFLINE "FLN"
-	variable HIDDEN "HDN"
-	variable BRB "BRB"
-	variable PHONE "PHN"
-	variable LUNCH "LUN"
+	typevariable ONLINE "NLN"
+	typevariable AWAY "AWY"
+	typevariable IDLE "IDL"
+	typevariable BUSY "BSY"
+	typevariable OFFLINE "FLN"
+	typevariable HIDDEN "HDN"
+	typevariable BRB "BRB"
+	typevariable PHONE "PHN"
+	typevariable LUNCH "LUN"
 
-	variable FORWARD_LIST "FL"
-	variable ALLOW_LIST "AL"
-	variable BLOCK_LIST "BL"
-	variable REVERSE_LIST "RL"
-	variable PENDING_LIST "PL"
+	typevariable FORWARD_LIST "FL"
+	typevariable ALLOW_LIST "AL"
+	typevariable BLOCK_LIST "BL"
+	typevariable REVERSE_LIST "RL"
+	typevariable PENDING_LIST "PL"
 
-	variable msnp ""
+	typevariable msnp ""
 
-	constructor { args } {
-		
-		if { [info exists ::accountManager] } {
-			error "Only one AccountManager allowed (singleton class), please use $::accountManager"
-		}
-
-		::Events::registerEvent Connected protocol all [list $self Connected] ;# On socket connected
-		::Events::registerEvent DisConnected protocol all [list $self DisConnected] ;# On socket disconnected
-		::Events::registerEvent ConnectionRedirected protocol all [list $self ConnectionRedirected] ; # On XFR
-		::Events::registerEvent LoggedIn protocol all [list $self LoggedIn] ;# On the SYN command
-		::Events::registerEvent LoggedOut protocol all [list $self LoggedOut] ; # On an OUT command
-		::Events::registerEvent Authenticating protocol all [list $self Authenticating] ;# when USR TWN/SSO is received
-		::Events::registerEvent Authenticated protocol all [list $self Authenticated] ;# when USR OK is received
-		::Events::registerEvent AuthenticationFailed protocol all [list $self AuthenticationFailed] ;# when wrong user/pass
-		::Events::registerEvent AuthenticationServerError protocol all [list $self AuthenticationServerError] ;# when auth server inaccessible...
-		::Events::registerEvent GroupAdded protocol all [list $self GroupAdded] ; # Sent on LSG or ADG
-		::Events::registerEvent UserAdded protocol all [list $self UserAdded] ; # on LST
-		::Events::registerEvent ContactListLoaded protocol all [list $self ContactListLoaded] ; # when we finished loading all LSG and LST
-		::Events::registerEvent MyStatusChanged protocol all [list $self MyStatusChanged] ; # On CHG
-		::Events::registerEvent NewBuddyListPrivacy protocol all [list $self NewBuddyListPrivacy] ; # On BLP
-		::Events::registerEvent UserChangedState protocol all [list $self UserChangedState] ; # on ILN/NLN
-		::Events::registerEvent UserChangedNickname protocol all [list $self UserChangedNickname] ; # on ILN/NLN
-		::Events::registerEvent UserChangedCapabilities protocol all [list $self UserChangedCapabilities] ; # on ILN/NLN
-		::Events::registerEvent UserChangedDisplayPicture protocol all [list $self UserChangedDisplayPicture] ; # on ILN/NLN
-		::Events::registerEvent UserPSMChanged protocol all [list $self UserPSMChanged] ; # On UBX
-		::Events::registerEvent MyPSMChanged protocol all [list $self MyPSMChanged] ; # On UUX
-		::Events::registerEvent MyMediaChanged protocol all [list $self MyMediaChanged] ; # On UUX
-		::Events::registerEvent MyStatusChanged protocol all [list $self MyStatusChanged] ; # On CHG
-		::Events::registerEvent NewPersonalInformation protocol all [list $self NewPersonalInformation] ; # On PRP
-		::Events::registerEvent MyNicknameChanged protocol all [list $self MyNicknameChanged] ; # On PRP
-		::Events::registerEvent InvalidNicknameChange protocol all [list $self InvalidNicknameChange] ; # On 209 error response to PRP
-		::Events::registerEvent NewUserInformation protocol all [list $self NewUserInformation] ; # On BPR
+	typemethod InitEvents { } {
+		::Events::registerEvent Connected protocol all [list AccountManager Connected] ;# On socket connected
+		::Events::registerEvent DisConnected protocol all [list AccountManager DisConnected] ;# On socket disconnected
+		::Events::registerEvent ConnectionRedirected protocol all [list AccountManager ConnectionRedirected] ; # On XFR
+		::Events::registerEvent LoggedIn protocol all [list AccountManager LoggedIn] ;# On the SYN command
+		::Events::registerEvent LoggedOut protocol all [list AccountManager LoggedOut] ; # On an OUT command
+		::Events::registerEvent Authenticating protocol all [list AccountManager Authenticating] ;# when USR TWN/SSO is received
+		::Events::registerEvent Authenticated protocol all [list AccountManager Authenticated] ;# when USR OK is received
+		::Events::registerEvent AuthenticationFailed protocol all [list AccountManager AuthenticationFailed] ;# when wrong user/pass
+		::Events::registerEvent AuthenticationServerError protocol all [list AccountManager AuthenticationServerError] ;# when auth server inaccessible...
+		::Events::registerEvent GroupAdded protocol all [list AccountManager GroupAdded] ; # Sent on LSG or ADG
+		::Events::registerEvent UserAdded protocol all [list AccountManager UserAdded] ; # on LST
+		::Events::registerEvent ContactListLoaded protocol all [list AccountManager ContactListLoaded] ; # when we finished loading all LSG and LST
+		::Events::registerEvent MyStatusChanged protocol all [list AccountManager MyStatusChanged] ; # On CHG
+		::Events::registerEvent NewBuddyListPrivacy protocol all [list AccountManager NewBuddyListPrivacy] ; # On BLP
+		::Events::registerEvent UserChangedState protocol all [list AccountManager UserChangedState] ; # on ILN/NLN
+		::Events::registerEvent UserChangedNickname protocol all [list AccountManager UserChangedNickname] ; # on ILN/NLN
+		::Events::registerEvent UserChangedCapabilities protocol all [list AccountManager UserChangedCapabilities] ; # on ILN/NLN
+		::Events::registerEvent UserChangedDisplayPicture protocol all [list AccountManager UserChangedDisplayPicture] ; # on ILN/NLN
+		::Events::registerEvent UserPSMChanged protocol all [list AccountManager UserPSMChanged] ; # On UBX
+		::Events::registerEvent MyPSMChanged protocol all [list AccountManager MyPSMChanged] ; # On UUX
+		::Events::registerEvent MyMediaChanged protocol all [list AccountManager MyMediaChanged] ; # On UUX
+		::Events::registerEvent MyStatusChanged protocol all [list AccountManager MyStatusChanged] ; # On CHG
+		::Events::registerEvent NewPersonalInformation protocol all [list AccountManager NewPersonalInformation] ; # On PRP
+		::Events::registerEvent MyNicknameChanged protocol all [list AccountManager MyNicknameChanged] ; # On PRP
+		::Events::registerEvent InvalidNicknameChange protocol all [list AccountManager InvalidNicknameChange] ; # On 209 error response to PRP
+		::Events::registerEvent NewUserInformation protocol all [list AccountManager NewUserInformation] ; # On BPR
 	}
 
-	destructor { 
-		
-		::Events::unregisterEvent Connected protocol all [list $self Connected] ;# On socket connected
-		::Events::unregisterEvent DisConnected protocol all [list $self DisConnected] ;# On socket disconnected
-		::Events::unregisterEvent ConnectionRedirected protocol all [list $self ConnectionRedirected] ; # On XFR
-		::Events::unregisterEvent LoggedIn protocol all [list $self LoggedIn] ;# On the SYN command
-		::Events::unregisterEvent LoggedOut protocol all [list $self LoggedOut] ; # On an OUT command
-		::Events::unregisterEvent Authenticating protocol all [list $self Authenticating] ;# when USR TWN/SSO is received
-		::Events::unregisterEvent Authenticated protocol all [list $self Authenticated] ;# when USR OK is received
-		::Events::unregisterEvent AuthenticationFailed protocol all [list $self AuthenticationFailed] ;# when wrong user/pass
-		::Events::unregisterEvent AuthenticationServerError protocol all [list $self AuthenticationServerError] ;# when auth server inaccessible...
-		::Events::unregisterEvent GroupAdded protocol all [list $self GroupAdded] ; # Sent on LSG or ADG
-		::Events::unregisterEvent UserAdded protocol all [list $self UserAdded] ; # on LST
-		::Events::unregisterEvent ContactListLoaded protocol all [list $self ContactListLoaded] ; # when we finished loading all LSG and LST
-		::Events::unregisterEvent MyStatusChanged protocol all [list $self MyStatusChanged] ; # On CHG
-		::Events::unregisterEvent NewBuddyListPrivacy protocol all [list $self NewBuddyListPrivacy] ; # On BLP
-		::Events::unregisterEvent UserChangedState protocol all [list $self UserChangedState] ; # on ILN/NLN
-		::Events::unregisterEvent UserChangedNickname protocol all [list $self UserChangedNickname] ; # on ILN/NLN
-		::Events::unregisterEvent UserChangedCapabilities protocol all [list $self UserChangedCapabilities] ; # on ILN/NLN
-		::Events::unregisterEvent UserChangedDisplayPicture protocol all [list $self UserChangedDisplayPicture] ; # on ILN/NLN
-		::Events::unregisterEvent UserPSMChanged protocol all [list $self UserPSMChanged] ; # On UBX
-		::Events::unregisterEvent MyPSMChanged protocol all [list $self MyPSMChanged] ; # On UUX
-		::Events::unregisterEvent MyMediaChanged protocol all [list $self MyMediaChanged] ; # On UUX
-		::Events::unregisterEvent MyStatusChanged protocol all [list $self MyStatusChanged] ; # On CHG
-		::Events::unregisterEvent NewPersonalInformation protocol all [list $self NewPersonalInformation] ; # On PRP
-		::Events::unregisterEvent MyNicknameChanged protocol all [list $self MyNicknameChanged] ; # On PRP
-		::Events::unregisterEvent InvalidNicknameChange protocol all [list $self InvalidNicknameChange] ; # On 209 error response to PRP
-		::Events::unregisterEvent NewUserInformation protocol all [list $self NewUserInformation] ; # On BPR
-	}
 
-	method Connect { } {
+	typemethod Connect { } {
 		if { $msnp != "" } {
 			$msnp destroy
 			set msnp ""
@@ -97,7 +63,7 @@ snit::type AccountManager {
 
 		return $msnp
 	}
-	method DisConnect { } {
+	typemethod DisConnect { } {
 		if { $msnp != "" } {
 			# TODO, we should send an event to the protocol, asking it to disconnect itself
 			$msnp Logout
@@ -108,22 +74,22 @@ snit::type AccountManager {
 		return $msnp
 	}
 
-	method Connected { event layer caller} {
+	typemethod Connected { event layer caller} {
 		cmsn_draw_signin
 		::Event::fireEvent loggingIn protocol
 	}
 
-	method DisConnected { event layer caller} {
+	typemethod DisConnected { event layer caller} {
 		::Event::fireEvent loggedOut protocol
 	}
 
-	method ConnectionRedirected {event layer caller address} {
+	typemethod ConnectionRedirected {event layer caller address} {
 		::config::setKey start_ns_server $address
 		$caller configure -server $address
 		$caller Connect
 	}
 
-	method LoggedIn { event layer caller} {
+	typemethod LoggedIn { event layer caller} {
 		set dm [$caller getDataManager]
 		if {$dm != "" } {
 			$dm destroy
@@ -131,7 +97,7 @@ snit::type AccountManager {
 		$caller setDataManager [DataManager create %AUTO% -login [$caller cget -login]]
 	}
 
-	method LoggedOut { event layer caller reason } {
+	typemethod LoggedOut { event layer caller reason } {
 		# TODO this should be duplicated in disconnected, no ?
 
 		set dm [$caller getDataManager]
@@ -163,24 +129,24 @@ snit::type AccountManager {
 		}
 	}
 	
-	method Authenticating { event layer caller algorithm } {
+	typemethod Authenticating { event layer caller algorithm } {
 		# TODO we should update GUI 'logging in' window to show progress
 	}
 
-	method Authenticated { event layer caller  } {
+	typemethod Authenticated { event layer caller  } {
 		# TODO we should update GUI 'logging in' window to show progress
 	}
 
-	method AuthenticationFailed { event layer caller  } {
+	typemethod AuthenticationFailed { event layer caller  } {
 		status_log "Error: User/Password\n" red
 		::amsn::errorMsg "[trans baduserpass]"
 	}
 
-	method AuthenticationServerError { event layer caller  } {
+	typemethod AuthenticationServerError { event layer caller  } {
 		::amsn::errorMsg "[trans connecterror]"
 	}
 
-	method ChCustomState { caller dm idx } {
+	typemethod ChCustomState { caller dm idx } {
 		global HOME automessage automsgsent original_nick original_psm
 		set automessage "-1"
 		set redraw 0
@@ -274,11 +240,11 @@ snit::type AccountManager {
 		}
 	}
 	
-	method ContactListLoaded { event layer caller  } {
+	typemethod ContactListLoaded { event layer caller  } {
 		set dm [$caller getDataManager]
 		#Don't use oldstatus if it was "FLN" (disconnectd) or we will get a 201 error
 		if {[info exists ::oldstatus] && $::oldstatus != "FLN" } {
-			$self ChCustomState $caller $dm $::oldstatus
+			AccountManager ChCustomState $caller $dm $::oldstatus
 			send_dock "STATUS" $::oldstatus
 			unset ::oldstatus
 		} elseif {![is_connectas_custom_state [::config::getKey connectas]]} {
@@ -287,16 +253,16 @@ snit::type AccountManager {
 			set goodstatecode "[::MSN::numberToState $number]"
 
 			if {$goodstatecode != ""} {
-				$self ChCustomState $caller $dm "$goodstatecode"
+				AccountManager ChCustomState $caller $dm "$goodstatecode"
 				send_dock "STATUS" "$goodstatecode"
 			} else {
 				status_log "Not able to get choosen key: [::config::getKey connectas]"
-				$self ChCustomState $caller $dm "NLN"
+				AccountManager ChCustomState $caller $dm "NLN"
 				send_dock "STATUS" "NLN"
 			}
 		} else {
 			set idx [get_custom_state_idx [::config::getKey connectas]]
-			$self ChCustomState $caller $dm $idx
+			AccountManager ChCustomState $caller $dm $idx
 			if { [lindex [StateList get $idx] 2] != "" } {
 				set new_state [::MSN::numberToState [lindex [StateList get $idx] 2]]
 				send_dock "STATUS" "$new_state"
@@ -321,53 +287,53 @@ snit::type AccountManager {
 		cmsn_draw_online 1 2
 	}
 
-	method NewBuddyListPrivacy {event layer caller privacy } {
+	typemethod NewBuddyListPrivacy {event layer caller privacy } {
 		[$caller getDataManager] SetBuddyListPrivacy $privacy
 	}
 
-	method NewPersonalInformation { event layer caller key value} {
+	typemethod NewPersonalInformation { event layer caller key value} {
 		[$caller getDataManager] SetPersonalInformation $key $value
 	}
 
-	method NewUserInformation { event layer caller username key value} {
+	typemethod NewUserInformation { event layer caller username key value} {
 		[$caller getDataManager] SetUserInformation $username $key $value
 	}
 
-	method UserAdded { event layer caller username nickname contactguid list_names groups } {
+	typemethod UserAdded { event layer caller username nickname contactguid list_names groups } {
 		[$caller getDataManager] AddUser $username $nickname $contactguid $list_names $groups
 	}
 
-	method GroupAdded { event layer caller groupid groupname } {
+	typemethod GroupAdded { event layer caller groupid groupname } {
 		[$caller getDataManager] AddGroup  $groupid $groupname
 	
 	}
 
-	method UserPSMChanged { event layer caller username psm media } {
+	typemethod UserPSMChanged { event layer caller username psm media } {
 		[$caller getDataManager] SetUserPSM $username $psm $media
 	}
 
-	method UserChangedState { event layer caller username status initial} {
+	typemethod UserChangedState { event layer caller username status initial} {
 		[$caller getDataManager] SetUserStatus $username $status
 
 		::Event::fireEvent contactStateChange protocol $username
 		::plugins::PostEvent ChangeState evpar
 	}
 
-	method UserChangedNickname { event layer caller username nickname } {
+	typemethod UserChangedNickname { event layer caller username nickname } {
 		::abook::setContactData $username nick $nickname
 		::Event::fireEvent contactNickChange protocol $username
 	}
 
-	method UserChangedCapabilities { event layer caller username capabilities } {
+	typemethod UserChangedCapabilities { event layer caller username capabilities } {
 
 	}
 
-	method UserChangedDisplayPicture { event layer caller username msnobj } {
+	typemethod UserChangedDisplayPicture { event layer caller username msnobj } {
 
 	}
 
 
-	method MyNicknameChanged { event layer caller nick} {
+	typemethod MyNicknameChanged { event layer caller nick} {
 		# We don't need to save the new nickname because it gets saved on the event NewPersonalInformation
 		
 
@@ -377,16 +343,16 @@ snit::type AccountManager {
 		::Event::fireEvent myNickChange protocol
 	}
 
-	method InvalidNicknameChange { event layer caller} {
+	typemethod InvalidNicknameChange { event layer caller} {
 		msg_box [trans invalidusername]
 	}
 
-	method MyPSMChanged { event layer caller psm media} {
+	typemethod MyPSMChanged { event layer caller psm media} {
 		[$caller getDataManager] SetMyPSM $psm $media
 		save_config
 	}
 
-	method MyStatusChanged { event layer caller status clientid msnobj } {
+	typemethod MyStatusChanged { event layer caller status clientid msnobj } {
 		[$caller getDataManager] SetMyStatus $status
 		[$caller getDataManager] SetMyDisplayPicture $msnobj
 
@@ -398,6 +364,5 @@ snit::type AccountManager {
 
 }
 
-if { ![info exists ::accountManager] } {
-	set ::accountManager [AccountManager]
-}
+
+AccountManager InitEvents

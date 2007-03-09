@@ -100,6 +100,42 @@ snit::type MSNP11 {
 		set protocol $options(-protocol)
 	}
 
+
+	method urldecode {str} {
+		set str [split $str "%"]
+		set decode [lindex $str 0]
+
+		for {set i 1 } { $i < [llength $str] } { incr i } {
+			set char [string range [lindex $str $i] 0 1]
+			if { [catch {append decode [binary format H2 $char]}] } {
+				append decode "%$char"
+			}
+			append decode [string range [lindex $str $i] 2 end]
+		}
+		return [encoding convertfrom utf-8 $decode]
+	}
+
+	method urlencode {str} {
+		set encode ""
+
+		set utfstr [encoding convertto utf-8 $str]
+
+		for {set i 0} {$i<[string length $utfstr]} {incr i} {
+			set character [string range $utfstr $i $i]
+			
+			if {![string match {[^a-zA-Z0-9()]} $character]} {
+				binary scan $character H2 charval
+				append encode "%$charval"
+			} else {
+				append encode "${character}"
+			}
+		}
+
+		return $encode
+	}
+
+
+
 	method Logout {  } {
 		# We send the logout command and the MSNP object will take care of doing the proper logout code
 		# once the socket gets closed by the server... 
@@ -171,7 +207,7 @@ snit::type MSNP11 {
 	method UpdateNickOnServer { username nickname } {
 		# TODO FIX THIS
 		set cid [::abook::getContactData $username contactguid]
-		set command [$commandManager CreateCommand [list $protocol handleSBP] 0 $SBP_COMMAND $cid "MFN" $nickname]
+		set command [$commandManager CreateCommand [list $protocol handleSBP] 0 $SBP_COMMAND $cid "MFN" [$protocol urlencode $nickname]]
 		$protocol SendCommand $command
 		$command destroy
 	}
@@ -189,7 +225,7 @@ snit::type MSNP11 {
 	method UserChangedNickname {username nickname } {
 		if { $nickname != [[$protocol getDataManager] GetUserNickname $username] } {
 			# Send the event to the account manager and let it handle it
-			$protocol SendEvent UserChangedNickname $username [urldecode $nickname]
+			$protocol SendEvent UserChangedNickname $username $nickname
 			$protocol UpdateNickOnServer $username $nickname
 			return "NICKNAME"
 		} else {
@@ -279,7 +315,7 @@ snit::type MSNP11 {
 	}
 
 	method ChangeNickname { nick } {
-		set command [$commandManager CreateCommand [list $protocol handlePRP] 0 $PRP_COMMAND "MFN" $nick]
+		set command [$commandManager CreateCommand [list $protocol handlePRP] 0 $PRP_COMMAND "MFN" [$protocol urlencode $nick]]
 		$protocol SendCommand $command
 		$command destroy
 	}
@@ -292,7 +328,7 @@ snit::type MSNP11 {
 	}
 
 	method ChangeStatus { status } {
-		set command [$commandManager CreateCommand [list $protocol handleCHG] 0 $CHG_COMMAND $status [$protocol GetClientId] [urlencode [[$protocol getDataManager] GetMyDisplayPicture]]]
+		set command [$commandManager CreateCommand [list $protocol handleCHG] 0 $CHG_COMMAND $status [$protocol GetClientId] [$protocol urlencode [[$protocol getDataManager] GetMyDisplayPicture]]]
 		$protocol SendCommand $command
 		$command destroy
 	}
@@ -308,7 +344,7 @@ snit::type MSNP11 {
 	}
 	
 	method AddGroup { name } {
-		set command [$commandManager CreateCommand [list $protocol handleLSG] 0 $ADG_COMMAND [urlencode $name] 0]
+		set command [$commandManager CreateCommand [list $protocol handleADG] 0 $ADG_COMMAND [$protocol urlencode $name] 0]
 		$protocol SendCommand $command
 		$command destroy
 	}
@@ -463,12 +499,9 @@ snit::type MSNP11 {
 	}
 
 	method handleLSG { command params } {
-		if {$command == $LSG_COMMAND || $command == $ADG_COMMAND } {
-			foreach {groupid groupname} $params break
-			$protocol newGroup $groupid $groupname
-		} else {
-			# TODO handle errors for ADG
-		}
+		foreach {groupid groupname} $params break
+		set groupname [$protocol urldecode $groupname]
+		$protocol newGroup $groupid $groupname
 		
 	}
 
@@ -491,7 +524,7 @@ snit::type MSNP11 {
 					if {$type == "N" } {
 						set username $info
 					} elseif {$type == "F" } {
-						set nickname $info
+						set nickname [$protocol urldecode $info]
 					} elseif {$type == "C" } {
 						set contactguid $info
 					} else {
@@ -550,6 +583,8 @@ snit::type MSNP11 {
 	}
 	method handleNLN { command params } {
 		foreach {status username nickname clientid msnobj} $params break
+		set nickname [$protocol urldecode $nickname]
+		set msnobj [$protocol urldecode $msnobj]
 		$protocol UserInfoChanged 0 $username $status $nickname $clientid $msnobj
 	}
 
@@ -588,7 +623,7 @@ snit::type MSNP11 {
 		if { $command == $PRP_COMMAND } {
 			foreach {key value_encoded} $params break
 			
-			set value [urldecode $value_encoded]
+			set value [$protocol urldecode $value_encoded]
 			
 			# Send event to the account manager..
 			$protocol SendEvent NewPersonalInformation $key $value
@@ -607,7 +642,7 @@ snit::type MSNP11 {
 	method handleBPR { command params } {
 		foreach {key value_encoded} $params break
 
-		set value [urldecode $value_encoded]
+		set value [$protocol urldecode $value_encoded]
 
 		if {$last_lst_user != "" } {
 			# Send event to the account manager..
@@ -618,6 +653,7 @@ snit::type MSNP11 {
 	method handleSBP { command params } {
 		# TODO do we need to do something here ? old code totally ignored it :s
 	}
+
 	# trid command handlers
 	#
 	method handleUSR {command params } {
@@ -676,14 +712,17 @@ snit::type MSNP11 {
 
 	method handleCHG { command params } {
 		foreach {status clientid msnobj} $params break
+		set msnobj [$protocol urldecode $msnobj]
 		# Send event to the account manager..
-		$protocol SendEvent MyStatusChanged $status $clientid [urldecode $msnobj]
+		$protocol SendEvent MyStatusChanged $status $clientid $msnobj
 	}
 
 	method handleILN { command params } {
 		# TODO review this
 		if {$command == "ILN" } {
 			foreach {status username nickname clientid msnobj} $params break
+			set msnobj [$protocol urldecode $msnobj]
+			set nickname [$protocol urldecode $nickname]
 			$protocol UserInfoChanged 1 $username $status $nickname $clientid $msnobj
 		} elseif {$command == "CHG" } {
 			$protocol handleCHG $command $params
@@ -710,7 +749,14 @@ snit::type MSNP11 {
 	}
 
 	method handleADG { command params } {
-		# TODO 
+		if {$command == $ADG_COMMAND} {
+			foreach {groupid groupname} $params break
+			set groupname [$protocol urldecode $groupname]
+			$protocol newGroup $groupid $groupname
+		} else {
+			# TODO handle errors for ADG
+		}
+		
 	}
 
 	method handleREM { command params } {

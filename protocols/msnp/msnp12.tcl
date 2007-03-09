@@ -82,7 +82,7 @@ snit::type MSNP12 {
 					if {$type == "N" } {
 						set username $info
 					} elseif {$type == "F" } {
-						set nickname $info
+						set nickname [$protocol urldecode $info]
 					} elseif {$type == "C" } {
 						set contactguid $info
 					} else {
