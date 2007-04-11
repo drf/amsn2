@@ -10,31 +10,24 @@ snit::type SSOAuthentication {
 	method Authenticate { callback url } { 
 		error "UNSUPPORTED"
 	}
-}
-
-snit::type TWNAuthentication {
-	variable messengerTicket ""
-	variable voiceTicket ""
-	variable contactsTicket ""
-
-	variable MESSENGER_URL "messenger.msn.com"
-	variable VOICE_URL "voice.messenger.msn.com"
-	variable CONTACTS_URL "contacts.messenger.msn.com"
-
-	method Authenticate { callback url } {
-		return [$self AuthenticatePassport3 $callback $url]
-	}
 	method GetMessengerTicket { } {
 		return $messengerTicket
 	}
+	method GetContactsTicket { } {
+		return $contactsTicket
+	}
+	method GetVoiceTicket { } {
+		return $voiceTicket
+	}
 
-	method AuthenticatePassport3Error { callbk msg } {
+
+	method AuthenticateSSOError { callbk msg } {
 		if {[catch {eval $callbk [list 2]} result]} {
 			bgerror $result
 		}
 	}
 	
-	method AuthenticatePassport3Callback { callbk soap_req data } {
+	method AuthenticatSSOCallback { callbk soap_req data } {
 		set xml [SOAP::dump $soap_req]
 		set list [xml2list $xml]
 		
@@ -70,27 +63,110 @@ snit::type TWNAuthentication {
 		}
 	}
 	
-	method AuthenticatePassport3 { callbk url } {
-		set soap_req [SOAP::create AuthenticatePassport3 \
-				  -uri "https://loginnet.passport.com/RST.srf" \
-				  -proxy "https://loginnet.passport.com/RST.srf" \
-				  -wrapProc [list $self getPassport3Xml $url] \
-				  -errorCommand [list $self AuthenticatePassport3Error $callbk]]
-		SOAP::configure AuthenticatePassport3 -command [list $self AuthenticatePassport3Callback $callbk $soap_req]
+	method AuthenticateSSO { callbk url } {
+		set soap_req [SOAP::create AuthenticateSSO \
+				  -uri "https://login.live.com/RST.srf" \
+				  -proxy "https://login.live.com/RST.srf" \
+				  -wrapProc [list $self getSSOXml $url] \
+				  -errorCommand [list $self AuthenticateSSOError $callbk]]
+		SOAP::configure AuthenticatePassport3 -command [list $self AuthenticateSSOCallback $callbk $soap_req]
 		$soap_req
 
 		return ""
 	}
 	
-	method getPassport3Xml { url args } {
+	method getSSOXml { url args } {
 		# TODO make login and password as options!
+		
+		set xml {<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsse="http://schemas.xmlsoap.org/ws/2003/06/secext" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wssc="http://schemas.xmlsoap.org/ws/2004/04/sc" xmlns:wst="http://schemas.xmlsoap.org/ws/2004/04/trust"> <Header> <ps:AuthInfo xmlns:ps="http://schemas.microsoft.com/Passport/SoapServices/PPCRL" Id="PPAuthInfo"> <ps:HostingApp>{7108E71A-9926-4FCB-BCC9-9A9D3F32E423}</ps:HostingApp><ps:BinaryVersion>4</ps:BinaryVersion><ps:UIVersion>1</ps:UIVersion><ps:Cookies></ps:Cookies><ps:RequestParams>AQAAAAIAAABsYwQAAAAxMDMz</ps:RequestParams></ps:AuthInfo><wsse:Security><wsse:UsernameToken Id="user"><wsse:Username>}
+		append xml [config::getKey login]
+		append xml {</wsse:Username><wsse:Password>}
+		append xml $::password
+		append xml {</wsse:Password></wsse:UsernameToken></wsse:Security></Header><Body><ps:RequestMultipleSecurityTokens xmlns:ps="http://schemas.microsoft.com/Passport/SoapServices/PPCRL" Id="RSTS"><wst:RequestSecurityToken Id="RST0"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>http://Passport.NET/tb</wsa:Address></wsa:EndpointReference></wsp:AppliesTo></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST1"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>messengerclear.live.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI=}
+		append xml "\"?[string map { "," "&amp;" } [urldecode $url]]\""
+		append xml {></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST2"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>messenger.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?id=507"></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST3"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>contacts.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?cb=&amp;fs=1&amp;id=24000&amp;kv=9&amp;rn=UFkjwrlz&amp;tw=43200&amp;ver=2.1.6000.1"></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST4"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>contacts.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?cb=&amp;fs=1&amp;id=24000&amp;kv=9&amp;rn=UFkjwrlz&amp;tw=43200&amp;ver=2.1.6000.1"></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST5"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>voice.messenger.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?id=69264"></wsse:PolicyReference></wst:RequestSecurityToken></ps:RequestMultipleSecurityTokens></Body></Envelope>}
+		return $xml
+	}
+}
+
+snit::type TWNAuthentication {
+	variable hotmailTicket ""
+	variable messengerTicket ""
+	variable voiceTicket ""
+	variable contactsTicket ""
+
+	variable MESSENGER_URL "messenger.msn.com"
+	variable VOICE_URL "voice.messenger.msn.com"
+	variable CONTACTS_URL "contacts.messenger.msn.com"
+
+	method Authenticate { callback url } {
+		return [$self AuthenticatePassport3 $callback $url]
+	}
+	method GetHotmailTicket { } {
+		return $hotmailTicket
+	}
+	method GetMessengerTicket { } {
+		return $messengerTicket
+	}
+	method GetContactsTicket { } {
+		return $contactsTicket
+	}
+	method GetVoiceTicket { } {
+		return $voiceTicket
+	}
+	
+	method AuthenticatePassport3Callback { callbk soap } {
+		if { [$soap GetStatus] == "success" } {
+			set xml [$soap GetResponse]
+			
+			set i 0
+			while {1 } {
+				set subxml [GetXmlNode $list "S:Envelope:S:Body:wst:RequestSecurityTokenResponseCollection:wst:RequestSecurityTokenResponse" $i]
+				incr i
+				if  { $subxml == "" } {
+					break
+				}
+				
+				set type [GetXmlEntry $subxml "wst:RequestSecurityTokenResponse:wsp:AppliesTo:wsa:EndpointReference:wsa:Address"]
+				if { $type == $MESSENGER_URL } {
+					set messengerTicket [GetXmlEntry $subxml "wst:RequestSecurityTokenResponse:wst:RequestedSecurityToken:wsse:BinarySecurityToken"]
+				} elseif { $type == $VOICE_URL } {
+					set voiceTicket [GetXmlEntry $subxml "wst:RequestSecurityTokenResponse:wst:RequestedSecurityToken:wsse:BinarySecurityToken"]
+				} elseif { $type == $CONTACTS_URL } {
+					set contactsTicket [GetXmlEntry $subxml "wst:RequestSecurityTokenResponse:wst:RequestedSecurityToken:wsse:BinarySecurityToken"]
+				}
+				
+			}
+			
+			if {[catch {eval $callbk [list 0]} result]} {
+				bgerror $result
+			}
+		} else {
+			$soap destroy
+			if {[catch {eval $callbk [list 0]} result]} {
+				bgerror $result
+			}
+		}
+	
+	}
+	
+	method AuthenticatePassport3 { callbk url } {
+		set soap_req [SOAPRequest create %AUTO% \
+				  -url "https://loginnet.passport.com/RST.srf" \
+				  -xml [$self getPassport3Xml $url] \
+				  -callback [list $self AuthenticatePassport3Callback $callbk]]
+		$soap_req SendSOAPRequest
+	}
+	
+	method getPassport3Xml { url } {
+		# TODO make login and password as options of the class!
 		
 		set xml {<?xml version="1.0" encoding="UTF-8"?><Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsse="http://schemas.xmlsoap.org/ws/2003/06/secext" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion" xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wssc="http://schemas.xmlsoap.org/ws/2004/04/sc" xmlns:wst="http://schemas.xmlsoap.org/ws/2004/04/trust"><Header><ps:AuthInfo xmlns:ps="http://schemas.microsoft.com/Passport/SoapServices/PPCRL" Id="PPAuthInfo"><ps:HostingApp>{7108E71A-9926-4FCB-BCC9-9A9D3F32E423}</ps:HostingApp><ps:BinaryVersion>4</ps:BinaryVersion><ps:UIVersion>1</ps:UIVersion><ps:Cookies></ps:Cookies><ps:RequestParams>AQAAAAIAAABsYwQAAAAzMDg0</ps:RequestParams></ps:AuthInfo><wsse:Security><wsse:UsernameToken Id="user"><wsse:Username>}
 		append xml [config::getKey login]
 		append xml {</wsse:Username><wsse:Password>}
 		append xml $::password
 		append xml {</wsse:Password></wsse:UsernameToken></wsse:Security></Header><Body><ps:RequestMultipleSecurityTokens xmlns:ps="http://schemas.microsoft.com/Passport/SoapServices/PPCRL" Id="RSTS"><wst:RequestSecurityToken Id="RST0"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>http://Passport.NET/tb</wsa:Address></wsa:EndpointReference></wsp:AppliesTo></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST1"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>messenger.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI=}
-		append xml "\"?[string map { "," "&amp;" } [urldecode $url]]\""
+		append xml "\"?[string map { "," "&amp;" } $url]\""
 		append xml {></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST2"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>contacts.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?cb=&amp;fs=1&amp;id=24000&amp;kv=9&amp;rn=UFkjwrlz&amp;tw=43200&amp;ver=2.1.6000.1"></wsse:PolicyReference></wst:RequestSecurityToken><wst:RequestSecurityToken Id="RST3"><wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType><wsp:AppliesTo><wsa:EndpointReference><wsa:Address>voice.messenger.msn.com</wsa:Address></wsa:EndpointReference></wsp:AppliesTo><wsse:PolicyReference URI="?id=69264"></wsse:PolicyReference></wst:RequestSecurityToken></ps:RequestMultipleSecurityTokens></Body></Envelope>}
 		return $xml
 	}

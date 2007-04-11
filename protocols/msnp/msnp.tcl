@@ -33,17 +33,16 @@
 
 		http::register https 443 ::tls::socket
 
-		package require dom 3.0
-		package require SOAP
-		package require SOAP::https
-		package require SOAP::xpath
-
 		set commandManager [CommandManager create %AUTO%]
 		set api [ProtocolAPI create %AUTO%]
 	}
 
 	destructor {
 		$self Logout
+	}
+
+	method test { } {
+		puts [myvar protocol]
 	}
 
 	method getDataManager { } {
