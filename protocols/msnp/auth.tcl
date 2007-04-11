@@ -121,7 +121,7 @@ snit::type TWNAuthentication {
 			
 			set i 0
 			while {1 } {
-				set subxml [GetXmlNode $list "S:Envelope:S:Body:wst:RequestSecurityTokenResponseCollection:wst:RequestSecurityTokenResponse" $i]
+				set subxml [GetXmlNode $xml "S:Envelope:S:Body:wst:RequestSecurityTokenResponseCollection:wst:RequestSecurityTokenResponse" $i]
 				incr i
 				if  { $subxml == "" } {
 					break
@@ -143,7 +143,7 @@ snit::type TWNAuthentication {
 			}
 		} else {
 			$soap destroy
-			if {[catch {eval $callbk [list 0]} result]} {
+			if {[catch {eval $callbk [list 1]} result]} {
 				bgerror $result
 			}
 		}

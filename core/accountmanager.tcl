@@ -22,7 +22,7 @@ snit::type AccountManager {
 
 	typevariable msnp ""
 
-	typemethod InitEvents { } {
+	typeconstructor {
 		::Events::registerEvent Connected protocol all [list AccountManager Connected] ;# On socket connected
 		::Events::registerEvent DisConnected protocol all [list AccountManager DisConnected] ;# On socket disconnected
 		::Events::registerEvent ConnectionRedirected protocol all [list AccountManager ConnectionRedirected] ; # On XFR
@@ -49,6 +49,7 @@ snit::type AccountManager {
 		::Events::registerEvent MyNicknameChanged protocol all [list AccountManager MyNicknameChanged] ; # On PRP
 		::Events::registerEvent InvalidNicknameChange protocol all [list AccountManager InvalidNicknameChange] ; # On 209 error response to PRP
 		::Events::registerEvent NewUserInformation protocol all [list AccountManager NewUserInformation] ; # On BPR
+			
 	}
 
 
@@ -99,6 +100,8 @@ snit::type AccountManager {
 
 	typemethod LoggedOut { event layer caller reason } {
 		# TODO this should be duplicated in disconnected, no ?
+		# TODO add a catch maybe, for multithreaded tcl, we could get a loggedout event and a disconnected event
+		# in which the disconnect event will destroy MSNP object, so [$caller getDataManager] could cause a bug if $caller was destroyed
 
 		set dm [$caller getDataManager]
 		if {$dm != "" } {
@@ -285,6 +288,7 @@ snit::type AccountManager {
 		::plugins::PostEvent contactlistLoaded evPar
 
 		cmsn_draw_online 1 2
+		catch {.main.loginscreen LoggingIn ""}
 	}
 
 	typemethod NewBuddyListPrivacy {event layer caller privacy } {
@@ -364,5 +368,3 @@ snit::type AccountManager {
 
 }
 
-
-AccountManager InitEvents

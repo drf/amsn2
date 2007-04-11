@@ -310,7 +310,7 @@ snit::type MSNP11 {
 
 
 		# TODO transform this into local CCARD info
-		::MSNCCARD::InitCCard
+		::MSNSPACES::InitSpaces
 
 	}
 
