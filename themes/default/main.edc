@@ -1,0 +1,18 @@
+fonts {
+#include "edc/fonts.edc"
+}
+
+images {
+#include "edc/images.edc"
+}
+
+spectra {
+#include "edc/spectra.edc"
+}
+
+collections {
+#include "edc/group.edc"
+#include "edc/contact_list.edc"
+#include "edc/contact.edc"
+}
+
