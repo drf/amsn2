@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import sys
+sys.path.append("./pymsn.devel")
 
 import evas
 import edje
@@ -7,32 +9,21 @@ import ecore.evas
 import sys
 import os
 import time
+import logging
 
-WIDTH = 800
-HEIGHT = 480
+import pymsn
+import pymsn.event
+
+logging.basicConfig(level=logging.DEBUG)
+
+WIDTH = 400
+HEIGHT = 600
 MIN_WIDTH = 100
 MIN_HEIGHT = 150
 THEME_FILE = "themes/default.edj"
 TITLE = "aMSN 2"
 WM_NAME = "aMSN2"
 WM_CLASS = "main"
-
-class ResizableImage(evas.SmartObject):
-    def __init__(self, ecanvas):
-        evas.SmartObject.__init__(self, ecanvas)
-        self.image_object = evas.Image(ecanvas)
-        self.member_add(self.image_object)
-
-    def file_set(self, filename):
-        self.image_object.file_set(filename)
-        self.image_object.show()
-
-    def resize(self, w, h):
-        self.image_object.size = (w, h)
-        self.image_object.fill_set(0, 0, w, h)
-
-    def color_set(self, r, g, b, a):
-        self.image_object.color_set(r, g, b, a)
 
 
 class GroupHolder(evas.SmartObject):
@@ -51,17 +42,23 @@ class GroupHolder(evas.SmartObject):
         new_group.show()
         self.groups.append(new_group)
         self.member_add(new_group)
+        self.update_widget()
         
     def resize(self, w, h):
+        self.update_widget()
+
+    def update_widget(self):
         x = self.top_left[0]
         y = self.top_left[1]
-        spacing = 5
-        total_spacing = spacing * len(self.groups)
-        item_height = (h - total_spacing) / len(self.groups)
-        for i in self.groups:
-            i.move(x, y)
-            i.size = (w, item_height)
-            y += item_height + spacing
+        (w, h) = self.size
+        if len(self.groups) > 0:
+            spacing = 5
+            total_spacing = spacing * len(self.groups)
+            item_height = (h - total_spacing) / len(self.groups)
+            for i in self.groups:
+                i.move(x, y)
+                i.size = (w, item_height)
+                y += item_height + spacing
             
         
 class MainWindow(object):
@@ -83,12 +80,12 @@ class MainWindow(object):
         self.cl.focus = True
     
         self.groups = GroupHolder(self.evas_obj.evas)
-        self.groups.add_group("test group 1");
-        self.groups.add_group("Group with long name, very long, very very long name");
-        self.groups.add_group("Yet another test group"); 
         
         self.cl.part_swallow("groups", self.groups);
         self.groups.show();
+
+    def add_group(self, group_name):
+        self.groups.add_group(group_name)
 
     def on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
@@ -127,41 +124,87 @@ class EvasCanvas(object):
     def on_delete_request(self, evas_obj):
         ecore.main_loop_quit()
 
+class ClientEvents(pymsn.event.ClientEventInterface):
+    def on_client_state_changed(self, state):
+        if state == pymsn.event.ClientState.CLOSED:
+            self._client.quit()
+        elif state == pymsn.event.ClientState.OPEN:
+            self._client.profile.display_name = "aMSN2"
+            self._client.profile.presence = pymsn.Presence.ONLINE
+            self._client.profile.current_media = ("I listen to", "Nothing")
+            self._client.profile.personal_message = "Testing aMSN2!"
+            ecore.idler_add(self._client.fill_gui)
 
-if __name__ == "__main__":
-    from optparse import OptionParser
+    def on_client_error(self, error_type, error):
+        print "ERROR :", error_type, " ->", error
 
-    def parse_geometry(option, opt, value, parser):
-        try:
-            w, h = value.split("x")
-            w = int(w)
-            h = int(h)
-        except Exception, e:
-            raise optparse.OptionValueError("Invalid format for %s" % option)
-        parser.values.geometry = (w, h)
 
-    usage = "usage: %prog [options]"
-    op = OptionParser(usage=usage)
-    op.add_option("-e", "--engine", type="choice",
-                  choices=("x11", "x11-16"), default="x11",
-                  help=("which display engine to use (x11, x11-16), "
-                        "default=%default"))
-    op.add_option("-z", "--fullscreen", action="store_true", default=False,
-                  help="do not launch in fullscreen")
-    op.add_option("-g", "--geometry", type="string", metavar="WxH",
-                  action="callback", callback=parse_geometry,
-                  default=(800, 480),
-                  help="use given window geometry")
-    op.add_option("-f", "--fps", type="int", default=50,
-                  help="frames per second to use, default=%default")
+class Client(pymsn.Client):
+    def __init__(self, account, quit,gui):
+        server = ('messenger.hotmail.com', 1863)
+        self.quit = quit
+        self.account = account
+        self.gui = gui
+        pymsn.Client.__init__(self, server)
 
-    # Handle options and create output window
-    options, args = op.parse_args()
-    edje.frametime_set(1.0 / options.fps)
-    canvas = EvasCanvas(fullscreen=options.fullscreen,
-                        engine=options.engine,
-                        width=options.geometry[0],
-                        height=options.geometry[1])
+        ClientEvents(self)
+        ecore.idler_add(self._connect)
+
+    def _connect(self):
+        self.login(*self.account)
+        return False
+
+    def fill_gui(self):
+        groups = self.address_book.groups
+        for group in groups.values():
+            self.gui.add_group(group.name)
+        return False
+
+def main():
+    import sys
+    import getpass
+    import signal
+    import thread
+    import gobject
+
+    if len(sys.argv) < 3:
+        print "Usage : %s username password" % (sys.argv[0])
+        return
+    else:
+        account = sys.argv[1]
+        passwd = sys.argv[2]
+
+    mainloop = gobject.MainLoop(is_running=True)
+    context = mainloop.get_context()
+  
+    def glib_context_iterate():
+        while context.pending():
+            context.iteration()
+        return True
+
+    def quit():
+        ecore.main_loop_quit()
+
+    def sigterm_cb():
+        ecore.idle_add(quit)
+
+        
+ 
+    edje.frametime_set(1.0 / 30)
+    canvas = EvasCanvas(fullscreen=False,
+                        engine="x11",
+                        width=WIDTH,
+                        height=HEIGHT)
 
     view = MainWindow(canvas)
+
+    n = Client((account, passwd), quit, view)
+
+    # Every 100ms, call an iteration of the glib main context loop
+    ecore.timer_add(0.1, glib_context_iterate)
+
     ecore.main_loop_begin()
+
+
+if __name__ == '__main__':
+    main()
