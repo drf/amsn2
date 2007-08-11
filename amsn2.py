@@ -25,37 +25,98 @@ TITLE = "aMSN 2"
 WM_NAME = "aMSN2"
 WM_CLASS = "main"
 
+def info(object, spacing=10, collapse=1):   
+    """Print methods and doc strings.
+    
+    Takes module, class, list, dictionary, or string."""
+    methodList = [method for method in dir(object) if callable(getattr(object, method))]
+    processFunc = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)
+    print object
+    print "\n".join(["%s %s" %
+                      (method.ljust(spacing),
+                       processFunc(str(getattr(object, method).__doc__)))
+                     for method in methodList])
 
+class ContactHolder(evas.SmartObject):
+
+    def __init__(self, ecanvas):
+        evas.SmartObject.__init__(self, ecanvas)
+        self.evas_obj = ecanvas
+        self.contacts = []
+        self.p2s = {pymsn.Presence.ONLINE:"online",
+                    pymsn.Presence.BUSY:"busy",
+                    pymsn.Presence.IDLE:"idle",
+                    pymsn.Presence.AWAY:"away",
+                    pymsn.Presence.BE_RIGHT_BACK:"brb",
+                    pymsn.Presence.ON_THE_PHONE:"phone",
+                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
+                    pymsn.Presence.INVISIBLE:"hidden",
+                    pymsn.Presence.OFFLINE:"offline"}
+
+    def add_contact(self, contact):
+        new_contact = edje.Edje(self.evas_obj, file=THEME_FILE,
+                                group="contact_item")
+        new_contact.part_text_set("contact_data", 
+                                  "<%s><nickname>%s</nickname> <status>(%s)</status> <psm>%s</psm></%s>"
+                                  % (contact.presence, contact.display_name, 
+                                     self.p2s[contact.presence], contact.personal_message, 
+                                     contact.presence) )
+        new_contact.signal_emit("state_changed", self.p2s[contact.presence])
+        new_contact.show()
+        self.contacts.append(new_contact)
+        self.member_add(new_contact)
+        self.update_widget(self.size[0], self.size[1])
+        
+    def resize(self, w, h):
+        self.update_widget(w, h)
+
+    def update_widget(self, w, h):
+        x = self.top_left[0]
+        y = self.top_left[1]
+        if len(self.contacts) > 0:
+            spacing = 5
+            total_spacing = spacing * len(self.contacts)
+            item_height = (h - total_spacing) / len(self.contacts)
+            for i in self.contacts:
+                i.move(x, y)
+                i.size = (w, item_height)
+                y += item_height + spacing
+            
 class GroupHolder(evas.SmartObject):
 
     def __init__(self, ecanvas):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.groups = []
-        self.x = 0
-        self.y = 0
+        self.contacts = {}
 
-    def add_group(self, group_name):
+    def add_group(self, group, contacts):
         new_group = edje.Edje(self.evas_obj, file=THEME_FILE,
                                    group="group_item")
-        new_group.part_text_set("group_name", group_name)
+        contact_holder = ContactHolder(self.evas_obj)
+        new_group.part_text_set("group_name", group.name)
+        new_group.part_swallow("contacts", contact_holder);
+        for user in contacts:
+            contact_holder.add_contact(user)
+        self.contacts[new_group] = len(contacts)
         new_group.show()
         self.groups.append(new_group)
         self.member_add(new_group)
-        self.update_widget()
+        self.update_widget(self.size[0], self.size[1])
         
     def resize(self, w, h):
-        self.update_widget()
+        self.update_widget(w, h)
 
-    def update_widget(self):
+    def update_widget(self,w, h):
         x = self.top_left[0]
         y = self.top_left[1]
-        (w, h) = self.size
+        h = h +100
         if len(self.groups) > 0:
             spacing = 5
             total_spacing = spacing * len(self.groups)
-            item_height = (h - total_spacing) / len(self.groups)
+            #item_height = (h - total_spacing) / len(self.groups)
             for i in self.groups:
+                item_height = 36 + (24 * self.contacts[i])
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
@@ -83,9 +144,6 @@ class MainWindow(object):
         
         self.cl.part_swallow("groups", self.groups);
         self.groups.show();
-
-    def add_group(self, group_name):
-        self.groups.add_group(group_name)
 
     def on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
@@ -155,9 +213,10 @@ class Client(pymsn.Client):
         return False
 
     def fill_gui(self):
-        groups = self.address_book.groups
-        for group in groups.values():
-            self.gui.add_group(group.name)
+
+        for group in self.address_book.groups.values():
+            contacts = self.address_book.contacts.search_by_groups(group)
+            self.gui.groups.add_group(group, contacts)
         return False
 
 def main():

@@ -1,0 +1,12 @@
+style {
+  name: "contact_data";
+  base: "font=VeraBd font_size=10 align=left valign=bottom color=#000 wrap=none";
+
+  tag:  "nickname"  "  ";
+  //  tag:  "/nickname" "- \n";
+  tag:  "psm"       "  font_size=10 ";
+  //  tag:  "/psm"      "- \n";
+  tag:  "status"    "  color=#808080";
+  tag:  "/status"   "-  \n";
+  tag:  "br"        "  \n";
+}

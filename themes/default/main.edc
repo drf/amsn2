@@ -10,6 +10,10 @@ spectra {
 #include "edc/spectra.edc"
 }
 
+styles {
+#include "edc/styles.edc"
+}
+
 collections {
 #include "edc/group.edc"
 #include "edc/contact_list.edc"
