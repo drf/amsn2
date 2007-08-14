@@ -15,6 +15,7 @@ styles {
 }
 
 collections {
+#include "edc/login_screen.edc"
 #include "edc/group.edc"
 #include "edc/contact_list.edc"
 #include "edc/contact.edc"
