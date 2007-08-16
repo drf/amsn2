@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import sys
-sys.path.append("./pymsn.devel")
+
+import pymsn
+import pymsn.event
 
 import evas
 import edje
@@ -11,8 +13,6 @@ import os
 import time
 import logging
 
-import pymsn
-import pymsn.event
 
 logging.basicConfig(level=logging.DEBUG)
 

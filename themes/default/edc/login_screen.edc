@@ -20,8 +20,8 @@ group {
         state: "default" 0.0;
         min: 40 30;
         rel1 {
-          relative: 0.0 0.0;
-          offset: 0 0;
+          relative: 1.0 1.0;
+          offset: -60 -280;
         }
         rel2 {
           relative: 1.0 1.0;
@@ -161,6 +161,8 @@ group {
       type: TEXT;                                                      \
       description {                                                    \
         state: "default" 0.0;                                          \
+        min: 50 20;                                                    \
+        max: 500 20;                                                   \
 	rel1 {                                                         \
 	  to: "main_frame";                                            \
 	  relative: 0.2 0.0;                                           \
@@ -188,6 +190,8 @@ group {
       type: IMAGE;                                                     \
       description {                                                    \
         state: "default" 0.0;                                          \
+        min: 50 20;                                                    \
+        max: 500 20;                                                   \
 	rel1 {                                                         \
 	  to: NAME"_label";                                            \
 	  relative: 0.0 1.0;                                           \
@@ -199,7 +203,7 @@ group {
 	  offset: 0 20;                                                \
 	}                                                              \
 	image {                                                        \
-	  normal: IMAGE_FILE;                                            \
+	  normal: IMAGE_FILE;                                          \
 	  border: 2 20 2 2;                                            \
 	}                                                              \
       }                                                                \
@@ -212,7 +216,7 @@ group {
 	rel1 {                                                         \
 	  to: NAME"_bg";                                               \
 	  relative: 0.0 0.0;                                           \
-	  offset: 0 0;                                                 \
+	  offset: 5 0;                                                 \
 	}                                                              \
 	rel2 {                                                         \
 	  to: NAME"_bg";                                               \
@@ -243,17 +247,43 @@ group {
 	rel1 {
 	  to: "main_frame";
 	  relative: 0.5 0.0;
-	  offset: -20 250;
+	  offset: -40 250;
 	}
 	rel2 {
 	  to: "main_frame";
 	  relative: 0.5 0.0;
-	  offset: 20 280;
+	  offset: 40 280;
 	}
 	image {
 	  normal: "button.png";
-	  border: 4 4 4 4;
+	  border: 6 6 6 6;
 	}
+      }
+    }
+    part {
+      name: "login_button_label";
+      type: TEXT;
+      description {
+        state: "default" 0.0;
+	rel1 {
+	  to: "login_button";
+	  relative: 0.0 0.0;
+	  offset: 3 3;
+	}
+	rel2 {
+	  to: "login_button";
+	  relative: 1.0 1.0;
+	  offset: -3 -3;
+	}
+	text {
+	  align: 0.5 0.5;
+	  font: "VeraBd";
+	  size: 10;
+	  text: "Sign In";
+	  min: 0 0;
+	  elipsis: 0.0;
+	}
+
       }
     }
   }
