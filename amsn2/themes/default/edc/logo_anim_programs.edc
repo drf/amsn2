@@ -1,0 +1,54 @@
+// if you desire a little more hesitation between cube moves you can
+// change that here
+//#define HESITATE in: 0.25 0.0
+#define HESITATE
+// There is always a noticable pause between rotations; using
+// sinusoidal will appear more pronounced. Experiment.
+#define ROTATION_TRANSITION SINUSOIDAL 1.0
+//#define ROTATION_TRANSITION LINEAR 1.0
+
+
+         program {
+            name: "cube_anim_start";
+            action: STATE_SET "roll_start" 0.0;
+            in: 0.50 0.0;
+            target: "logo_cube";
+            after: "roll_to_90";
+         }
+         program {
+            name: "cube_anim_0";
+            action: STATE_SET "roll_start" 0.0;
+            target: "logo_cube";
+            after: "roll_to_90";
+         }
+         program {
+            name: "roll_to_90";
+            action: STATE_SET "roll_to_90" 0.0;
+            transition: ROTATION_TRANSITION;
+            target: "logo_cube";
+            after: "roll_to_180";
+         }
+         program {
+            name: "roll_to_180";
+            HESITATE;
+            action: STATE_SET "roll_to_180" 0.0;
+            transition: ROTATION_TRANSITION;
+            target: "logo_cube";
+            after: "roll_to_270";
+         }
+         program {
+            name: "roll_to_270";
+            HESITATE;
+            action: STATE_SET "roll_to_270" 0.0;
+            transition: ROTATION_TRANSITION;
+            target: "logo_cube";
+            after: "roll_to_360";
+         }
+         program {
+            name: "roll_to_360";
+            HESITATE;
+            action: STATE_SET "roll_to_360" 0.0;
+            transition: ROTATION_TRANSITION;
+            target: "logo_cube";
+            after: "cube_anim_0";
+         }
