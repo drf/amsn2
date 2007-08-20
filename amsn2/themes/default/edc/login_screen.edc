@@ -19,6 +19,7 @@ group {
   script {
     public animate_arrow = 1
     public remove_button = 0
+    public cube_animated = 0
   }
 
   parts {
@@ -657,7 +658,16 @@ group {
       target: "connection_status";
       target: "connection_status2";
       transition: LINEAR 0.0;
-      after: "cube_anim_start";
+      after: "check_cube_anim_start";
+    }
+    program {
+      name: "check_cube_anim_start";
+      script {
+	if (get_int(cube_animated) == 0) {
+	  run_program(PROGRAM:"cube_anim_start");
+	}
+	set_int(cube_animated, 1);
+      }
     }
 #include "logo_anim_programs.edc"
   }

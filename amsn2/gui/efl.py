@@ -49,7 +49,7 @@ class aMSNGUI_EFL(aMSNGUI):
         context = mainloop.get_context()
 
         def glib_context_iterate():
-            while context.pending():
+            if context.pending():
                 context.iteration()
             return True
 
