@@ -2,5 +2,5 @@
 spectrum {
   name: "login_screen_spectrum";
   color: 255 255 255 50 1;
-  color: 10 50 100 100 0;
+  color: 10 50 100 150 1;
 }

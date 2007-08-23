@@ -3,7 +3,7 @@ import logging
 import pymsn
 import pymsn.event
 
-#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 class ClientEvents(pymsn.event.ClientEventInterface):
     def __init__(self, client, amsn_core):

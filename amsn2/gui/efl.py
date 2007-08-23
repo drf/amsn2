@@ -153,7 +153,7 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
     # Private methods
     def __on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
-            self.evas_obj.fullscreen = not self.evas_obj.fullscreen
+            self._evas.fullscreen = not self._evas.fullscreen
         elif event.keyname == "Escape":
             ecore.main_loop_quit()
 
@@ -251,7 +251,7 @@ class aMSNContactList_EFL(object):
     # Private methods
     def __on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
-            self.evas_obj.fullscreen = not self.evas_obj.fullscreen
+            self.evas.fullscreen = not self.evas.fullscreen
         elif event.keyname == "Escape":
             ecore.main_loop_quit()
 

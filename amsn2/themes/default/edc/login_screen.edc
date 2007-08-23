@@ -56,7 +56,7 @@ group {
         }
 	gradient {
 	  spectrum: "login_screen_spectrum";
-	  type: "linear";
+	  type: "radial";
           rel1 {
             relative: 0.0 0.0;
             offset: 0 0;
@@ -67,8 +67,9 @@ group {
           }
 	}
 	fill {
-	  size {
-	    relative: 2 2;
+
+	  origin {
+	    relative: 0.0 0.0;
 	  }
 	}
       }
@@ -87,7 +88,7 @@ group {
         }
         rel2 {
           relative: 1.0 1.0;
-          offset: -1 -1;
+          offset: 0 0;
         }
         image {
           normal: "login_bg.png";
