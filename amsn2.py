@@ -7,6 +7,7 @@ from amsn2.gui.efl import aMSNGUI_EFL
 
 def main():
     import sys
+    use_cocoa = False
 
     if len(sys.argv) < 3:
         print "Usage : %s username password" % (sys.argv[0])
@@ -19,7 +20,10 @@ def main():
     profile = amsn.addProfile(account)
     profile.password = passwd
 
-    gui = aMSNGUI_EFL(amsn)
+    if use_cocoa is True:
+        gui = aMSNGUI_Cocoa(amsn)
+    else:
+        gui = aMSNGUI_EFL(amsn)
     gui.launch()
 
     # Should become as simple as :
