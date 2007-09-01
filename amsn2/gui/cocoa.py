@@ -150,7 +150,7 @@ class aMSNContactList_Cocoa(object):
         pass
 
     def contactAdded(self, group, contact):
-        print "Adding contact %s to group %s in CL" % (str(contact.display_name), str(group.name))
+        print "Adding contact %s to group %s in CL" % (str(contact.display_name), str(group.id))
     
     def contactRemoved(self, group, contact):
         pass
@@ -162,7 +162,7 @@ class aMSNContactList_Cocoa(object):
         pass
 
     def groupAdded(self, group):
-        print "Adding group %s to CL" % str(group.name)
+        print "Adding group %s to CL" % str(group.id)
 
     def groupRemoved(self, group):
         pass
