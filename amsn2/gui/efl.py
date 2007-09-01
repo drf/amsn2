@@ -4,6 +4,7 @@ import evas
 import edje
 import ecore
 import ecore.evas
+import etk
 
 from amsn2.gui import *
 from amsn2.core import *
@@ -49,7 +50,8 @@ class aMSNGUI_EFL(aMSNGUI):
         context = mainloop.get_context()
 
         def glib_context_iterate():
-            if context.pending():
+            iters = 0
+            while iters < 10 and context.pending():
                 context.iteration()
             return True
 
@@ -81,6 +83,32 @@ class aMSNGUI_EFL(aMSNGUI):
         ecore.main_loop_quit()
 
 
+
+class EFL_Entry(evas.SmartObject):
+    def __init__(self, canvas, password=False, label=None):
+        evas.SmartObject.__init__(self, canvas)
+        self.embed = etk.Embed(canvas)
+        self.member_add(self.embed.object)
+        self.entry = etk.Entry()
+        self.embed.add(self.entry)
+        self.embed.show_all()
+        
+        if label is not None:
+            self.entry.text = label
+
+        self.entry.password_mode = password
+
+    def resize(self, w, h):
+        self.embed.object.move(self.top_left[0], self.top_left[1])
+        self.embed.object.size = (w, h)
+
+    def get_text(self):
+        return self.entry.text
+        
+    def set_text(self, text):
+        self.entry.text = text
+
+
 class aMSNLoginWindow_EFL(aMSNLoginWindow):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
@@ -99,8 +127,18 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
         self._edje.on_key_down_add(self.__on_key_down)
         self._edje.signal_callback_add("signin", "*", self.__signin_cb)
 
-        self._edje.focus = True
 
+#        self._edje.focus = True
+        
+        self.password = EFL_Entry(self._evas.evas, password=True)
+        self._edje.part_swallow("login_screen.password", self.password)
+
+        self.status = EFL_Entry(self._evas.evas)
+        self._edje.part_swallow("login_screen.status", self.status)
+        
+        self.username = EFL_Entry(self._evas.evas)
+        self._edje.part_swallow("login_screen.username", self.username)
+        
         # We start with no profile set up, we let the Core set our starting profile
         self.switch_to_profile(None)
 
@@ -113,13 +151,16 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
     def switch_to_profile(self, profile):
         self.current_profile = profile
         if self.current_profile is not None:
-            self._edje.part_text_set("user_name", self.current_profile.username)
-            self._edje.part_text_set("password",  ''.join(["*" for i in range(len(self.current_profile.password))]))
+            self.username.set_text(self.current_profile.username)
+            self.password.set_text(self.current_profile.password)
 
 
     def signin(self):
         # TODO : get/set the username/password and other options from the login screen
-        self._amsn_core.signin_to_account( self, self.current_profile)
+        self.current_profile.username = self.username.get_text()
+        self.current_profile.email = self.username.get_text()
+        self.current_profile.password = self.password.get_text()
+        self._amsn_core.signin_to_account(self, self.current_profile)
 
     def onConnecting(self):
         self._edje.signal_emit("connecting", "")
@@ -154,12 +195,18 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
     def __on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
             self._evas.fullscreen = not self._evas.fullscreen
+        elif event.keyname == "b":
+            self._evas.borderless = not self._evas.borderless
         elif event.keyname == "Escape":
             ecore.main_loop_quit()
 
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()
 
+
+#class ComboBox(Evas_Object):
+#    def __init__(self, editable, parent):
+#        pass
 
 class aMSNContactList_EFL(object):
     def __init__(self, amsn_core):
@@ -251,7 +298,9 @@ class aMSNContactList_EFL(object):
     # Private methods
     def __on_key_down(self, obj, event):
         if event.keyname in ("F6", "f"):
-            self.evas.fullscreen = not self.evas.fullscreen
+            self._evas.fullscreen = not self._evas.fullscreen
+        elif event.keyname == "b":
+            self._evas.borderless = not self._evas.borderless
         elif event.keyname == "Escape":
             ecore.main_loop_quit()
 
@@ -372,3 +421,4 @@ class GroupHolder(evas.SmartObject):
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
+

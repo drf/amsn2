@@ -2,9 +2,14 @@ from profile import *
 from amsn2.protocol import *
 
 class aMSNCore(object):
-    def __init__(self):
+    def __init__(self, options):
         self.profile_manager = aMSNProfileManager()
         self.gui = None
+        self.options = options
+
+        if self.options.debug:
+            import logging
+            logging.basicConfig(level=logging.DEBUG)
 
 
     def setGUI(self, gui):
