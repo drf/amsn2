@@ -5,15 +5,9 @@ sys.path.append("./pymsn.devel")
 from amsn2.core import aMSNCore
 
 def main():
-    import sys
     import optparse
     account = ""
     passwd = ""
-
-    if len(sys.argv) >= 2:
-        account = sys.argv[1]
-    if len(sys.argv) >=3:
-        passwd = sys.argv[2]
 
     parser = optparse.OptionParser()
     parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False,
@@ -22,10 +16,16 @@ def main():
                   action="store_true", dest="use_cocoa", default=False,
                   help="Use the Cocoa front end")
     (options, args) = parser.parse_args()
-    print "Options parsed : debug = %s - cocoa = %s", (options.debug, options.use_cocoa)
+    print "Options parsed : debug = %s - cocoa = %s - args : %s" % (options.debug, options.use_cocoa, args)
 
     amsn = aMSNCore(options)
 
+    if len(args) >= 1:
+        account = args[0]
+    if len(args) >=2:
+        passwd = args[1]
+
+    print "default profile set to %s:%s" % (account, passwd)
     if account != "":
         profile = amsn.addProfile(account)
         profile.password = passwd
