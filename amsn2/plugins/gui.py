@@ -1,9 +1,11 @@
+import plugins
+
 class aMSNPluginSelectorWindow(object):
 	def drawWindow(self): pass
 	def showWindow(self): pass
 	def closeWindow(self): pass
 	def getPlugins(self):
-		return getPlugins()
+		return plugins.getPlugins()
 	def getPluginsWithStatus(self): 
 		return plugins.getPluginsWithStatus()
 	def loadPlugin(self, plugin_name): pass
