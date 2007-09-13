@@ -1,0 +1,179 @@
+fonts {
+  font: "VeraBd.ttf" "VeraBd";
+}
+
+spectra {
+  spectrum {
+    name: "test_spectrum";
+    color: 255 255 255 50 1;
+    color: 10 50 100 150 1;
+  }
+}
+
+images {
+  image: "arrow.png" COMP;
+}
+
+
+collections {
+group {
+  name: "main";
+  parts {
+    part {
+      name: "background";
+      type: RECT;
+      mouse_events: 0;
+      description {
+        state: "default" 0.0;
+        color: 255 255 255 255;
+        rel1 {
+          relative: 0.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+      }
+    }
+    part {
+      name: "background_spectrum";
+      type: GRADIENT;
+      mouse_events: 0;
+      description {
+        state: "default" 0.0;
+        rel1 {
+          relative: 0.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+	gradient {
+	  spectrum: "test_spectrum";
+	  type: "radial";
+          rel1 {
+            relative: 0.0 0.0;
+            offset: 0 0;
+          }
+          rel2 {
+            relative: 1.0 1.0;
+            offset: 0 0;
+          }
+	}
+	fill {
+
+	  origin {
+	    relative: 0.0 0.0;
+	  }
+	}
+      }
+    }
+
+#define CREATE_FIELD(NAME, OFFSET, LABEL)                              \
+    part { 	                                                       \
+      name: NAME"_label";                                              \
+      type: TEXT;                                                      \
+      description {                                                    \
+        state: "default" 0.0;                                          \
+        min: 50 20;                                                    \
+        max: 500 20;                                                   \
+	rel1 {                                                         \
+	  relative: 0.2 0.0;                                           \
+	  offset: 0 OFFSET;                                            \
+	}                                                              \
+	rel2 {                                                         \
+	  relative: 0.8 0.0;                                           \
+	  offset: 0 (OFFSET+20);                                       \
+	}                                                              \
+        color: 0 0 0 255;                                              \
+        color2: 225 225 225 128;                                       \
+	text {                                                         \
+	  align: 0.0 0.5;                                              \
+	  font: "VeraBd";                                              \
+	  size: 10;                                                    \
+	  text: LABEL" :";                                             \
+	  min: 0 0;                                                    \
+	  elipsis: 0.0;                                                \
+	}                                                              \
+      }								       \
+    }                                                                  \
+    part {                                                             \
+      name: NAME;                                                      \
+      type: SWALLOW;                                                   \
+      description {                                                    \
+        state: "default" 0.0;                                          \
+        min: 50 20;                                                    \
+        max: 500 20;                                                   \
+	rel1 {                                                         \
+	  to: NAME"_label";                                            \
+	  relative: 0.0 1.0;                                           \
+	  offset: 0 0;                                                 \
+	}                                                              \
+	rel2 {                                                         \
+	  to: NAME"_label";                                            \
+	  relative: 1.0 1.0;                                           \
+	  offset: 0 40;                                                \
+	}                                                              \
+      }								       \
+    }
+    CREATE_FIELD("entry1", 0, "Username")
+    CREATE_FIELD("entry2", 70, "Password")
+
+    part {
+      name: "arrow";
+      type: IMAGE;
+      mouse_events: 0;
+      description {
+        state: "default" 0.0;
+	rel1 {
+  	  relative: 0.2 0.0;
+	  offset: -30 20;
+	}
+	rel2 {
+          relative: 0.2 0.0;
+	  offset: -0 40;
+	}
+	image {
+  	  normal: "arrow.png";
+	}
+      }
+      description {
+        state: "left" 0.0;
+        inherit: "default" 0.0;
+	rel1 {
+  	  relative: 0.2 0.0;
+	  offset: -50 20;
+	}
+	rel2 {
+          relative: 0.2 0.0;
+	  offset: -20 40;
+	}
+	
+      }
+    }
+  }
+  programs {
+    program {
+      name: "arrow_animate";
+      signal: "load";
+      after: "arrow_left";
+    }
+    program {
+      name: "arrow_left";
+      action: STATE_SET "left" 0.0;
+      target: "arrow";
+      transition: LINEAR 0.3;
+      after: "arrow_right";
+    }
+    program {
+      name: "arrow_right";
+      action: STATE_SET "default" 0.0;
+      target: "arrow";
+      transition: LINEAR 0.3;
+      after: "arrow_left";
+    }
+  }
+}
+}

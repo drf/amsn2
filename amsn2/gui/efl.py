@@ -1,9 +1,9 @@
 
-
 import evas
 import edje
 import ecore
 import ecore.evas
+import ecore.x
 import etk
 
 from amsn2.gui import *
@@ -114,7 +114,7 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
         embed.add(self.status)
         embed.show_all()
         self._edje.part_swallow("login_screen.status", embed.object)
-        
+
         self.username = etk.Entry()
         embed = etk.Embed(self._evas.evas)
         embed.add(self.username)
@@ -188,9 +188,6 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
         self.signin()
 
 
-#class ComboBox(Evas_Object):
-#    def __init__(self, editable, parent):
-#        pass
 
 class aMSNContactList_EFL(object):
     def __init__(self, amsn_core):

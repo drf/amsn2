@@ -1,0 +1,6 @@
+build
+dist
+*.pyc
+*.pyo
+*~
+python_etk.egg-info
