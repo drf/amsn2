@@ -1,0 +1,36 @@
+CREATE_FRAME("options_frame", "fields_frame", 76)
+
+#define CREATE_OPTION(NAME, OFFSET)	\
+  part {				\
+    name, NAME;				\
+    type, TEXT;				\
+    clip_to, "options_frame";		\
+    description {			\
+      min, 50 20;			\
+      max, 500 20;			\
+      state, "default" 0.0;		\
+      rel1 {				\
+	to, "options_frame";		\
+	relative, 0.2 0.0;		\
+	offset, 0 (OFFSET);		\
+      }					\
+      rel2 {				\
+	to, "options_frame";		\
+	relative, 0.8 0.0;		\
+	offset, 0 (OFFSET+20);		\
+      }					\
+      text {				\
+	align, 0.0 0.5;			\
+	font, "VeraBd";			\
+	size, 10;			\
+	text, NAME;			\
+	min, 0 0;			\
+	elipsis, 0.0;			\
+      }					\
+    }					\
+  }
+
+CREATE_OPTION("login_screen.remember_me", 3)
+CREATE_OPTION("login_screen.remember_password", 23)
+CREATE_OPTION("login_screen.auto_login", 43)
+

@@ -1,0 +1,20 @@
+CREATE_FRAME("signin_frame", "options_frame", 40)
+
+part {
+  name, "login_screen.signin";
+  type, TEXT;
+  description {
+    state, "default" 0.0;
+    rel1 {
+      to, "signin_frame";
+      relative, 0.5 0.0;
+      offset, -200 0;
+    }
+    rel2 {
+      to, "signin_frame";
+      relative, 0.5 1.0;
+      offset, 200 0;
+    }
+  }
+}
+

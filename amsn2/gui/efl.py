@@ -83,32 +83,6 @@ class aMSNGUI_EFL(aMSNGUI):
         ecore.main_loop_quit()
 
 
-
-class EFL_Entry(evas.SmartObject):
-    def __init__(self, canvas, password=False, label=None):
-        evas.SmartObject.__init__(self, canvas)
-        self.embed = etk.Embed(canvas)
-        self.member_add(self.embed.object)
-        self.entry = etk.Entry()
-        self.embed.add(self.entry)
-        self.embed.show_all()
-        
-        if label is not None:
-            self.entry.text = label
-
-        self.entry.password_mode = password
-
-    def resize(self, w, h):
-        self.embed.object.move(self.top_left[0], self.top_left[1])
-        self.embed.object.size = (w, h)
-
-    def get_text(self):
-        return self.entry.text
-        
-    def set_text(self, text):
-        self.entry.text = text
-
-
 class aMSNLoginWindow_EFL(aMSNLoginWindow):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
@@ -128,17 +102,27 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
         self._edje.signal_callback_add("signin", "*", self.__signin_cb)
 
 
-#        self._edje.focus = True
-        
-        self.password = EFL_Entry(self._evas.evas, password=True)
-        self._edje.part_swallow("login_screen.password", self.password)
+        self.password = etk.Entry()
+        embed = etk.Embed(self._evas.evas)
+        embed.add(self.password)
+        embed.show_all()
+        self.password.password_mode = True
+        self._edje.part_swallow("login_screen.password", embed.object)
 
-        self.status = EFL_Entry(self._evas.evas)
-        self._edje.part_swallow("login_screen.status", self.status)
+        self.status = etk.Entry()
+        embed = etk.Embed(self._evas.evas)
+        embed.add(self.status)
+        embed.show_all()
+        self._edje.part_swallow("login_screen.status", embed.object)
         
-        self.username = EFL_Entry(self._evas.evas)
-        self._edje.part_swallow("login_screen.username", self.username)
+        self.username = etk.Entry()
+        embed = etk.Embed(self._evas.evas)
+        embed.add(self.username)
+        embed.show_all()
+        self._edje.part_swallow("login_screen.username", embed.object)
         
+        self._edje.focus = True
+
         # We start with no profile set up, we let the Core set our starting profile
         self.switch_to_profile(None)
 
@@ -151,15 +135,15 @@ class aMSNLoginWindow_EFL(aMSNLoginWindow):
     def switch_to_profile(self, profile):
         self.current_profile = profile
         if self.current_profile is not None:
-            self.username.set_text(self.current_profile.username)
-            self.password.set_text(self.current_profile.password)
+            self.username.text = self.current_profile.username
+            self.password.text = self.current_profile.password
 
 
     def signin(self):
         # TODO : get/set the username/password and other options from the login screen
-        self.current_profile.username = self.username.get_text()
-        self.current_profile.email = self.username.get_text()
-        self.current_profile.password = self.password.get_text()
+        self.current_profile.username = self.username.text
+        self.current_profile.email = self.username.text
+        self.current_profile.password = self.password.text
         self._amsn_core.signin_to_account(self, self.current_profile)
 
     def onConnecting(self):

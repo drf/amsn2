@@ -1,0 +1,96 @@
+CREATE_FRAME("fields_frame", "dp_frame", 126)
+
+#define CREATE_FIELD(NAME, OFFSET, LABEL)	\
+  part {					\
+    name, NAME"_label";				\
+    type, TEXT;					\
+    clip_to, "fields_frame";			\
+    description {				\
+      state, "default" 0.0;			\
+      min, 50 20;				\
+      max, 500 20;				\
+      rel1 {					\
+	to, "fields_frame";			\
+	relative, 0.2 0.0;			\
+	offset, 0 OFFSET;			\
+      }						\
+      rel2 {					\
+	to, "fields_frame";			\
+	relative, 0.8 0.0;			\
+	offset, 0 (OFFSET+20);			\
+      }						\
+      color, 0 0 0 255;				\
+      color2, 225 225 225 128;			\
+      text {					\
+	align, 0.0 0.5;				\
+	font, "VeraBd";				\
+	size, 10;				\
+	text, LABEL" :";			\
+	min, 0 0;				\
+	elipsis, 0.0;				\
+      }						\
+    }						\
+  }						\
+  part {					\
+    name, NAME;					\
+    type, SWALLOW;				\
+    clip_to, "fields_frame";			\
+    description {				\
+      state, "default" 0.0;			\
+      min, 50 20;				\
+      max, 500 20;				\
+      rel1 {					\
+	to, NAME"_label";			\
+	relative, 0.0 1.0;			\
+	offset, 0 0;				\
+      }						\
+      rel2 {					\
+	to, NAME"_label";			\
+	relative, 1.0 1.0;			\
+	offset, 0 20;				\
+      }						\
+    }						\
+  }
+
+CREATE_FIELD("login_screen.username", 3, "Username")
+CREATE_FIELD("login_screen.password", 43, "Password")
+CREATE_FIELD("login_screen.status", 83, "Sign-in status")
+
+part {
+  name, "arrow";
+  type, IMAGE;
+  clip_to, "fields_frame";
+  mouse_events, 0;
+  description {
+    state, "default" 0.0;
+    rel1 {
+      to, "fields_frame";
+      relative, 0.2 0.0;
+      offset, -30 20;
+    }
+    rel2 {
+      to, "fields_frame";
+      relative, 0.2 0.0;
+      offset, 0 40;
+    }
+    image {
+      normal, "login_screen/arrow.png";
+    }
+  }
+  description {
+    state, "left" 0.0;
+    inherit, "default" 0.0;
+    rel1 {
+      to, "fields_frame";
+      relative, 0.2 0.0;
+      offset, -50 20;
+    }
+    rel2 {
+      to, "fields_frame";
+      relative, 0.2 0.0;
+      offset, -20 40;
+    }
+	
+  }
+}
+
