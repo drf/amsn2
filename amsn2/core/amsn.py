@@ -26,7 +26,11 @@ class aMSNCore(object):
             if prof.isLocked() is False:
                 use_profile = prof
                 break
-        
+
+        if use_profile is None:
+            use_profile = self.profile_manager.addProfile("")
+            use_profile.password = ""
+            
         login.switch_to_profile(use_profile)
         login.show_window()
 
@@ -58,8 +62,8 @@ class aMSNCore(object):
             profile.login.hide_window()
             profile.cl.show_window()
             profile.login = None
-       
-            for group in profile.client.address_book.groups.values():
+
+            for group in profile.client.address_book.groups:
                 contacts = profile.client.address_book.contacts.search_by_groups(group)
                 profile.cl.groupAdded(group)
                 for c in contacts:
