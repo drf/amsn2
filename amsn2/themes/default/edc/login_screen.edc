@@ -38,23 +38,14 @@ group {
     public change_state_all(state[], num) {
       set_state(PART:"language_frame", state, num);
       set_state(PART:"dp_frame", state, num);
-      /*
-      set_state(PART:"language_button", state, num);
-      set_state(PART:"language_spacer", state, num);
-      set_state(PART:"language_text", state, num);
-      set_state(PART:"main_frame", state, num);
-      set_state(PART:"login_screen.username", state, num);
-      set_state(PART:"login_screen.username_label", state, num);
-      set_state(PART:"login_screen.password", state, num);
-      set_state(PART:"login_screen.password_label", state, num);
-      set_state(PART:"login_screen.status", state, num);
-      set_state(PART:"login_screen.status_label", state, num);
-      set_state(PART:"arrow", state, num);
-      set_state(PART:"login_button", state, num);
-      set_state(PART:"login_button_label", state, num);
-      set_state(PART:"more_button", state, num);
+      set_state(PART:"fields_frame", state, num);
+      set_state(PART:"links_frame", state, num);
+      set_state(PART:"more_frame", state, num);
+      set_state(PART:"options_frame", state, num);
+      set_state(PART:"signin_frame", state, num);
+      set_state(PART:"update_frame", state, num);
       set_state(PART:"connection_status", state, num);
-      set_state(PART:"connection_status2", state, num);*/
+      set_state(PART:"connection_status2", state, num);
     }
   }
 
@@ -167,6 +158,10 @@ group {
 	  offset, -1 -1;		      \
 	}				      \
       }					      \
+      description {			      \
+	state, "connecting" 0.0;	      \
+	inherit, "hidden" 0.0;		      \
+      } 	 	   		      \
     }
 
 #include "login_screen/language_frame.edc"

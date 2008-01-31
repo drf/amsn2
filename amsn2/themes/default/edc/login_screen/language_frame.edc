@@ -26,6 +26,10 @@ part {
       offset, 0 0;
     }
   }
+  description {
+    state, "connecting" 0.0;
+    inherit, "hidden" 0.0;
+  }
 }
 
 part {
