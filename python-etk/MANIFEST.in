@@ -1,3 +1,0 @@
-recursive-include etk *.pxd *.pyx *.pxi *.py *.h
-include ez_setup.py
-include AUTHORS COPYING-PLAIN COPYING README
