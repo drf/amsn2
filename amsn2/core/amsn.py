@@ -69,7 +69,9 @@ class aMSNCore(object):
                 for c in contacts:
                     profile.cl.contactAdded(group, c)
 
-            
+
+    def contact_presence_changed(self, profile, contact):
+        profile.cl.contactStateChange(contact)
 
     def idler_add(self, func):
         self.gui.idler_add(func)

@@ -22,8 +22,12 @@ class ClientEvents(pymsn.event.ClientEventInterface):
 
 class ContactEvents(pymsn.event.ContactEventInterface):
 
+    def __init__(self, client, amsn_core):
+        self._amsn_core = amsn_core
+        pymsn.event.ContactEventInterface.__init__(self, client)
+        
     def on_contact_presence_changed(self, contact):
-        print "Contact %s presence changed" % contact.display_name
+        self._amsn_core.contact_presence_changed(self._client._amsn_profile, contact)
 
 
 class Client(pymsn.Client):
@@ -35,7 +39,7 @@ class Client(pymsn.Client):
         pymsn.Client.__init__(self, server)
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
-        self._contact_events_handler = ContactEvents(self)
+        self._contact_events_handler = ContactEvents(self, self._amsn_core)
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)

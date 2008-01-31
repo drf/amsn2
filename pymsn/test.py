@@ -29,7 +29,6 @@ def get_proxies():
 
 class ClientEvents(pymsn.event.ClientEventInterface):
     def on_client_state_changed(self, state):
-	print "state changed to %s" % (state)
         if state == pymsn.event.ClientState.CLOSED:
             self._client.quit()
         elif state == pymsn.event.ClientState.OPEN:

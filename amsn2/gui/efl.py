@@ -234,7 +234,8 @@ class aMSNContactList_EFL(object):
         self._edje.hide()
 
     def contactStateChange(self, contact):
-        pass
+        for group in contact.groups:
+            self.group_holders[group.id].contact_presence_changed(contact)
 
     def contactNickChange(self, contact):
         pass
@@ -303,7 +304,7 @@ class ContactHolder(evas.SmartObject):
     def __init__(self, ecanvas):
         evas.SmartObject.__init__(self, ecanvas.evas)
         self.evas_obj = ecanvas
-        self.contacts = []
+        self.contacts = {}
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
                     pymsn.Presence.IDLE:"idle",
@@ -314,21 +315,29 @@ class ContactHolder(evas.SmartObject):
                     pymsn.Presence.INVISIBLE:"hidden",
                     pymsn.Presence.OFFLINE:"offline"}
 
-    def add_contact(self, contact):
-        new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,
-                                group="contact_item")
-        new_contact.part_text_set("contact_data", 
+    def contact_presence_changed(self, contact):
+        self.contacts[contact.id].part_text_set("contact_data", 
                                   "<%s><nickname>%s</nickname> <status>(%s)</status> <psm>%s</psm></%s>"
                                   % (contact.presence, contact.display_name, 
                                      self.p2s[contact.presence], contact.personal_message, 
                                      contact.presence) )
-        new_contact.signal_emit("state_changed", self.p2s[contact.presence])
-        new_contact.show()
-        self.contacts.append(new_contact)
+        self.contacts[contact.id].signal_emit("state_changed", self.p2s[contact.presence])
+        
+    def add_contact(self, contact):
+        new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,
+                                group="contact_item")
+        self.contacts[contact.id] = new_contact        
+        self.contact_presence_changed(contact)
+        
         self.member_add(new_contact)
+        new_contact.show()
+
+    def show(self):
         self.update_widget(self.size[0], self.size[1])
         
-
+    def hide(self):
+        self.update_widget(self.size[0], self.size[1])
+        
     def resize(self, w, h):
         self.update_widget(w, h)
 
@@ -340,8 +349,8 @@ class ContactHolder(evas.SmartObject):
             total_spacing = spacing * len(self.contacts)
             item_height = (h - total_spacing) / len(self.contacts)
             for i in self.contacts:
-                i.move(x, y)
-                i.size = (w, item_height)
+                self.contacts[i].move(x, y)
+                self.contacts[i].size = (w, item_height)
                 y += item_height + spacing
             
     def num_contacts(self):
@@ -364,6 +373,9 @@ class GroupItem(edje.Edje):
     def add_contact(self, contact):
         self.contact_holder.add_contact(contact)
         self.__update_parent()
+
+    def contact_presence_changed(self, contact):
+        self.contact_holder.contact_presence_changed(contact)
 
     def num_contacts(self):
         if self.expanded == False:
@@ -402,6 +414,12 @@ class GroupHolder(evas.SmartObject):
     def resize(self, w, h):
         self.update_widget(w, h)
 
+    def show(self):
+        self.update_widget(self.size[0], self.size[1])
+        
+    def hide(self):
+        self.update_widget(self.size[0], self.size[1])
+        
     def update_widget(self,w, h):
         x = self.top_left[0]
         y = self.top_left[1]
