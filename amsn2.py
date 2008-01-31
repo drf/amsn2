@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-sys.path.append("./pymsn.devel")
+sys.path.append("./pymsn")
 
 from amsn2.core import aMSNCore
 
