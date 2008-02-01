@@ -36,4 +36,4 @@ class aMSNMainWindow(base.aMSNMainWindow):
             evas_obj.data[key].size = size
 
     def __on_delete_request(self, evas_obj):
-        self._amsn_core.exit()
+        self._amsn_core.quit()

@@ -104,8 +104,6 @@ class aMSNContactList(base.aMSNContactList):
             self._evas.fullscreen = not self._evas.fullscreen
         elif event.keyname == "b":
             self._evas.borderless = not self._evas.borderless
-        elif event.keyname == "Escape":
-            self._amsn_core.exit()
 
 class ContactHolder(evas.SmartObject):
 

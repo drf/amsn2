@@ -101,6 +101,21 @@ class aMSNCore(object):
                 for c in contacts:
                     profile.cl.contactAdded(group, c)
 
+            class NoGroup(object):
+                def __init__(self):
+                    self.id = 0
+                    self.name = "No Group"
+            nogroup = None
+            contacts = profile.client.address_book.contacts
+            for c in contacts:
+                if len(c.groups) == 0:
+                    if nogroup is None:
+                        nogroup = NoGroup()
+                        profile.cl.groupAdded(nogroup)
+                        
+                    profile.cl.contactAdded(nogroup, c)
+                    
+
     def contactPresenceChanged(self, profile, contact):
         profile.cl.contactStateChange(contact)
 
@@ -111,5 +126,5 @@ class aMSNCore(object):
     def timerAdd(self, delay, func):
         self._loop.timer_add(delay, func)
 
-    def exit(self):
-        self._loop.exit()
+    def quit(self):
+        self._loop.quit()
