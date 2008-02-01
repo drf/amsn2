@@ -3,8 +3,7 @@ from amsn2.gui import base
 import gobject
 
 class aMSNMainLoop(base.aMSNMainLoop):
-    def __init__(self, amsn_core):
-        self._amsn_core = amsn_core
+
     def run(self):
         self._mainloop = gobject.MainLoop(is_running=True)
 
@@ -22,11 +21,5 @@ class aMSNMainLoop(base.aMSNMainLoop):
         gobject.timeout_add(delay, func)
 
     def quit(self):
-        import curses
-        stdscr = self._amsn_core.getMainWindow()._stdscr
-	curses.nocbreak()
-	stdscr.keypad(0)
-	curses.echo()
-	curses.endwin()
         self._mainloop.quit()
         

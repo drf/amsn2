@@ -1,6 +1,5 @@
 from amsn2.gui import base
 import pymsn
-import curses
 
 class Contact(object):
     def __init__(self, name, presence):
@@ -44,8 +43,6 @@ class aMSNContactList(base.aMSNContactList):
         self._amsn_core = amsn_core
         self.groups = {}
         self.contacts = {}
-	self._stdscr = self._amsn_core.getMainWindow()._stdscr
-        self._win = curses.newwin(100, 100, 3, 3)
 
     def show(self):
         pass
@@ -112,19 +109,15 @@ class aMSNContactList(base.aMSNContactList):
     def cget(self, option, value):
         pass
 
+    def __cls(self):
+        print "[H[2J"
         
     def __update_view(self):
-        self._win.clear()
-        row = 0
+        self.__cls()
         for g in self.groups:
             count = self.groups[g].count()
-            self._win.addstr(row, 0, "%s (%d/%d)" % (self.groups[g].name, count[0], count[1]), curses.A_BOLD | curses.A_UNDERLINE)
-            row += 1
+            print "|X| %s (%d/%d)" % (self.groups[g].name, count[0], count[1])
             for c in self.groups[g].contacts:
-                 self._win.addstr(row, 2, "%s (%s)" % (self.groups[g].contacts[c].name, self.groups[g].contacts[c].status()), curses.A_BOLD)
-                 row += 1
-            row += 1
-
-        self._win.refresh()
-                             
+                print "  |=> %s (%s)" % (self.groups[g].contacts[c].name, self.groups[g].contacts[c].status())
+            print ""
 
