@@ -9,7 +9,7 @@ class ClientEvents(pymsn.event.ClientEventInterface):
         pymsn.event.ClientEventInterface.__init__(self, client)
 
     def on_client_state_changed(self, state):
-        self._amsn_core.connection_state_changed(self._client._amsn_profile, state)
+        self._amsn_core.connectionStateChanged(self._client._amsn_profile, state)
         
         if state == pymsn.event.ClientState.OPEN:
             self._client.profile.display_name = "aMSN2"
@@ -27,7 +27,7 @@ class ContactEvents(pymsn.event.ContactEventInterface):
         pymsn.event.ContactEventInterface.__init__(self, client)
         
     def on_contact_presence_changed(self, contact):
-        self._amsn_core.contact_presence_changed(self._client._amsn_profile, contact)
+        self._amsn_core.contactPresenceChanged(self._client._amsn_profile, contact)
 
 
 class Client(pymsn.Client):

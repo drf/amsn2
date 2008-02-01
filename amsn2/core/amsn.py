@@ -1,49 +1,80 @@
-from profile import *
-from amsn2.protocol import *
+
+import profile
+from amsn2 import gui
+from amsn2 import protocol
+import pymsn
 
 class aMSNCore(object):
     def __init__(self, options):
-        self.profile_manager = aMSNProfileManager()
-        self.gui = None
-        self.options = options
+        """
+        Create a new aMSN Core. It takes an options class as argument
+        which has a variable for each option the core is supposed to received.
+        This is easier done using optparse.
+        The options supported are :
+           options.account = the account's username to use
+           options.password = the account's password to use
+           options.front_end = the front end's name to use
+           options.debug = whether or not to enable debug output
+        """
+        self._profile_manager = profile.aMSNProfileManager()
+        self._options = options
+        self._gui_name = self._options.front_end
+        self._gui = gui.GUIManager(self, self._gui_name)
+        self._loop = self._gui.getMainLoop();
+        self._main = self._gui.getMainWindow();
 
-        if self.options.debug:
+        if self._options.debug:
             import logging
             logging.basicConfig(level=logging.DEBUG)
 
-
-    def setGUI(self, gui):
-        self.gui = gui
+    def run(self):
+        self._main.show();
+        self._loop.run();
+        
 
     def mainWindowShown(self):
         # TODO : load the profiles from disk and all settings
         # and show a splash screen in the main window, until all is loaded
         # then show the login window if autoconnect is disabled
-        login = self.gui.createLoginWindow()
+        login = self._gui.getLoginWindow()
         
-        use_profile = None
-        for prof in self.profile_manager.getAllProfiles():
-            if prof.isLocked() is False:
-                use_profile = prof
-                break
+        profile = None
+        if self._options.account is not None:
+            if self._profile_manager.profileExists(self._options.account):
+                profile = self._profile_manager.getProfile(self._options.account)
+            else:
+                profile = self._profile_manager.addProfile(self._options.account)
+                profile.save = False
+            if self._options.password is not None:
+                profile.password = self._options.password
 
-        if use_profile is None:
-            use_profile = self.profile_manager.addProfile("")
-            use_profile.password = ""
+        else:
+            for prof in self._profile_manager.getAllProfiles():
+                if prof.isLocked() is False:
+                    profile = prof
+                    break
+
+        if profile is None:
+            profile = self._profile_manager.addProfile("")
+            profile.password = ""
             
-        login.switch_to_profile(use_profile)
-        login.show_window()
+        login.switch_to_profile(profile)
+        login.show()
+
+    def getMainWindow(self):
+        return self._main
+            
 
     def addProfile(self, account):
-        return self.profile_manager.addProfile(account)
+        return self._profile_manager.addProfile(account)
 
-    def signin_to_account(self, login_window, profile):
+    def signinToAccount(self, login_window, profile):
         print "Signing in to account %s" % (profile.email)
         profile.login = login_window
-        profile.client = Client(self, profile)
+        profile.client = protocol.Client(self, profile)
         profile.client.connect()
 
-    def connection_state_changed(self, profile, state):
+    def connectionStateChanged(self, profile, state):
         if state == pymsn.event.ClientState.CONNECTING:
             profile.login.onConnecting()
         elif state == pymsn.event.ClientState.CONNECTED:
@@ -57,10 +88,11 @@ class aMSNCore(object):
         elif state == pymsn.event.ClientState.SYNCHRONIZED:
             profile.login.onSynchronized()
         elif state == pymsn.event.ClientState.OPEN:
-            cl = self.gui.createContactList(profile)
+            cl = self._gui.getContactList()
+            cl.profile = profile
             profile.cl = cl
-            profile.login.hide_window()
-            profile.cl.show_window()
+            profile.login.hide()
+            profile.cl.show()
             profile.login = None
 
             for group in profile.client.address_book.groups:
@@ -69,13 +101,15 @@ class aMSNCore(object):
                 for c in contacts:
                     profile.cl.contactAdded(group, c)
 
-
-    def contact_presence_changed(self, profile, contact):
+    def contactPresenceChanged(self, profile, contact):
         profile.cl.contactStateChange(contact)
 
-    def idler_add(self, func):
-        self.gui.idler_add(func)
 
-    def timer_add(self, delay, func):
-        self.gui.timer_add(delay, func)
-    
+    def idlerAdd(self, func):
+        self._loop.idler_add(func)
+
+    def timerAdd(self, delay, func):
+        self._loop.timer_add(delay, func)
+
+    def exit(self):
+        self._loop.exit()

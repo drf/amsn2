@@ -1,45 +1,34 @@
 #!/usr/bin/env python
 import sys
-sys.path.append("./pymsn")
+import os
+import optparse
+sys.path.insert(0, "./pymsn")
 
 from amsn2.core import aMSNCore
 
-def main():
-    import optparse
-    account = ""
-    passwd = ""
+if __name__ == '__main__':
+    account = None
+    passwd = None
+    system = os.uname()[0]
+    default_front_end = "console"
+
+    if system == "Linux":
+        default_front_end = "efl"
+    elif system == "Darwin":
+        default_front_end = "cocoa"
 
     parser = optparse.OptionParser()
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False,
-                  help="Show protocol debug")
-    parser.add_option("-c", "--cocoa",
-                  action="store_true", dest="use_cocoa", default=False,
-                  help="Use the Cocoa front end")
+    parser.add_option("-a", "--account", dest="account",
+                      default=None, help="The account's username to use")
+    parser.add_option("-p", "--password", dest="password",
+                      default=None, help="The account's password to use")
+    parser.add_option("-f", "--front-end", dest="front_end",
+                      default=default_front_end, help="The frontend to use")
+    parser.add_option("-d", "--debug", action="store_true", dest="debug",
+                      default=False, help="Show protocol debug")
     (options, args) = parser.parse_args()
-    print "Options parsed : debug = %s - cocoa = %s - args : %s" % (options.debug, options.use_cocoa, args)
-
+    
     amsn = aMSNCore(options)
+    
+    amsn.run()
 
-    if len(args) >= 1:
-        account = args[0]
-    if len(args) >=2:
-        passwd = args[1]
-
-    print "default profile set to %s:%s" % (account, passwd)
-    if account != "":
-        profile = amsn.addProfile(account)
-        profile.password = passwd
-
-    if options.use_cocoa is True:
-        from amsn2.gui.cocoa import aMSNGUI_Cocoa
-        gui = aMSNGUI_Cocoa(amsn)
-    else:
-        from amsn2.gui.efl import aMSNGUI_EFL
-        gui = aMSNGUI_EFL(amsn)
-    gui.launch()
-
-    # Should become as simple as :
-    # aMSNGUI_EFL(aMSNCore()).launch()
-
-if __name__ == '__main__':
-    main()
