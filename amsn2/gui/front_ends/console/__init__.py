@@ -6,17 +6,16 @@ import sys
 # We need to import the front end module and return it
 # so the guimanager can access its classes
 def load():
-    import console
-    return console
+    import curses_
+    return curses_
 
 # Initialize the front end by checking for any
 # dependency then register it to the guimanager
 try:
     import imp
 
-    # try to find any necessary module
-    # imp.find_module()
-    gui.GUIManager.registerFrontEnd("console", sys.modules[__name__])
+    imp.find_module("curses")
+    gui.GUIManager.registerFrontEnd("curses", sys.modules[__name__])
     
 except ImportError:
     pass
