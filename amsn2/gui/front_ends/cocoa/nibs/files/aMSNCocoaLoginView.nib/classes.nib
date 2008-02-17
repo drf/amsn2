@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>login</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>aMSNCocoaLoginView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>loginButton</key>
+				<string>id</string>
+				<key>passwordField</key>
+				<string>id</string>
+				<key>passwordLabel</key>
+				<string>id</string>
+				<key>rememberMe</key>
+				<string>id</string>
+				<key>rememberPassword</key>
+				<string>id</string>
+				<key>usernameField</key>
+				<string>id</string>
+				<key>usernameLabel</key>
+				<string>id</string>
+			</dict>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
