@@ -13,9 +13,10 @@ def load():
 # dependency then register it to the guimanager
 try:
     import imp
-
-    # try to find any necessary module
-    # imp.find_module()
+    imp.find_module('objc')
+    imp.find_module('Foundation')
+    imp.find_module('AppKit')
+    
     gui.GUIManager.registerFrontEnd("cocoa", sys.modules[__name__])
     
 except ImportError:
