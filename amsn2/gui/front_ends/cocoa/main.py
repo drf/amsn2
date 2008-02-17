@@ -1,19 +1,15 @@
 
-from nibs import CocoaMainWindow, CocoaLoginView, CocoaLoggingInView
+from nibs import CocoaMainWindow
 from amsn2.gui import base
 
 class aMSNMainWindow(base.aMSNMainWindow):
     cocoaWin = None
-    loginView = None
     
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
         
         # Load our window.
         self.cocoaWin = CocoaMainWindow.getMainWindow()
-        # Load our views.
-        self.loginView = CocoaLoginView.getView()
-        self.loggingInView = CocoaLoggingInView.getView()
     
     def setTitle(self, title):
         self.cocoaWin.setTitle_(title)

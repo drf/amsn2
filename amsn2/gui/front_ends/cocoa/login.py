@@ -1,4 +1,5 @@
 
+from nibs import CocoaLoginView, CocoaLoggingInView
 import main
 
 class aMSNLoginWindow(object):
@@ -11,8 +12,8 @@ class aMSNLoginWindow(object):
         self._mainWin = self._amsn_core.getMainWindow()
         
         # Save the cocoa views that can be loaded in the main window.
-        self.loginView = self._mainWin.loginView
-        self.loggingInView = self._mainWin.loggingInView
+        self.loginView = CocoaLoginView.getView()
+        self.loggingInView = CocoaLoggingInView.getView()
         
         # Save a call back method for when the cocoa login: message is sent.
         self.loginView.registerLoginCallback(self.login)
@@ -28,7 +29,7 @@ class aMSNLoginWindow(object):
         self._password = password
         
         # Load loggingInView into main window (no resize).
-        self._mainWin._loadView(self._mainWin.loggingInView, False)
+        self._mainWin._loadView(self.loggingInView, False)
         self.signin()
 
     def hide(self):
