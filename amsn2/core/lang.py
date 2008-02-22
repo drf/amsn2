@@ -8,38 +8,39 @@ class aMSNLang(object):
     base_lang = 'en'
     lang_code = base_lang
     
-    lineRe = re.compile('([^\s]*)\s*(.*)')  # key + whitespace + value
-    langRe = re.compile('(.+)-.+')          # code or code-variant
+    default_encoding = 'utf-8'
     
-    @staticmethod
-    def loadLang(lang_code, force_reload=False):
-        if aMSNLang.lang_code is lang_code and force_reload is False:
+    lineRe = re.compile('([^\s]*)\s*(.*)', re.UNICODE)  # key + whitespace + value
+    langRe = re.compile('(.+)-.+', re.UNICODE)          # code or code-variant
+    
+    def loadLang(self, lang_code, force_reload=False):
+        if self.lang_code is lang_code and force_reload is False:
             # Don't reload the same lang unless forced.
             return
         
-        hasVariant = bool(aMSNLang.langRe.match(lang_code) is not None)
+        hasVariant = bool(self.langRe.match(lang_code) is not None)
         
         # Check for lang variants.
         if hasVariant is True:
-            root = str(aMSNLang.langRe.split(lang_code)[1])
+            root = str(self.langRe.split(lang_code)[1])
         else:
             root = str(lang_code)
         
-        if lang_code is aMSNLang.base_lang:
+        if lang_code is self.base_lang:
             # Clear the keys if we're loading the base lang.
-            aMSNLang.clearKeys()
+            self.clearKeys()
         
-        if root is not aMSNLang.base_lang:
+        if root is not self.base_lang:
             # If it's not the default lang, load the base first.
-            aMSNLang.loadLang(aMSNLang.base_lang)
+            self.loadLang(self.base_lang)
         
         if hasVariant is True:
             # Then we have a variant, so load the root.
-            aMSNLang.loadLang(root)
+            self.loadLang(root)
         
         # Load the langfile from each langdir.
         fileWasLoaded = False
-        for dir in aMSNLang.getLangDirs():
+        for dir in self.getLangDirs():
             try:
                 f = file(path.join(dir, 'lang' + lang_code), 'r')
                 fileWasLoaded = True
@@ -49,9 +50,9 @@ class aMSNLang(object):
             
             line = f.readline()
             while line:
-                if aMSNLang.lineRe.match(line) is not None:
-                    components = aMSNLang.lineRe.split(line)
-                    aMSNLang.setKey(str(components[1]), str(components[2]))
+                if self.lineRe.match(line) is not None:
+                    components = self.lineRe.split(line)
+                    self.setKey(unicode(components[1], self.default_encoding), unicode(components[2], self.default_encoding))
                 
                 # Get the next line...
                 line = f.readline()
@@ -60,55 +61,48 @@ class aMSNLang(object):
         
         # If we've loaded a lang file, set the new lang code.
         if fileWasLoaded is True:
-            aMSNLang.lang_code = str(lang_code)
+            self.lang_code = str(lang_code)
         
-    @staticmethod
-    def addLangDir(lang_dir):
-        aMSNLang.lang_dirs.append(str(lang_dir))
-        aMSNLang.reloadKeys()
+    def addLangDir(self, lang_dir):
+        self.lang_dirs.append(str(lang_dir))
+        self.reloadKeys()
     
-    @staticmethod
-    def removeLangDir(lang_dir):
+    def removeLangDir(self, lang_dir):
         try:
             # Remove the lang_dir from the lang_dirs list, and reload keys.
-            aMSNLang.lang_dirs.remove(str(lang_dir))
-            aMSNLang.reloadKeys()
+            self.lang_dirs.remove(str(lang_dir))
+            self.reloadKeys()
             return True
         except ValueError:
             # Dir not in list.
             return False
     
-    @staticmethod
-    def getLangDirs():
+    def getLangDirs(self):
         # Return a copy for them to play with.
-        return aMSNLang.lang_dirs[:]
+        return self.lang_dirs[:]
 
-    @staticmethod
-    def clearLangDirs():
-        aMSNLang.lang_dirs = []
-        aMSNLang.clearKeys()
+    def clearLangDirs(self):
+        self.lang_dirs = []
+        self.clearKeys()
 
-    @staticmethod
-    def reloadKeys():
-        aMSNLang.loadLang(aMSNLang.lang_code, True)
+    def reloadKeys(self):
+        self.loadLang(self.lang_code, True)
 
-    @staticmethod
-    def setKey(key, val):
-        aMSNLang.lang_keys[str(key)] = str(val)
+    def setKey(self, key, val):
+        self.lang_keys[key] = val
     
-    @staticmethod
-    def getKey(key, replacements=[]):
+    def getKey(self, key, replacements=[]):
         try:
-            r = str(aMSNLang.lang_keys[key])
+            r = self.lang_keys[key]
         except KeyError:
             # Key doesn't exist.
-            return str(key)
+            return key
         
         # Perform any replacements necessary.
-        if aMSNLang._isDict(replacements):
+        if self._isDict(replacements):
             # Replace from a dictionary.
             for key, val in replacements.iteritems():
-                r = r.replace(str(key), str(val))
+                r = r.replace(key, val)
         else:
             # Replace each occurence of $i with an item from the replacements list.
             i = 1
@@ -118,23 +112,20 @@ class aMSNLang(object):
         
         return r
         
-    @staticmethod
-    def _isDict(test):
+    def _isDict(self, test):
         try:
             test.keys()
             return True
         except AttributeError:
             return False
     
-    @staticmethod
-    def clearKeys():
-        aMSNLang.lang_keys = {}
+    def clearKeys(self):
+        self.lang_keys = {}
     
-    @staticmethod
-    def printKeys():
-        print aMSNLang.lang_code
+    def printKeys(self):
+        print self.lang_code
         print '{'
-        for key, val in aMSNLang.lang_keys.iteritems():
+        for key, val in self.lang_keys.iteritems():
             print "\t[" + key + '] =>' + "\t" + '\'' + val + '\''
         print '}'
 
