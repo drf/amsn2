@@ -10,8 +10,8 @@ class aMSNLang(object):
     
     default_encoding = 'utf-8'
     
-    lineRe = re.compile('([^\s]*)\s*(.*)', re.UNICODE)  # key + whitespace + value
-    langRe = re.compile('(.+)-.+', re.UNICODE)          # code or code-variant
+    lineRe  = re.compile('\s*([^\s]+)\s+(.+)', re.UNICODE)  # whitespace? + key + whitespace + value
+    langRe  = re.compile('(.+)-.+', re.UNICODE)             # code or code-variant
     
     def loadLang(self, lang_code, force_reload=False):
         if self.lang_code is lang_code and force_reload is False:
