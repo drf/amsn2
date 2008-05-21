@@ -34,7 +34,7 @@ etkmodule = Extension('etk.c_etk',
                        sources=['etk/etk.c_etk.pyx'],
                        depends=glob('include/etk/*.pxd') + \
                           glob('etk/core/*.pxi'),
-                       **pkgconfig('"etk >= 0.1.0.007"'))
+                       **pkgconfig('"etk >= 0.1.0.042"'))
 
 headers = []
 
@@ -65,7 +65,7 @@ class etk_build_ext(build_ext):
 
 
 setup(name = 'python-etk',
-      version = '0.0.1',
+      version = '0.1.1',
       license = 'BSD',
       author='Caio Marcelo de Oliveira Filho',
       author_email='cmarcelo@gmail.com',
@@ -75,8 +75,8 @@ setup(name = 'python-etk',
       keywords = 'wrapper binding ui etk graphics',
       classifiers = trove_classifiers,
       packages = find_packages(),
-      install_requires = ['python-evas>=0.2.0', 'python-ecore>=0.2.0'],
-      setup_requires = ['python-evas>=0.2.0', 'python-ecore>=0.2.0'],
+      install_requires = ['python-evas>=0.2.1', 'python-ecore>=0.2.1'],
+      setup_requires = ['python-evas>=0.2.1', 'python-ecore>=0.2.1'],
       headers = headers,
       ext_modules = [etkmodule],
       zip_safe=False,

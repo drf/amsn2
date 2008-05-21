@@ -621,7 +621,7 @@ class List(core.Widget, CallbackMixin):
         return True
 
     def _get_focus(self, *ignored):
-        self.focus = True
+        self.focus()
         return True
 
     def _init_scrolled_view(self):

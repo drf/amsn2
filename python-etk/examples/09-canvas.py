@@ -12,11 +12,13 @@ w.show_all()
 evas = c.toplevel_evas_get()
 r = evas.Rectangle(color="#ff0000", size=(50,50))
 r.show()
-c.object_add(r)
+bla = c.object_add(r)
+
+print bla
 
 def mover(obj):
-    (x, y) = obj.center
-    obj.center = (x+1, y+1)
+    (x, y) = c.child_position_get(bla)
+    c.move(bla, x + 1, y + 1)
     return True
 
 ecore.animator_add(mover, r)
