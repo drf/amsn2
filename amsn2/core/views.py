@@ -1,4 +1,12 @@
 
+class StringViewTypes:
+    TEXT_ELEMENT = "text"
+    COLOR_ELEMENT = "color"
+    BACKGROUND_ELEMENT = "bgcolor"
+    IMAGE_ELEMENT = "image"
+
+# Font ? padding ? underline/bold/italic ?
+
 class StringView (object):
     class StringElement(object):
         def __init__(self, type, value):
@@ -11,30 +19,43 @@ class StringView (object):
         def getValue(self):
             return self._value
 
-    class TextElement(StringElement):
-        def __init__(self, text):
-            StringElement.__init__(self, "text", text)
-
-
     class ColorElement(StringElement):
         def __init__(self, color):
-            StringElement.__init__(self, "color", color)
-
+            StringElement.__init__(self, COLOR_ELEMENT, color)
+    class BackgroundColorElement(StringElement):
+        def __init__(self, color):
+            StringElement.__init__(self, BACKGROUND_ELEMENT, color)
+    class TextElement(StringElement):
+        def __init__(self, text):
+            StringElement.__init__(self, TEXT_ELEMENT, text)
+    class ImageElement(StringElement):
+        def __init__(self, image):
+            StringElement.__init__(self, IMAGE_ELEMENT, image)
             
-    def __init__(self):
+    def __init__(self, default_background_color, default_color):
         self._elements = []
 
-    def parse(self, str):
-        # TODO : actually do parse the string
-        self._elements = []
-        if str is not None:
-            self._elements.append(TextElement(str))
+        self._default_background_color = default_background_color
+        self._default_color = default_color
+        self.resetColor()
+        self.resetBackgroundColor()
 
-    @staticmethod
-    def buildFromString(str):
-        ret = StringEx()
-        ret.parse(str)
-        return ret
+    def append(self, type, value):
+        self._elements.append(StringElement(type, value))
+
+    def appendText(self, text):
+        self._elements.append(TextElement(text))
+    def appendImage(self, image):
+        self._elements.append(ImageElement(image))
+    def setColor(self, color):
+        self._elements.append(ColorElement(color))
+    def setBackgroundColor(self, color):
+        self._elements.append(BackgroundColorElement(color))
+        
+    def resetColor(self):
+        self.setColor(self._default_color)
+    def resetBackgroundColor(self):
+        self.setBackgroundColor(self._default_background_color)
 
 
 class GroupView (object):
@@ -42,12 +63,36 @@ class GroupView (object):
     def __init__(self, uid):
         self._uid = uid
         self._expanded = False
-        self._name = None
-        self._parsed_name = StringView.buildFromString(self._name)
+        self._name = StringView(None, None)
         self._active_contacts = 0
         self._total_contacts = 0
         self._visible_contacts = []
-        self._total_contacts = []
+        self._contacts = []
+        GroupView.registerGroup(key, self)
+
+    def isExpanded(self):
+        return self._expanded
+
+    def isCollapsed(self):
+        return not self._expanded
+
+    @staticmethod
+    def registerGroup(uid, group):
+        GroupView.groups[uid] = group
+
+    @staticmethod
+    def getGroup(uid):
+        try:
+            return GroupView.groups[key]
+        except KeyError:
+            return None
+
+class ContactView (object):
+    contacts = {}
+    def __init__(self, uid):
+        self._uid = uid
+        self._blocked = False
+        self._name = StringView(None, None)
         GroupView.registerGroup(key, self)
 
     def isExpanded(self):
