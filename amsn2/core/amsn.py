@@ -3,6 +3,7 @@ import profile
 from amsn2 import gui
 from amsn2 import protocol
 import pymsn
+from views import *
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -23,6 +24,16 @@ class aMSNCore(object):
         self._loop = self._gui.getMainLoop();
         self._main = self._gui.getMainWindow();
 
+        self.p2s = {pymsn.Presence.ONLINE:"online",
+                    pymsn.Presence.BUSY:"busy",
+                    pymsn.Presence.IDLE:"idle",
+                    pymsn.Presence.AWAY:"away",
+                    pymsn.Presence.BE_RIGHT_BACK:"brb",
+                    pymsn.Presence.ON_THE_PHONE:"phone",
+                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
+                    pymsn.Presence.INVISIBLE:"hidden",
+                    pymsn.Presence.OFFLINE:"offline"}
+        
         if self._options.debug:
             import logging
             logging.basicConfig(level=logging.DEBUG)
@@ -76,17 +87,17 @@ class aMSNCore(object):
 
     def connectionStateChanged(self, profile, state):
         if state == pymsn.event.ClientState.CONNECTING:
-            profile.login.onConnecting()
+            profile.login.onConnecting(("Connecting to server...",))
         elif state == pymsn.event.ClientState.CONNECTED:
-            profile.login.onConnected()
+            profile.login.onConnecting(("Connected...",))
         elif state == pymsn.event.ClientState.AUTHENTICATING:
-            profile.login.onAuthenticating()
+            profile.login.onConnecting(("Authenticating...",))
         elif state == pymsn.event.ClientState.AUTHENTICATED:
-            profile.login.onAuthenticated()
+            profile.login.onConnecting(("Password accepted...",))
         elif state == pymsn.event.ClientState.SYNCHRONIZING:
-            profile.login.onSynchronizing()
+            profile.login.onConnecting(("Please wait while your contact list", "is being downloaded..."))
         elif state == pymsn.event.ClientState.SYNCHRONIZED:
-            profile.login.onSynchronized()
+            profile.login.onConnecting(("Contact list downloaded successfully", "Happy Chatting"))
         elif state == pymsn.event.ClientState.OPEN:
             cl = self._gui.getContactList()
             cl.profile = profile
@@ -97,27 +108,62 @@ class aMSNCore(object):
 
             for group in profile.client.address_book.groups:
                 contacts = profile.client.address_book.contacts.search_by_groups(group)
-                profile.cl.groupAdded(group)
-                for c in contacts:
-                    profile.cl.contactAdded(group, c)
+                groupV = self.buildGroup(group, 0, len(contacts))
+                groupV.contacts = []
+                
+                for contact in contacts:
+                    contactV = self.buildContact(contact)
+                    groupV.contacts.append(contactV)
+                                
+                profile.cl.groupAdded(groupV)
 
-            class NoGroup(object):
-                def __init__(self):
-                    self.id = 0
-                    self.name = "No Group"
-            nogroup = None
-            contacts = profile.client.address_book.contacts
-            for c in contacts:
-                if len(c.groups) == 0:
-                    if nogroup is None:
-                        nogroup = NoGroup()
-                        profile.cl.groupAdded(nogroup)
-                        
-                    profile.cl.contactAdded(nogroup, c)
-                    
+            groupV = self.buildGroup(None, 0, 0)
+            groupV.contacts = []
+                
+            contacts = profile.client.address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
+            for contact in contacts:
+                if len(contact.groups) == 0:
+                    contactV = self.buildContact(contact)
+                    groupV.contacts.append(contactV)
+                                
+            if len(groupV.contacts) > 0:
+                groupV = self.buildGroup(None, 0, len(groupV.contacts))
+                profile.cl.groupAdded(groupV)
 
+
+    def buildGroup(self, group, active, total):
+        groupV = GroupView.getGroup(group.id if group else 0)
+        groupV.icon = None # TODO : expanded/collapsed icon
+        groupV.name = StringView(None, None) # TODO : default color from skin/settings
+        groupV.name.appendText(group.name if group else "No Group") # TODO : prase or translation
+        groupV.name.appendText("(" + str(active) + "/" + str(total) + ")")
+        
+        return groupV
+    
+    def buildContact(self, contact):
+        contactV = ContactView.getContact(contact.id)
+        contactV.icon = None # TODO : build buddy icon+emblems
+        contactV.name = StringView(None, None) # TODO : default colors
+        contactV.name.openTag("nickname")
+        contactV.name.appendText(contact.display_name) # TODO parse
+        contactV.name.closeTag("nickname")
+        contactV.name.appendText(" ")
+        contactV.name.openTag("status")
+        contactV.name.appendText("(")
+        contactV.name.appendText(self.p2s[contact.presence])
+        contactV.name.appendText(")")
+        contactV.name.closeTag("status")
+        contactV.name.appendText(" ")
+        # TODO : add italic
+        contactV.name.openTag("psm")
+        contactV.name.appendText(contact.personal_message)
+        contactV.name.closeTag("psm")
+        
+        return contactV
+        
     def contactPresenceChanged(self, profile, contact):
-        profile.cl.contactStateChange(contact)
+        c = self.buildContact(contact)
+        profile.cl.contactUpdated(c)
 
 
     def idlerAdd(self, func):

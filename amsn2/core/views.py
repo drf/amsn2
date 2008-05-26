@@ -4,6 +4,8 @@ class StringViewTypes:
     COLOR_ELEMENT = "color"
     BACKGROUND_ELEMENT = "bgcolor"
     IMAGE_ELEMENT = "image"
+    OPEN_TAG_ELEMENT = "tag"
+    CLOSE_TAG_ELEMENT = "-tag"
 
 # Font ? padding ? underline/bold/italic ?
 
@@ -21,16 +23,22 @@ class StringView (object):
 
     class ColorElement(StringElement):
         def __init__(self, color):
-            StringElement.__init__(self, COLOR_ELEMENT, color)
+            StringView.StringElement.__init__(self, StringViewTypes.COLOR_ELEMENT, color)
     class BackgroundColorElement(StringElement):
         def __init__(self, color):
-            StringElement.__init__(self, BACKGROUND_ELEMENT, color)
+            StringView.StringElement.__init__(self, StringViewTypes.BACKGROUND_ELEMENT, color)
     class TextElement(StringElement):
         def __init__(self, text):
-            StringElement.__init__(self, TEXT_ELEMENT, text)
+            StringView.StringElement.__init__(self, StringViewTypes.TEXT_ELEMENT, text)
     class ImageElement(StringElement):
         def __init__(self, image):
-            StringElement.__init__(self, IMAGE_ELEMENT, image)
+            StringView.StringElement.__init__(self, StringViewTypes.IMAGE_ELEMENT, image)
+    class OpenTagElement(StringElement):
+        def __init__(self, tag):
+            StringView.StringElement.__init__(self, StringViewTypes.OPEN_TAG_ELEMENT, tag)
+    class CloseTagElement(StringElement):
+        def __init__(self, tag):
+            StringView.StringElement.__init__(self, StringViewTypes.CLOSE_TAG_ELEMENT, tag)
             
     def __init__(self, default_background_color, default_color):
         self._elements = []
@@ -44,37 +52,49 @@ class StringView (object):
         self._elements.append(StringElement(type, value))
 
     def appendText(self, text):
-        self._elements.append(TextElement(text))
+        self._elements.append(StringView.TextElement(text))
     def appendImage(self, image):
-        self._elements.append(ImageElement(image))
+        self._elements.append(StringView.ImageElement(image))
     def setColor(self, color):
-        self._elements.append(ColorElement(color))
+        self._elements.append(StringView.ColorElement(color))
     def setBackgroundColor(self, color):
-        self._elements.append(BackgroundColorElement(color))
+        self._elements.append(StringView.BackgroundColorElement(color))
+    def openTag(self, tag):
+        self._elements.append(StringView.OpenTagElement(tag))
+    def closeTag(self, tag):
+        self._elements.append(StringView.CloseTagElement(tag))
         
     def resetColor(self):
         self.setColor(self._default_color)
     def resetBackgroundColor(self):
         self.setBackgroundColor(self._default_background_color)
 
+    def toString(self):
+        out = ""
+        for x in self._elements:
+            if x.getType() == StringViewTypes.TEXT_ELEMENT:
+                out += x.getValue()
+                
+        return out
+
+    def __repr__(self):
+        out = "{"
+        for x in self._elements:
+            out += "[" + x.getType() + "=" + str(x.getValue()) + "]"
+            
+        out += "}"
+        return out
+        
+
 
 class GroupView (object):
     groups = {}
     def __init__(self, uid):
-        self._uid = uid
-        self._expanded = False
-        self._name = StringView(None, None)
-        self._active_contacts = 0
-        self._total_contacts = 0
-        self._visible_contacts = []
-        self._contacts = []
-        GroupView.registerGroup(key, self)
-
-    def isExpanded(self):
-        return self._expanded
-
-    def isCollapsed(self):
-        return not self._expanded
+        self.uid = uid
+        self.icon = None
+        self.name = None
+        self.contacts = []
+        GroupView.registerGroup(self.uid, self)
 
     @staticmethod
     def registerGroup(uid, group):
@@ -83,31 +103,27 @@ class GroupView (object):
     @staticmethod
     def getGroup(uid):
         try:
-            return GroupView.groups[key]
+            return GroupView.groups[uid]
         except KeyError:
-            return None
+            return GroupView(uid)
 
 class ContactView (object):
     contacts = {}
     def __init__(self, uid):
-        self._uid = uid
-        self._blocked = False
-        self._name = StringView(None, None)
-        GroupView.registerGroup(key, self)
+        self.uid = uid
+        self.icon = None
+        self.name = None 
+        self.dp = None
+        ContactView.registerContact(self.uid, self)
 
-    def isExpanded(self):
-        return self._expanded
-
-    def isCollapsed(self):
-        return not self._expanded
 
     @staticmethod
-    def registerGroup(uid, group):
-        GroupView.groups[uid] = group
+    def registerContact(uid, contact):
+        ContactView.contacts[uid] = contact
 
     @staticmethod
-    def getGroup(uid):
+    def getContact(uid):
         try:
-            return GroupView.groups[key]
+            return ContactView.contacts[uid]
         except KeyError:
-            return None
+            return ContactView(uid)

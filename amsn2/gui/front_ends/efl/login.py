@@ -79,34 +79,22 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self.current_profile.password = self.password.text
         self._amsn_core.signinToAccount(self, self.current_profile)
 
-    def onConnecting(self):
+    def onConnecting(self, message):
         self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Connecting to server...")
+        msg1 = ""
+        msg2 = ""
+        try:
+            msg1 = message[0]
+        except IndexError:
+            pass
+        
+        try:
+            msg2 = message[1]
+        except IndexError:
+            pass
+        self._edje.part_text_set("connection_status", msg1)
+        self._edje.part_text_set("connection_status2", msg2)
 
-    def onConnected(self):
-        self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Connected...")
-        self._edje.part_text_set("connection_status2", "")
-
-    def onAuthenticating(self):
-        self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Authenticating...")
-        self._edje.part_text_set("connection_status2", "")
-
-    def onAuthenticated(self):
-        self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Password accepted...")
-        self._edje.part_text_set("connection_status2", "")
-
-    def onSynchronizing(self):
-        self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Please wait while your contact list")
-        self._edje.part_text_set("connection_status2", "is being downloaded...")
-
-    def onSynchronized(self):
-        self._edje.signal_emit("connecting", "")
-        self._edje.part_text_set("connection_status", "Contact list downloaded successfully")
-        self._edje.part_text_set("connection_status2", "Happy Chatting")
 
     # Private methods
     def __on_key_down(self, obj, event):

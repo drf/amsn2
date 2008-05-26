@@ -1,65 +1,32 @@
 
 class aMSNContactList(object):
     def __init__(self, amsn_core):
-        pass
+        raise NotImplementedError
 
     def show(self):
-        pass
+        raise NotImplementedError
 
     def hide(self):
-        pass
+        raise NotImplementedError
 
-    def contactStateChange(self, contact):
-        pass
-
-    def contactNickChange(self, contact):
-        pass
-        
-    def contactPSMChange(self, contact):
-        pass
+    def contactUpdated(self, contact):
+        raise NotImplementedError
     
-    def contactAlarmChange(self, contact):
-        pass
-
-    def contactDisplayPictureChange(self, contact):
-        pass
-
-    def contactSpaceChange(self, contact):
-        pass
-    
-    def contactSpaceFetched(self, contact):
-        pass
-
-    def contactBlocked(self, contact):
-        pass
-
-    def contactUnblocked(self, contact):
-        pass
-
-    def contactMoved(self, from_group, to_group, contact):
-        pass
-
-    def contactAdded(self, group, contact):
-        pass
-    
-    def contactRemoved(self, group, contact):
-        pass
-
     def contactRenamed(self, contact):
-        pass
+        raise NotImplementedError
 
-    def groupRenamed(self, group):
-        pass
+    def groupUpdated(self, group):
+        raise NotImplementedError
 
     def groupAdded(self, group):
-        pass
+        raise NotImplementedError
 
     def groupRemoved(self, group):
-        pass
+        raise NotImplementedError
 
     def configure(self, option, value):
-        pass
+        raise NotImplementedError
 
     def cget(self, option, value):
-        pass
+        raise NotImplementedError
 

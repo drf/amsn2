@@ -4,7 +4,9 @@ import gobject
 import ecore
 
 class aMSNMainLoop(base.aMSNMainLoop):
-
+    def __init__(self, amsn_core):
+        pass
+    
     def run(self):
         mainloop = gobject.MainLoop(is_running=True)
         context = mainloop.get_context()

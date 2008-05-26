@@ -1,35 +1,21 @@
 
 class aMSNLoginWindow(object):
     def __init__(self, amsn_core):
-        pass
+        raise NotImplementedError
 
     def show(self):
-        pass
+        raise NotImplementedError
     
     def hide(self):
-        pass
+        raise NotImplementedError
 
     def switch_to_profile(self, profile):
-        pass
+        raise NotImplementedError
 
     def signin(self):
-        pass
+        raise NotImplementedError
 
-    def onConnecting(self):
-        pass
+    def onConnecting(self, message):
+        raise NotImplementedError
 
-    def onConnected(self):
-        pass
-
-    def onAuthenticating(self):
-        pass
-
-    def onAuthenticated(self):
-        pass
-
-    def onSynchronizing(self):
-        pass
-
-    def onSynchronized(self):
-        pass
 

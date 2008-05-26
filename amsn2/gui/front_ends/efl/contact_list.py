@@ -5,6 +5,7 @@ import edje
 import ecore
 import ecore.evas
 
+from amsn2.core.views import StringViewTypes
 from amsn2.gui import base
 import pymsn
 
@@ -40,53 +41,20 @@ class aMSNContactList(base.aMSNContactList):
     def hide(self):
         self._edje.hide()
 
-    def contactStateChange(self, contact):
-        for group in contact.groups:
-            self.group_holders[group.id].contact_presence_changed(contact)
+    def contactUpdated(self, contact):
+        for gid in self.group_holders:
+            gi = self.group_holders[gid]
+            if contact in gi.group.contacts:
+                gi.contact_holder.contact_updated(contact)
 
-
-    def contactNickChange(self, contact):
-        pass
-        
-    def contactPSMChange(self, contact):
-        pass
+    def groupUpdated(self, group):
+        raise NotImplementedError
     
-    def contactAlarmChange(self, contact):
-        pass
-
-    def contactDisplayPictureChange(self, contact):
-        pass
-
-    def contactSpaceChange(self, contact):
-        pass
-    
-    def contactSpaceFetched(self, contact):
-        pass
-
-    def contactBlocked(self, contact):
-        pass
-
-    def contactUnblocked(self, contact):
-        pass
-
-    def contactMoved(self, from_group, to_group, contact):
-        pass
-
-    def contactAdded(self, group, contact):
-        self.group_holders[group.id].add_contact(contact)
-    
-    def contactRemoved(self, group, contact):
-        pass
-
-    def contactRenamed(self, contact):
-        pass
-
-    def groupRenamed(self, group):
-        pass
-
     def groupAdded(self, group):
         gi = self.groups.add_group(group)
-        self.group_holders[group.id] = gi
+        self.group_holders[group.uid] = gi
+        for c in group.contacts:
+            gi.add_contact(c)
 
     def groupRemoved(self, group):
         pass
@@ -111,34 +79,35 @@ class ContactHolder(evas.SmartObject):
         evas.SmartObject.__init__(self, ecanvas.evas)
         self.evas_obj = ecanvas
         self.contacts = {}
-        self.p2s = {pymsn.Presence.ONLINE:"online",
-                    pymsn.Presence.BUSY:"busy",
-                    pymsn.Presence.IDLE:"idle",
-                    pymsn.Presence.AWAY:"away",
-                    pymsn.Presence.BE_RIGHT_BACK:"brb",
-                    pymsn.Presence.ON_THE_PHONE:"phone",
-                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
-                    pymsn.Presence.INVISIBLE:"hidden",
-                    pymsn.Presence.OFFLINE:"offline"}
 
-    def contact_presence_changed(self, contact):
-        self.contacts[contact.id].\
-            part_text_set("contact_data", 
-                          "<%s><nickname>%s</nickname> <status>(%s)</status> <psm>%s</psm></%s>"
-                          % (contact.presence, contact.display_name, 
-                             self.p2s[contact.presence], contact.personal_message, 
-                             contact.presence) )
-        self.contacts[contact.id].signal_emit("state_changed", self.p2s[contact.presence])
+    def contact_updated(self, contact):
+        self.contacts[contact.uid].\
+            part_text_set("contact_data", contact.name.toString())
+
+        status = ""
+        found = False
+        for x in contact.name._elements:
+            if x.getType() == StringViewTypes.OPEN_TAG_ELEMENT and \
+                   x.getValue() == "status":
+                found = True
+            if found and x.getType() == StringViewTypes.TEXT_ELEMENT:
+                status += x.getValue()
+            if x.getType() == StringViewTypes.CLOSE_TAG_ELEMENT and \
+                   x.getValue() == "status":
+                found = False
+        if status != "":
+            self.contacts[contact.uid].signal_emit("state_changed", status.strip("()"))
 
     def add_contact(self, contact):
         new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,
                                 group="contact_item")
-        self.contacts[contact.id] = new_contact        
-        self.contact_presence_changed(contact)
+        self.contacts[contact.uid] = new_contact
+        self.contact_updated(contact)
         
         self.member_add(new_contact)
 
         new_contact.show()
+        return new_contact
         
     def show(self):
         self.update_widget(self.size[0], self.size[1])
@@ -146,6 +115,8 @@ class ContactHolder(evas.SmartObject):
     def hide(self):
         self.update_widget(self.size[0], self.size[1])
 
+    def clip_set(self, obj):
+        pass
 
     def resize(self, w, h):
         self.update_widget(w, h)
@@ -170,9 +141,10 @@ class GroupItem(edje.Edje):
         self.evas_obj = evas_obj
         self._parent = parent
         self.expanded = True
-        edje.Edje.__init__(self, self.evas_obj.evas, file=THEME_FILE, group="group_item")
+        self.group = group
+        self._edje = edje.Edje.__init__(self, self.evas_obj.evas, file=THEME_FILE, group="group_item")
         self.contact_holder = ContactHolder(self.evas_obj)
-        self.part_text_set("group_name", group.name)
+        self.part_text_set("group_name", group.name.toString())
         self.part_swallow("contacts", self.contact_holder);
 
         self.signal_callback_add("collapsed", "*", self.__collapsed_cb)
@@ -180,7 +152,8 @@ class GroupItem(edje.Edje):
         
 
     def add_contact(self, contact):
-        self.contact_holder.add_contact(contact)
+        c = self.contact_holder.add_contact(contact)
+        c.clip_set(self._edje)
         self.__update_parent()
 
     def contact_presence_changed(self, contact):
@@ -236,9 +209,9 @@ class GroupHolder(evas.SmartObject):
         if len(self.groups) > 0:
             spacing = 5
             total_spacing = spacing * len(self.groups)
-            #item_height = (h - total_spacing) / len(self.groups)
+            item_height = (h - total_spacing) / len(self.groups)
             for i in self.groups:
-                item_height = 36 + (24 * i.num_contacts())
+                item_height = 40 + (24 * i.num_contacts())
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
