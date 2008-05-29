@@ -50,13 +50,9 @@ class aMSNLoginWindow(object):
         
         self.switch_to_profile(None)
         
-        self.account.set_text('jandemooij@gmail.com')
-        self.password.set_text('716415smith')
-        
         
     def show(self):
         self._main_win.set_title('aMSN 2 - Login')
-        self.signin()
 
     def hide(self):
         pass
