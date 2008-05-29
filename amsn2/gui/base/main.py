@@ -1,6 +1,6 @@
 
 class aMSNMainWindow(object):
-    """ This Interface represents the main window of the application. Everythin will be done from here """
+    """ This Interface represents the main window of the application. Everything will be done from here """
     def __init__(self, amsn_core):
         raise NotImplementedError
 
@@ -13,4 +13,9 @@ class aMSNMainWindow(object):
         """ This should hide the main window, creates it, etc..
         and should notify the core of the main window being created"""
         raise NotImplementedError
-    
+
+    def setMainMenu(self, menu):
+        """ This will allow the core to change the current window's main menu
+        @menu : a MenuView
+        """
+        raise NotImplementedError
