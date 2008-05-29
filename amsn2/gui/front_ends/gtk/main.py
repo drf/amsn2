@@ -9,6 +9,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
         self.main_win = gtk.Window()
+        self.main_win.set_size_request(250, 500)
         self.view = None
 
     def show(self):

@@ -1,22 +1,5 @@
 import gtk
 
-class TextBox(object):
-    def __init__(self, win, y, x, txt):
-	self._win = win.derwin(1, 30, y, x)
-	self._win.clear()
-	self._txtbox = curses.textpad.Textbox(self._win)
-	self._txtbox.stripspaces = True
-
-        if txt is not None:
-            for x in txt:
-                self._txtbox.do_command(x)
-
-    def edit(self):
-	return self._txtbox.edit()
-
-    def value(self):
-        return self._txtbox.gather()
-    
 class aMSNLoginWindow(object):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
@@ -63,14 +46,13 @@ class aMSNLoginWindow(object):
         self.view.show_all()
         self._main_win.set_view(self.view)
         
+        self.switch_to_profile(None)
+        
     def show(self):
         self._main_win.set_title('aMSN 2 - Login')
 
     def hide(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        self._win.refresh()
+        pass
 
     def switch_to_profile(self, profile):
         self.current_profile = profile
