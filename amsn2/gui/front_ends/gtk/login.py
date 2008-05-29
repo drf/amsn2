@@ -84,23 +84,9 @@ class aMSNLoginWindow(object):
         self.current_profile.password = self.password.get_text()
         self._amsn_core.signinToAccount(self, self.current_profile)
 
-    def onConnecting(self):
-        self.status.set_text("Connecting...")
-
-    def onConnected(self):
-        self.status.set_text("Connected...")
-
-    def onAuthenticating(self):
-        self.status.set_text("Authenticating...")
-
-    def onAuthenticated(self):
-        self.status.set_text("Authenticated...")
-
-    def onSynchronizing(self):
-        self.status.set_text("Fetching contact list...")
-
-    def onSynchronized(self):
-        self.status.set_text("Synchronized!")
+    def onConnecting(self, message):
+        s = '\n'.join(message)
+        self.status.set_text(s)
 
     def _login_clicked(self, *args):
         self.signin()
