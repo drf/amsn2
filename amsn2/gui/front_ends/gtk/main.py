@@ -23,7 +23,11 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self.main_win.hide()
     
     def set_view(self, view):
-        self.view = view
+        current = self.main_win.get_child()
+        
+        if current:
+            self.main_win.remove(current)
+        
         self.main_win.add(view)
         self.main_win.show_all()
     
