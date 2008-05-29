@@ -5,7 +5,7 @@ import edje
 import ecore
 import ecore.evas
 
-from amsn2.core.views import StringViewTypes
+from amsn2.core.views import StringView
 from amsn2.gui import base
 import pymsn
 
@@ -87,12 +87,12 @@ class ContactHolder(evas.SmartObject):
         status = ""
         found = False
         for x in contact.name._elements:
-            if x.getType() == StringViewTypes.OPEN_TAG_ELEMENT and \
+            if x.getType() == StringView.OPEN_TAG_ELEMENT and \
                    x.getValue() == "status":
                 found = True
-            if found and x.getType() == StringViewTypes.TEXT_ELEMENT:
+            if found and x.getType() == StringView.TEXT_ELEMENT:
                 status += x.getValue()
-            if x.getType() == StringViewTypes.CLOSE_TAG_ELEMENT and \
+            if x.getType() == StringView.CLOSE_TAG_ELEMENT and \
                    x.getValue() == "status":
                 found = False
         if status != "":
