@@ -9,13 +9,17 @@ from amsn2.core import aMSNCore
 if __name__ == '__main__':
     account = None
     passwd = None
-    system = os.uname()[0]
     default_front_end = "console"
 
-    if system == "Linux":
-        default_front_end = "efl"
-    elif system == "Darwin":
-        default_front_end = "cocoa"
+    if os.name == "posix":
+        system = os.uname()[0]
+        if system == "Linux":
+            default_front_end = "efl"
+        elif system == "Darwin":
+            default_front_end = "cocoa"
+    elif os.name == "nt":
+        default_front_end = "gtk"
+            
 
     parser = optparse.OptionParser()
     parser.add_option("-a", "--account", dest="account",
