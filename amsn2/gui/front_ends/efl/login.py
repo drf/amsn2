@@ -84,12 +84,12 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         msg1 = ""
         msg2 = ""
         try:
-            msg1 = message[0]
+            msg1 = message.split("\n")[0]
         except IndexError:
             pass
         
         try:
-            msg2 = message[1]
+            msg2 = message.split("\n")[1]
         except IndexError:
             pass
         self._edje.part_text_set("connection_status", msg1)

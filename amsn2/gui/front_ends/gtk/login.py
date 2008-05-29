@@ -70,8 +70,7 @@ class aMSNLoginWindow(object):
         self._amsn_core.signinToAccount(self, self.current_profile)
 
     def onConnecting(self, message):
-        s = '\n'.join(message)
-        self.status.set_text(s)
+        self.status.set_text(message)
 
     def _login_clicked(self, *args):
         self.signin()

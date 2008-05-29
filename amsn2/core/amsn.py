@@ -87,17 +87,17 @@ class aMSNCore(object):
 
     def connectionStateChanged(self, profile, state):
         if state == pymsn.event.ClientState.CONNECTING:
-            profile.login.onConnecting(("Connecting to server...",))
+            profile.login.onConnecting("Connecting to server...")
         elif state == pymsn.event.ClientState.CONNECTED:
-            profile.login.onConnecting(("Connected...",))
+            profile.login.onConnecting("Connected...")
         elif state == pymsn.event.ClientState.AUTHENTICATING:
-            profile.login.onConnecting(("Authenticating...",))
+            profile.login.onConnecting("Authenticating...")
         elif state == pymsn.event.ClientState.AUTHENTICATED:
-            profile.login.onConnecting(("Password accepted...",))
+            profile.login.onConnecting("Password accepted...")
         elif state == pymsn.event.ClientState.SYNCHRONIZING:
-            profile.login.onConnecting(("Please wait while your contact list", "is being downloaded..."))
+            profile.login.onConnecting("Please wait while your contact list\nis being downloaded...")
         elif state == pymsn.event.ClientState.SYNCHRONIZED:
-            profile.login.onConnecting(("Contact list downloaded successfully", "Happy Chatting"))
+            profile.login.onConnecting("Contact list downloaded successfully\nHappy Chatting")
         elif state == pymsn.event.ClientState.OPEN:
             cl = self._gui.getContactList()
             cl.profile = profile
