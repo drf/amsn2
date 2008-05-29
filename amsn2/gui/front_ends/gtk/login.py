@@ -25,8 +25,9 @@ class aMSNLoginWindow(object):
         passbox = gtk.VBox()
         passlabel = gtk.Label('Password:')
         passlabel.set_alignment(0.0, 0.5)
-        self.password = gtk.Entry()
+        self.password = gtk.Entry(128)
         self.password.set_visibility(False)
+        self.password.connect('activate' , self._login_clicked)
         passbox.pack_start(passlabel, False, False)
         passbox.pack_start(self.password, False, False)
         fields.pack_start(passbox, False, False)
@@ -45,6 +46,7 @@ class aMSNLoginWindow(object):
         
         self.view.show_all()
         self._main_win.set_view(self.view)
+        self.account.grab_focus()
         
         self.switch_to_profile(None)
         
