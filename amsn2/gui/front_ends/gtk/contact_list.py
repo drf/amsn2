@@ -18,6 +18,7 @@ class aMSNContactList(base.aMSNContactList, gtk.TreeView):
         
         self._amsn_core = amsn_core
         self._main_win = self._amsn_core.getMainWindow()
+        self._main_win.set_title('aMSN 2')
         
         # the image (None for groups) the object (group or contact) and 
         # the string to display
