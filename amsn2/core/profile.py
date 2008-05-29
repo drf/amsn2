@@ -1,16 +1,17 @@
 class aMSNProfileConfiguration(object):
     def __init__(self, profile):
         self._profile = profile
-        self.config = {"ns_server":'messenger.hotmail.com', "ns_port":1863}
+        self.config = {"ns_server":'messenger.hotmail.com',
+                       "ns_port":1863,
+                       }
         
-    def getConfigKey(self, key, default = None):
+    def getKey(self, key, default = None):
         try:
-            value = self.config[key]
+            return self.config[key]
         except KeyError:
-            value = default
-        return value
+            return default
         
-    def setConfigKey(self, key, value):
+    def setKey(self, key, value):
         self.config[key] = value
 
 class aMSNProfile(object):
@@ -38,17 +39,19 @@ class aMSNProfile(object):
         """ Unlocks a profile to allow other instances to acces it """
         pass
 
-    def connect(self):
-        pass
+    def getConfigKey(self, key, default = None):
+        return self.config.getKey(key, default)
+
+    def setConfigKey(self, key, value):
+        return self.config.setKey(key, value)
 
 class aMSNProfileManager(object):
     """ aMSNProfileManager : The profile manager that takes care of storing
     and retreiving all the profiles for our users.
     """
     def __init__(self):
+        # TODO read profiles fro disk
         self.profiles = {}
-        pass
-
 
     def profileExists(self, email):
         """ Checks whether a profile exists """
@@ -64,7 +67,6 @@ class aMSNProfileManager(object):
 
     def getAllProfiles(self):
         return self.profiles.values()
-
 
     def addProfile(self, email):
         """ Adds a profile to the current running instance of aMSN """
