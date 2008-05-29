@@ -21,7 +21,10 @@
 
 import socket
 
-import adns
+try:
+    import adns
+except:
+    pass
 import gobject
 
 __all__ = ['HostnameResolver']
@@ -51,14 +54,23 @@ class HostnameResponse(object):
 
 class HostnameResolver(object):
     def __init__(self):
-        self._c = adns.init(adns.iflags.noautosys)
+        self._c = None
+        try:
+            self._c = adns.init(adns.iflags.noautosys)
+        except:
+            pass
         self._queries = {}
 
     def query(self, host, callback):
         if self._is_ip(host):
             self._emit_response(callback, (0, None, 0, ((2, host),)))
             return
-    
+        if self._c is None:
+            ip = socket.gethostbyname(host)
+            print ip
+            self._emit_response(callback, (0, None, 0, ((2, ip),)))
+            return
+            
         query = self._c.submit(host, adns.rr.ADDR)
         self._queries[query] = host, callback
         if len(self._queries) == 1:
@@ -72,7 +84,12 @@ class HostnameResolver(object):
                 socket.inet_pton(socket.AF_INET6, address)
             except socket.error:
                 return False
-            return True
+        except:
+            try:
+                socket.inet_aton(address)
+            except socket.error:
+                return False
+                
         return True
 
     def _process_queries(self):
