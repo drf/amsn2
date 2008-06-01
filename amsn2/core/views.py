@@ -5,8 +5,12 @@ class StringView (object):
     IMAGE_ELEMENT = "image"
     OPEN_TAG_ELEMENT = "tag"
     CLOSE_TAG_ELEMENT = "-tag"
+    ITALIC_ELEMENT = "italic"
+    BOLD_ELEMENT = "bold"
+    UNDERLINE_ELEMENT = "underline"
+    FONT_ELEMENT = "font"
 
-    # Font ? padding ? underline/bold/italic ?
+    # padding ? 
 
     class StringElement(object):
         def __init__(self, type, value):
@@ -37,14 +41,32 @@ class StringView (object):
     class CloseTagElement(StringElement):
         def __init__(self, tag):
             StringView.StringElement.__init__(self, StringView.CLOSE_TAG_ELEMENT, tag)
+    class FontElement(StringElement):
+        def __init__(self, font):
+            StringView.StringElement.__init__(self, StringView.FONT_ELEMENT, font)
+    class BoldElement(StringElement):
+        def __init__(self, bold):
+            StringView.StringElement.__init__(self, StringView.BOLD_ELEMENT, bold)
+    class ItalicElement(StringElement):
+        def __init__(self, italic):
+            StringView.StringElement.__init__(self, StringView.ITALIC_ELEMENT, italic)
+    class UnderlineElement(StringElement):
+        def __init__(self, underline):
+            StringView.StringElement.__init__(self, StringView.UNDERLINE_ELEMENT, underline)
             
-    def __init__(self, default_background_color, default_color):
+    def __init__(self, default_background_color = None, default_color = None, default_font = None):
         self._elements = []
 
         self._default_background_color = default_background_color
         self._default_color = default_color
-        self.resetColor()
-        self.resetBackgroundColor()
+        self._default_font = default_font
+        
+        if default_background_color is not None:
+            self.resetColor()
+        if default_color is not None:
+            self.resetBackgroundColor()
+        if default_font is not None:
+            self.resetFont()
 
     def append(self, type, value):
         self._elements.append(StringElement(type, value))
@@ -57,15 +79,32 @@ class StringView (object):
         self._elements.append(StringView.ColorElement(color))
     def setBackgroundColor(self, color):
         self._elements.append(StringView.BackgroundColorElement(color))
+    def setFont(self, font):
+        self._elements.append(StringView.FontElement(font))
     def openTag(self, tag):
         self._elements.append(StringView.OpenTagElement(tag))
     def closeTag(self, tag):
         self._elements.append(StringView.CloseTagElement(tag))
         
+    def setBold(self):
+        self._elements.append(StringView.BoldElement(True))
+    def unsetBold(self):
+        self._elements.append(StringView.BoldElement(False))
+    def setItalic(self):
+        self._elements.append(StringView.ItalicElement(True))
+    def unsetItalic(self):
+        self._elements.append(StringView.ItalicElement(False))
+    def setUnderline(self):
+        self._elements.append(StringView.UnderlineElement(True))
+    def unsetUnderline(self):
+        self._elements.append(StringView.UnderlineElement(False))
+        
     def resetColor(self):
         self.setColor(self._default_color)
     def resetBackgroundColor(self):
         self.setBackgroundColor(self._default_background_color)
+    def resetFont(self):
+        self.setFont(self._default_font)
 
     def toString(self):
         out = ""
@@ -74,6 +113,9 @@ class StringView (object):
                 out += x.getValue()
                 
         return out
+
+    def __str__(self):
+        return self.toString()
 
     def __repr__(self):
         out = "{"
@@ -84,7 +126,6 @@ class StringView (object):
         return out
         
 
-
 class GroupView (object):
     groups = {}
     def __init__(self, uid):
@@ -92,6 +133,8 @@ class GroupView (object):
         self.icon = None
         self.name = None
         self.contacts = []
+        self.menu = None
+        self.tooltip = None
         GroupView.registerGroup(self.uid, self)
 
     @staticmethod
@@ -112,6 +155,8 @@ class ContactView (object):
         self.icon = None
         self.name = None 
         self.dp = None
+        self.menu = None
+        self.tooltip = None
         ContactView.registerContact(self.uid, self)
 
 
@@ -126,6 +171,12 @@ class ContactView (object):
         except KeyError:
             return ContactView(uid)
 
+class TooltipView (object):
+    def __init__(self):
+        self.name = None
+        self.icon = None
+
+    
 class KeyBindingView(object):
     BACKSPACE = "Backspace"
     TAB = "Tab"
