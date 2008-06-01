@@ -134,7 +134,7 @@ class aMSNCore(object):
     def buildGroup(self, group, active, total):
         groupV = GroupView.getGroup(group.id if group else 0)
         groupV.icon = None # TODO : expanded/collapsed icon
-        groupV.name = StringView(None, None) # TODO : default color from skin/settings
+        groupV.name = StringView() # TODO : default color from skin/settings
         groupV.name.appendText(group.name if group else "No Group") # TODO : prase or translation
         groupV.name.appendText("(" + str(active) + "/" + str(total) + ")")
         
@@ -143,7 +143,7 @@ class aMSNCore(object):
     def buildContact(self, contact):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = None # TODO : build buddy icon+emblems
-        contactV.name = StringView(None, None) # TODO : default colors
+        contactV.name = StringView() # TODO : default colors
         contactV.name.openTag("nickname")
         contactV.name.appendText(contact.display_name) # TODO parse
         contactV.name.closeTag("nickname")
@@ -154,9 +154,10 @@ class aMSNCore(object):
         contactV.name.appendText(")")
         contactV.name.closeTag("status")
         contactV.name.appendText(" ")
-        # TODO : add italic
         contactV.name.openTag("psm")
+        contactV.name.setItalic()
         contactV.name.appendText(contact.personal_message)
+        contactV.name.unsetItalic()
         contactV.name.closeTag("psm")
         
         return contactV
