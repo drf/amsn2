@@ -2,11 +2,13 @@
 import gtk
 import gobject
 
+import pymsn
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
 from amsn2.gui import base
-import pymsn
+
+import common
 
 class aMSNContactList(base.aMSNContactList, gtk.TreeView):
     '''GTK contactlist'''
@@ -54,14 +56,14 @@ class aMSNContactList(base.aMSNContactList, gtk.TreeView):
         self._main_win.set_view(self.view)
 
     def show(self):
-        pass #self._edje.show()
+        pass 
 
     def hide(self):
-        pass #self._edje.hide()
+        pass 
 
     def contactUpdated(self, contact):
-        contact_data = (None, contact, contact.name.toString())
-
+        contact_data = (None, contact, common.stringvToHtml(contact.name))
+        print common.stringview_to_html(contact.name)
         for row in self._model:
             obj = row[1]
             if type(obj) == GroupView:
@@ -82,8 +84,7 @@ class aMSNContactList(base.aMSNContactList, gtk.TreeView):
         iter = self._model.append(None, group_data)
         
         for contact in group.contacts:
-            contact_data = (None, contact, contact.name.toString())
-            
+            contact_data = (None, contact, common.stringvToHtml(contact.name))
             self._model.append(iter, contact_data)
             
         path = self._model.get_path(iter)
