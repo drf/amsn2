@@ -1,0 +1,23 @@
+TEMPORARY README:
+
+In theory, you don't need much... 
+python-adns
+python-openssl
+maybe some other stuff...
+
+If you launch ./amsn2.py and it gives an error, that error probably tells you which dependency you need...
+You can type ./amsn2.py --help for more info... and the front ends can be selected with -f :
+./amsn2.py -f efl
+./amsn2.py -f gtk
+for gtk, you need python-gtk... and for efl, you need the EFL, the python-efl and python-etk
+
+If you want to install the EFL, it's easy go to http://omicron.homeip.net/projects/ and download the easy_e17.sh script :
+http://omicron.homeip.net/projects/easy_e17/easy_e17.sh
+Then do ./easy_e17.sh -i
+It will download the CVS, automake, configure, make and make install everything into /opt/e17 (so it doesn't 'contaminate' your system).
+Once done, go to ./e17_cvs/proto/python-efl and type ./buildall.sh /usr (this will build and install the python extensions into /usr/python2.X/...)
+Then in amsn2 directory, go to python-etk and build that too and install it... 
+Then the efl front end should become available...
+
+
+
