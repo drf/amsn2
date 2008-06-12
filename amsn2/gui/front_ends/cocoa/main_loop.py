@@ -8,6 +8,8 @@ import gobject
 
 class aMSNMainLoop(base.aMSNMainLoop):
     nsapp = None
+    def __init__(self, amsn_core):
+        pass
 
     def run(self):
         self._mainloop = gobject.MainLoop(is_running=True)
