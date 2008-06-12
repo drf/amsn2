@@ -48,18 +48,6 @@ class aMSNLoginWindow(object):
         self._amsn_core.signinToAccount(self, self.current_profile)
         
     # Set the status message in the login window.
-    def setStatus(self, message):
+    def onConnecting(self, message):
         self.loggingInView.setStatus(message)
-    def onConnecting(self):
-        self.setStatus("Connecting...")
-    def onConnected(self):
-        self.setStatus("Connected!")
-    def onAuthenticating(self):
-        self.setStatus("Authenticating...")
-    def onAuthenticated(self):
-        self.setStatus("Authenticated!")
-    def onSynchronizing(self):
-        self.setStatus("Synchronizing contact list...")
-    def onSynchronized(self):
-        self.setStatus("Synchronized!")
 
