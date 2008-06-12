@@ -2,13 +2,15 @@ TEMPORARY README:
 
 In theory, you don't need much... 
 python-adns
-python-openssl
+python-pyopenssl
+python-crypto
 maybe some other stuff...
 
 If you launch ./amsn2.py and it gives an error, that error probably tells you which dependency you need...
 You can type ./amsn2.py --help for more info... and the front ends can be selected with -f :
 ./amsn2.py -f efl
 ./amsn2.py -f gtk
+./amsn2.py -f qt4 
 for gtk, you need python-gtk... and for efl, you need the EFL, the python-efl and python-etk
 
 If you want to install the EFL, it's easy go to http://omicron.homeip.net/projects/ and download the easy_e17.sh script :
