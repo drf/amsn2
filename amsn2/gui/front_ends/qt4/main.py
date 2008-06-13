@@ -10,20 +10,22 @@ except ImportError, msg:
     print "ImportError: " + str(msg)
     sys.exit()
 
-class aMSNMainWindow(base.aMSNMainWindow):
-    def __init__(self, amsn_core):
+class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
+    def __init__(self, amsn_core, parent=None):
+        QMainWindow.__init__(self, parent)
+        self._amsn_core = amsn_core
         self.ui = Ui_Main()
-        self.main_win = QMainWindow()
-        self.ui.setupUi(self.main_win)
+        self.ui.setupUi(self)
 
     def show(self):
-        self.main_win.show()
-
-    def set_title(self, title):
-        self.main_win.setTitle(title)
+        self.setVisible(True)
+        self._amsn_core.mainWindowShown()
 
     def hide(self):
-        self.main_win.hide()
+        self.setVisible(False)
 
-    def __on_show(self):
-        self._amsn_core.mainWindowShown()
+    def set_title(self, title):
+        self.setWindowTitle(title)
+
+    def set_view(self, view):
+        print "set_view request"

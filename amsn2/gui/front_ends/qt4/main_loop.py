@@ -10,15 +10,17 @@ except ImportError, msg:
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
-        self.loop = QApplication(sys.argv)
+        self.app = QApplication(sys.argv)
 
     def run(self):
         sys.exit(self.loop.exec_())
 
     def idler_add(self, func):
+        print "idler_add req"
         pass
 
     def timer_add(self, delay, func):
+        print "timer_add req"
         pass
 
     def quit(self):
