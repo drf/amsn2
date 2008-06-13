@@ -10,7 +10,7 @@ except ImportError, msg:
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
-        self.app = QApplication(sys.argv)
+        self.loop = QApplication(sys.argv)
 
     def run(self):
         sys.exit(self.loop.exec_())
