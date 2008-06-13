@@ -18,7 +18,7 @@ if __name__ == '__main__':
         elif system == "Darwin":
             default_front_end = "cocoa"
     elif os.name == "nt":
-        default_front_end = "gtk"
+        default_front_end = "qt4"
             
 
     parser = optparse.OptionParser()
