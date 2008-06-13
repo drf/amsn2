@@ -12,18 +12,17 @@ except ImportError, msg:
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
+        import os
+        os.putenv("QT_NO_GLIB", "1")
         self.app = QApplication(sys.argv)
 
     def run(self):
+        
         self.gmainloop = gobject.MainLoop()
         self.gcontext = self.gmainloop.get_context()
         self.idletimer = QTimer(QApplication.instance())
         QObject.connect(self.idletimer, SIGNAL('timeout()'), self.on_idle)
-        self.idletimer.start(0) # FIXME: Ugly CPU-consuming hack! Not even sure if it actually fixes the
-                                #        issue or works around it. But how else can we fix those
-                                #        damn GLib Event Loop issues? Needs more research. The first
-                                #        segfault is caused by pymsn/pymsn/gnet/io/iochannel.py
-                                #        because of this function: self._channel.add_watch(cond, handler)
+        self.idletimer.start(100)
         self.app.exec_()
 
     def __del__(self):
