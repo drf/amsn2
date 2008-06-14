@@ -61,9 +61,9 @@ class StringView (object):
         self._default_color = default_color
         self._default_font = default_font
         
-        if default_background_color is not None:
-            self.resetColor()
         if default_color is not None:
+            self.resetColor()
+        if default_background_color is not None:
             self.resetBackgroundColor()
         if default_font is not None:
             self.resetFont()
