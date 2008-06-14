@@ -94,6 +94,9 @@ font-weight: bold;
      <property name="text" >
       <string>Test stylesheet</string>
      </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

@@ -13,20 +13,20 @@ except ImportError, msg:
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
         import os
-        os.putenv("QT_NO_GLIB", "1")
+        os.putenv("QT_NO_GLIB", "1") # FIXME: Temporary workaround for segfault
+                                     #        caused by GLib Event Loop integration
         self.app = QApplication(sys.argv)
-
-    def run(self):
-        
         self.gmainloop = gobject.MainLoop()
         self.gcontext = self.gmainloop.get_context()
+
+    def __del__(self):
+        self.gmainloop.quit()
+
+    def run(self):
         self.idletimer = QTimer(QApplication.instance())
         QObject.connect(self.idletimer, SIGNAL('timeout()'), self.on_idle)
         self.idletimer.start(100)
         self.app.exec_()
-
-    def __del__(self):
-        self.gmainloop.quit()
 
     def on_idle(self):
         iter = 0
