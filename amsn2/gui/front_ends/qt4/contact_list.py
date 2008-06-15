@@ -37,8 +37,8 @@ class aMSNContactList(StyledWidget, base.aMSNContactList):
     def groupAdded(self, group):
         print group.name.toString()
         groupItem = QTreeWidgetItem(self.ui.cList)
-        groupItem.setText(0, group.name.toString())
+        groupItem.setText(0, QString.fromUtf8(group.name.toString()))
         for contact in group.contacts:
             print "  * " + contact.name.toString()
             contactItem = QTreeWidgetItem(groupItem)
-            contactItem.setText(0, contact.name.toString())
+            contactItem.setText(0, QString.fromUtf8(contact.name.toString()))

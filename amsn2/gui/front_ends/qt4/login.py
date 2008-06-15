@@ -88,7 +88,6 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         self.ui.comboAccount.lineEdit().setText(str(self._username))
         self.ui.linePassword.setText(str(self._password))
 
-
     def signin(self):
         self.loginThrobber = LoginThrobber(self)
         self._main_win.fadeIn(self.loginThrobber)
