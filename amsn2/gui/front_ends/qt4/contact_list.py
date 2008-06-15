@@ -1,6 +1,5 @@
 import sys
 from amsn2.gui import base
-import common
 
 try:
     from PyQt4.QtCore import *
