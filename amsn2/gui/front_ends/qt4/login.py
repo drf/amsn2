@@ -51,14 +51,23 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         self.ui.setupUi(self)
         self._main_win = self._amsn_core.getMainWindow()
         QObject.connect(self.ui.pushSignIn, SIGNAL("clicked()"), self.signin)
-        QObject.connect(self.ui.checkTestStylesheet, SIGNAL("stateChanged(int)"), self.setTestStyle)
+        QObject.connect(self.ui.styleDesktop, SIGNAL("clicked()"), self.setTestStyle)
+        QObject.connect(self.ui.styleRounded, SIGNAL("clicked()"), self.setTestStyle)
+        QObject.connect(self.ui.styleWLM, SIGNAL("clicked()"), self.setTestStyle)
+        self.setTestStyle()
         self.switch_to_profile(None)
-        # FIXME: Temporary stuff to make "./amsn2.py -f qt4 account password" possible
-        #        This makes it quicker to do testing :)
-        if len(sys.argv) > 3:
-            self.ui.comboAccount.lineEdit().setText(sys.argv[3])
-        if len(sys.argv) > 4:
-            self.ui.linePassword.setText(sys.argv[4])
+
+    def setTestStyle(self):
+        styleData = QFile()
+        if self.ui.styleDesktop.isChecked() == True:
+            styleData.setFileName("amsn2/gui/front_ends/qt4/style0.qss")
+        elif self.ui.styleWLM.isChecked() == True:
+            styleData.setFileName("amsn2/gui/front_ends/qt4/style1.qss")
+        elif self.ui.styleRounded.isChecked() == True:
+            styleData.setFileName("amsn2/gui/front_ends/qt4/style2.qss")
+        if styleData.open(QIODevice.ReadOnly|QIODevice.Text):
+            styleReader = QTextStream(styleData)
+            self.setStyleSheet(styleReader.readAll())
 
     def show(self):
         self._main_win.fadeIn(self)
@@ -68,10 +77,17 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         pass
 
     def switch_to_profile(self, profile):
+        self._username = ""
+        self._password = ""
         self.current_profile = profile
         if self.current_profile is not None:
-            self._username = self.current_profile.username
-            self._password = self.current_profile.password
+            if self.current_profile.username is not None:
+                self._username = self.current_profile.username
+            if self.current_profile.password is not None:
+                self._password = self.current_profile.password
+        self.ui.comboAccount.lineEdit().setText(str(self._username))
+        self.ui.linePassword.setText(str(self._password))
+
 
     def signin(self):
         self.loginThrobber = LoginThrobber(self)

@@ -6,19 +6,96 @@
     <x>0</x>
     <y>0</y>
     <width>206</width>
-    <height>421</height>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
+  <property name="styleSheet" >
+   <string notr="true" >#ContactList { background-color: white; }</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <property name="spacing" >
+    <number>2</number>
+   </property>
+   <property name="leftMargin" >
     <number>0</number>
    </property>
-   <property name="margin" >
+   <property name="topMargin" >
+    <number>3</number>
+   </property>
+   <property name="rightMargin" >
     <number>0</number>
    </property>
+   <property name="bottomMargin" >
+    <number>3</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="pixUser" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="styleSheet" >
+        <string notr="true" >#pixUser {
+color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 255), stop:1 rgba(175, 175, 175, 255));
+font-weight: bold;
+font-size: 20px;
+border: 3px solid gray;
+border-radius: 10px;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(80, 92, 115, 255), stop:1 rgba(0, 0, 0, 255));
+}
+#pixUser:hover {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(80, 92, 115, 255));
+}</string>
+       </property>
+       <property name="text" >
+        <string>aMSN</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
@@ -29,29 +106,26 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Welcome!&lt;/span>&lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This is just a test!&lt;/p>&lt;/body>&lt;/html></string>
      </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
    <item>
-    <widget class="QTreeWidget" name="list" >
+    <widget class="QTreeWidget" name="cList" >
      <property name="styleSheet" >
       <string notr="true" >         QTreeView {
              show-decoration-selected: 1;
+             background-color: white;
+             border: none;
          }
 
-         QTreeView::item {
-             border: 1px solid #d9d9d9;
-             border-top-color: transparent;
-             border-bottom-color: transparent;
-         }
+
 
          QTreeView::item:hover {
              background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
-             border: 1px solid #bfcde4;
          }
 
-         QTreeView::item:selected {
-             border: 1px solid #567dbc;
-         }
 
          QTreeView::item:selected:active{
              background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
@@ -60,60 +134,10 @@ p, li { white-space: pre-wrap; }
          QTreeView::item:selected:!active {
              background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #577fbf);
          }
-         QTreeView::branch {
-                 background: palette(base);
-         }
-
-         QTreeView::branch:has-siblings:!adjoins-item {
-                 background: cyan;
-         }
-
-         QTreeView::branch:has-siblings:adjoins-item {
-                 background: red;
-         }
-
-         QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-                 background: blue;
-         }
-
-         QTreeView::branch:closed:has-children:has-siblings {
-                 background: pink;
-         }
-
-         QTreeView::branch:has-children:!has-siblings:closed {
-                 background: gray;
-         }
-
-         QTreeView::branch:open:has-children:has-siblings {
-                 image: downarrow-icon;
-         }
-
-         QTreeView::branch:open:has-children:!has-siblings {
-                 image: downarrow-icon;
-         }
-         QTreeView::branch:has-siblings:!adjoins-item {
-             border-image: url(vline.png) 0;
-         }
-
-         QTreeView::branch:has-siblings:adjoins-item {
-             border-image: url(branch-more.png) 0;
-         }
-
-         QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-             border-image: url(branch-end.png) 0;
-         }
-
-         QTreeView::branch:has-children:!has-siblings:closed,
-         QTreeView::branch:closed:has-children:has-siblings {
-                 border-image: none;
-                 image: downarrow-icon;
-         }
-
-         QTreeView::branch:open:has-children:!has-siblings,
-         QTreeView::branch:open:has-children:has-siblings  {
-                 border-image: none;
-                 image: downarrow-icon;
-         }</string>
+</string>
+     </property>
+     <property name="horizontalScrollBarPolicy" >
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="sortingEnabled" >
       <bool>true</bool>
@@ -176,6 +200,11 @@ p, li { white-space: pre-wrap; }
       <item>
        <property name="text" >
         <string>User 1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Some user with a really long name, lol</string>
        </property>
       </item>
      </item>

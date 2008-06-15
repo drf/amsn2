@@ -26,6 +26,7 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
         self.resize(230, 550)
 
     def fadeIn(self, widget):
+        widget.setAutoFillBackground(True)
         self.stackedLayout.addWidget(widget)
         self.stackedLayout.setCurrentWidget(self.opaqLayer)
         # Is there another widget in here?

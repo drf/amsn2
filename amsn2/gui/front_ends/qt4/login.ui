@@ -5,44 +5,56 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>579</height>
+    <width>281</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
   <property name="styleSheet" >
-   <string notr="true" >#Login {
-background-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(224, 219, 255, 255), stop:1 rgba(255, 255, 255, 255));
+   <string notr="true" >QWidget {
+font-size: 11px;
+}
+
+#Login {
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(155, 191, 193), stop:0.253333 rgb(236, 243, 246));
 }
 
 QLineEdit {
-border: 2px solid rgb(180, 180, 180);
-border-radius: 10px;
+border: 1px solid rgb(169, 183, 199);
+border-radius: 0px;
 background-color: white;
 selection-background-color: darkgray;
-padding: 1px 18px 1px 3px;
+min-height: 20px;
+max-height: 20px;
+min-width: 225px;
+max-width: 225px;
+}
+
+QLineEdit:hover {
+border: 1px solid rgb(0, 136, 228);
 }
 
 QComboBox {
-border: 2px solid rgb(180, 180, 180);
-border-radius: 10px;
+border: 1px solid rgb(169, 183, 199);
+border-radius: 0px;
 background-color: white;
 selection-background-color: darkgray;
-padding: 1px 18px 1px 3px;
-min-width: 6em;
+min-height: 20px;
+max-height: 20px;
 }
 
 QComboBox:editable {
 background-color: white;
+min-width: 225px;
+max-width: 225px;
 }
 
-         QComboBox:!editable, QComboBox::drop-down:editable {
-              background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                          stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                          stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-         }
+QComboBox:!editable {
+border: 1px solid rgb(169, 183, 199);
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgb(226, 225, 231), stop:1 rgb(255, 255, 255));
+}
 
          QComboBox:!editable:on, QComboBox::drop-down:editable:on {
              background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -72,7 +84,7 @@ background-color: white;
          }
 
          QComboBox::down-arrow {
-             image: url(/usr/lib/kde4/share/icons/oxygen/16x16/actions/arrow-down.png);
+             image: url(amsn2/gui/front_ends/qt4/msn-down.png);
          }
 
          QComboBox::down-arrow:on { 
@@ -80,42 +92,44 @@ background-color: white;
              left: 1px;
          }
 
+QComboBox:hover {
+border: 1px solid rgb(0, 136, 228);
+}
+
 QPushButton {
-background: qlineargradient(spread:repeat, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(167, 195, 255, 255), stop:1 rgba(74, 99, 156, 255));
-font-weight: bold;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 255), stop:0.395556 rgba(200, 200, 200, 255));
+border: 1px solid gray;
+border-radius: 3px;
+padding: 2px 16px;
+}
+
+QPushButton:hover {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb(0, 86, 178), stop:0.395556 rgb(0, 136, 228));
+border: 1px solid rgb(0, 136, 228);
+color: white;
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="spacing" >
-    <number>2</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_7" >
    <item>
-    <widget class="QCheckBox" name="checkTestStylesheet" >
-     <property name="text" >
-      <string>Test stylesheet</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer" >
+    <spacer name="verticalSpacer_3" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
-       <height>57</height>
+       <height>31</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
      <item>
-      <spacer name="horizontalSpacer_4" >
+      <spacer name="horizontalSpacer_6" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
@@ -137,25 +151,12 @@ font-weight: bold;
        </property>
        <property name="minimumSize" >
         <size>
-         <width>100</width>
-         <height>100</height>
+         <width>131</width>
+         <height>129</height>
         </size>
        </property>
        <property name="styleSheet" >
-        <string notr="true" >#pixUser {
-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(0, 0, 0, 50));
-font-weight: bold;
-font-size: 20px;
-border: 3px solid gray;
-border-radius: 10px;
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(185, 190, 255, 255), stop:1 rgba(255, 255, 255, 255));
-}
-#pixUser:hover {
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(166, 180, 213, 255), stop:1 rgba(255, 255, 255, 255));
-}</string>
-       </property>
-       <property name="text" >
-        <string>aMSN</string>
+        <string notr="true" />
        </property>
        <property name="alignment" >
         <set>Qt::AlignCenter</set>
@@ -163,7 +164,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_5" >
+      <spacer name="horizontalSpacer_7" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
@@ -178,51 +179,23 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label" >
-     <property name="text" >
-      <string>E-mail address:</string>
+    <spacer name="verticalSpacer_5" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-    </widget>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
-    <widget class="QComboBox" name="comboAccount" >
-     <property name="editable" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>Password:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="linePassword" >
-     <property name="echoMode" >
-      <enum>QLineEdit::Password</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>Status:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboStatus" >
-       <item>
-        <property name="text" >
-         <string>Online</string>
-        </property>
-       </item>
-      </widget>
-     </item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6" >
      <item>
       <spacer name="horizontalSpacer" >
        <property name="orientation" >
@@ -230,45 +203,285 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
        </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>108</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="checkRememberMe" >
-     <property name="text" >
-      <string>Remember me</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="checkRememberPass" >
-     <property name="text" >
-      <string>Remember my password</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="checkSignInAuto" >
-     <property name="text" >
-      <string>Sign me in automatically</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
-      <spacer name="horizontalSpacer_2" >
+      <layout class="QVBoxLayout" name="verticalLayout_6" >
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <item>
+          <spacer name="horizontalSpacer_12" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4" >
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3" >
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout" >
+               <property name="spacing" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label" >
+                 <property name="text" >
+                  <string>E-mail address:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboAccount" >
+                 <property name="editable" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2" >
+               <property name="spacing" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_2" >
+                 <property name="text" >
+                  <string>Password:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="linePassword" >
+                 <property name="echoMode" >
+                  <enum>QLineEdit::Password</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout" >
+             <item>
+              <widget class="QLabel" name="label_3" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text" >
+                <string>Sign in as:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboStatus" >
+               <property name="layoutDirection" >
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>Online</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Busy</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Away</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Show offline</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_11" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5" >
+         <item>
+          <spacer name="horizontalSpacer_2" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <item>
+            <spacer name="verticalSpacer" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>13</width>
+               <height>13</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkRememberMe" >
+             <property name="text" >
+              <string>Remember me</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkRememberPass" >
+             <property name="text" >
+              <string>Remember my password</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkSignInAuto" >
+             <property name="text" >
+              <string>Sign me in automatically</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2" >
+             <item>
+              <spacer name="horizontalSpacer_4" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushSignIn" >
+               <property name="text" >
+                <string>Sign In</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_5" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>13</width>
+               <height>13</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="links" >
+             <property name="styleSheet" >
+              <string notr="true" >color: red;</string>
+             </property>
+             <property name="text" >
+              <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans'; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt;">&lt;a href="test">&lt;span style="text-decoration: none; color:#0088e4;">Forgot your password?&lt;/span>&lt;/a>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt; color:#ffffff;">&lt;a href="test">&lt;span style="text-decoration: none; color:#0088e4;">Service status&lt;/span>&lt;/a>&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt; color:#ffffff;">&lt;a href="test">&lt;span style="text-decoration: none; color:#0088e4;">Get a new account&lt;/span>&lt;/a>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>28</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_8" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
@@ -280,56 +493,51 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QPushButton" name="pushSignIn" >
-       <property name="text" >
-        <string>Sign In</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_2" >
+    <spacer name="verticalSpacer_4" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
-       <height>57</height>
+       <height>30</height>
       </size>
      </property>
     </spacer>
    </item>
    <item>
-    <widget class="QLabel" name="links" >
-     <property name="styleSheet" >
-      <string notr="true" />
-     </property>
-     <property name="text" >
-      <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="test">&lt;span style=" text-decoration: underline;;">Forgot your password?&lt;/span>&lt;/a>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="test">&lt;span style=" text-decoration: underline;">Service status&lt;/span>&lt;/a>&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="test">&lt;span style=" text-decoration: underline;">Get a new account&lt;/span>&lt;/a>&lt;/p>&lt;/body>&lt;/html></string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_7" >
+     <item>
+      <widget class="QRadioButton" name="styleDesktop" >
+       <property name="text" >
+        <string>Desktop</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="styleRounded" >
+       <property name="text" >
+        <string>Rounded</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="styleWLM" >
+       <property name="text" >
+        <string>WLM</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
