@@ -16,7 +16,7 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
         self._amsn_core = amsn_core
         self.centralWidget = QWidget(self)
         self.stackedLayout = QStackedLayout()
-        self.stackedLayout.setStackingMode(QStackedLayout.StackAll)
+        #self.stackedLayout.setStackingMode(QStackedLayout.StackAll)
         self.centralWidget.setLayout(self.stackedLayout)
         self.setCentralWidget(self.centralWidget)
         self.opaqLayer = FadingWidget(Qt.white, self)

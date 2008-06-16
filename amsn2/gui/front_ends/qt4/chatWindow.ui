@@ -1,18 +1,18 @@
 <ui version="4.0" >
- <class>Form</class>
- <widget class="QWidget" name="Form" >
+ <class>ChatWindow</class>
+ <widget class="QWidget" name="ChatWindow" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
-    <height>453</height>
+    <width>559</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
    <item>
     <widget class="QSplitter" name="splitter_2" >
      <property name="orientation" >
@@ -23,7 +23,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTextEdit" name="textEdit" />
-      <widget class="QWidget" name="" >
+      <widget class="QWidget" name="layoutWidget" >
        <layout class="QVBoxLayout" name="verticalLayout" >
         <item>
          <widget class="QLabel" name="label" >
@@ -49,22 +49,91 @@
       </widget>
      </widget>
      <widget class="QWidget" name="" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
-        <widget class="QTextEdit" name="textEdit_2" />
+        <widget class="QToolBar" name="toolBar" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>16777215</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="sizeIncrement" >
+          <size>
+           <width>0</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="baseSize" >
+          <size>
+           <width>0</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="acceptDrops" >
+          <bool>true</bool>
+         </property>
+         <property name="windowTitle" >
+          <string>Quick Actions</string>
+         </property>
+         <property name="movable" >
+          <bool>false</bool>
+         </property>
+         <addaction name="actionInsert_Emoticon" />
+         <addaction name="actionNudge" />
+        </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>Contact image</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout" >
+         <item>
+          <widget class="QTextEdit" name="inputWidget" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="baseSize" >
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Contact image</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
   </layout>
+  <action name="actionInsert_Emoticon" >
+   <property name="text" >
+    <string>Insert Emoticon</string>
+   </property>
+  </action>
+  <action name="actionNudge" >
+   <property name="text" >
+    <string>Nudge</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

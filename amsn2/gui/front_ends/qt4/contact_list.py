@@ -1,5 +1,6 @@
 import sys
 from amsn2.gui import base
+import common
 
 try:
     from PyQt4.QtCore import *
@@ -13,6 +14,8 @@ except ImportError, msg:
 
 class aMSNContactList(StyledWidget, base.aMSNContactList):
     def __init__(self, amsn_core, parent=None):
+        """ Should we consider switching the contact view to a Model+View
+        instead of a QTreeWidget? This can surely give us some advantages... """
         StyledWidget.__init__(self, parent)
         self._amsn_core = amsn_core
         self.ui = Ui_ContactList()
