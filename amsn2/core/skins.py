@@ -2,7 +2,7 @@ import os.path
 
 class Skin(object):
     def __init__(self, core, path):
-        self.path = path
+        self._path = path
         pass
 
     def getKey(self, key, default):
@@ -12,7 +12,7 @@ class Skin(object):
         pass
 
     def getFilename(self, name):
-        return os.path.join(path, name + ".png")
+        return os.path.join(self._path, name + ".png")
 
 
 class SkinManager(object):

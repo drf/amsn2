@@ -145,8 +145,8 @@ class aMSNCore(object):
     def buildContact(self, contact):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = self._gui.createImage(self._main)
-        contactV.icon = self._skin_manager.skin. \
-                        getFilename("buddy_" + self.p2s[contact.presence]);
+        contactV.icon.loadFromFile(self._skin_manager.skin. \
+                        getFilename("buddy_" + self.p2s[contact.presence]));
         contactV.name = StringView() # TODO : default colors
         contactV.name.openTag("nickname")
         contactV.name.appendText(contact.display_name) # TODO parse
