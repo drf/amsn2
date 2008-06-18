@@ -16,7 +16,7 @@ class Skin(object):
 
 
 class SkinManager(object):
-    def __init__( core):
+    def __init__(self, core):
         self.skin = Skin(core, "skins")
 
     def setSkin(self, name):
