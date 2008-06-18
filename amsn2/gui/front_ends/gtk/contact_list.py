@@ -63,7 +63,6 @@ class aMSNContactList(base.aMSNContactList, gtk.TreeView):
 
     def contactUpdated(self, contact):
         contact_data = (None, contact, common.stringvToHtml(contact.name))
-        print common.stringview_to_html(contact.name)
         for row in self._model:
             obj = row[1]
             if type(obj) == GroupView:
