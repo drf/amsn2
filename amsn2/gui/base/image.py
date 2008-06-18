@@ -1,7 +1,7 @@
 
 class Image(object):
     """ This interface will represent an image to be used by the UI"""
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, window):
         """Initialize the interface. You should store the reference to the core in here """
         raise NotImplementedError
 

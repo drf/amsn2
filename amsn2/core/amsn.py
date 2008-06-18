@@ -4,6 +4,7 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
+import skins
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -23,6 +24,7 @@ class aMSNCore(object):
         self._gui = gui.GUIManager(self, self._gui_name)
         self._loop = self._gui.getMainLoop();
         self._main = self._gui.getMainWindow();
+        self._skin_manager = skins.SkinManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
@@ -142,7 +144,9 @@ class aMSNCore(object):
     
     def buildContact(self, contact):
         contactV = ContactView.getContact(contact.id)
-        contactV.icon = None # TODO : build buddy icon+emblems
+        contactV.icon = self._gui.createImage(self._main)
+        contactV.icon = self._skin_manager.skin. \
+                        getFilename("buddy_" + self.p2s[contact.presence]);
         contactV.name = StringView() # TODO : default colors
         contactV.name.openTag("nickname")
         contactV.name.appendText(contact.display_name) # TODO parse

@@ -30,10 +30,12 @@ class GUIManager(object):
     def getLoginWindow(self):
         return self._gui.aMSNLoginWindow(self._core)
     
-    
     def getContactList(self):
         return self._gui.aMSNContactList(self._core)
 
+    def createImage(self, window):
+        return self._gui.Image(self._core, window)
+    
     @staticmethod
     def registerFrontEnd(name, module):
         GUIManager.front_ends[name] = module
