@@ -17,10 +17,11 @@ class Skin(object):
 
 class SkinManager(object):
     def __init__(self, core):
+        self._core = core
         self.skin = Skin(core, "skins")
 
     def setSkin(self, name):
-        self.skin = Skin(core, os.path.join("skins", name))
+        self.skin = Skin(self._core, os.path.join("skins", name))
 
     def listSkins(self, path):
         pass
