@@ -1,7 +1,7 @@
 
 class aMSNContactList(object):
     """ This interface implements the contact list of the UI """
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         raise NotImplementedError
 
     def show(self):

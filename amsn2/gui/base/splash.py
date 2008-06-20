@@ -1,7 +1,7 @@
 
 class aMSNSplashScreen(object):
     """ This interface will represent the splashscreen of the UI"""
-    def __init__(self, amsn_core, window):
+    def __init__(self, amsn_core, parent):
         """Initialize the interface. You should store the reference to the core in here
         as well as a reference to the window where you will show the splash screen
         """

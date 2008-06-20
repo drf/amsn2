@@ -1,7 +1,7 @@
 
 class aMSNLoginWindow(object):
     """ This interface will represent the login window of the UI"""
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         """Initialize the interface. You should store the reference to the core in here """
         raise NotImplementedError
 
