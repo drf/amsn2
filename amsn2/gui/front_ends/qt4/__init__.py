@@ -16,8 +16,6 @@ def load():
 try:
     import imp
     imp.find_module("PyQt4")
-    imp.find_module("PyQt4.QtCore")
-    imp.find_module("PyQt4.QtGui")
     
     gui.GUIManager.registerFrontEnd("qt4", sys.modules[__name__])
 except ImportError:
