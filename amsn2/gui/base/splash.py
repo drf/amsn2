@@ -19,8 +19,8 @@ class aMSNSplashScreen(object):
         """ Shows a different text inside the splashscreen """
         raise NotImplementedError
     
-    def setImage(self, image)
-    """ Set the image to show in the splashscreen. This is a gui.Image object """
+    def setImage(self, image):
+        """ Set the image to show in the splashscreen. This is a gui.Image object """
         raise NotImplementedError
 
 
