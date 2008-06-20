@@ -5,7 +5,7 @@ from amsn2 import protocol
 import pymsn
 from views import *
 import skins
-
+    
 class aMSNCore(object):
     def __init__(self, options):
         """
@@ -22,8 +22,8 @@ class aMSNCore(object):
         self._options = options
         self._gui_name = self._options.front_end
         self._gui = gui.GUIManager(self, self._gui_name)
-        self._loop = self._gui.getMainLoop();
-        self._main = self._gui.getMainWindow();
+        self._loop = self._gui.gui.aMSNMainLoop(self)
+        self._main = self._gui.gui.aMSNMainWindow(self);
         self._skin_manager = skins.SkinManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
@@ -49,20 +49,17 @@ class aMSNCore(object):
         # TODO : load the profiles from disk and all settings
         # then show the login window if autoconnect is disabled
         
-        """ I have implemented an interface to a splashscreen. 
-        It works (tested with Qt), though I disabled it until 
-        all frontends implement it (and until we have a decent
-        splashscreen too ^^) """
+        self._main.setTitle("aMSN 2 - Loading")
         
-        """ splash = self._gui.getSplashScreen()
-        image = self._gui.createImage(None)
+        splash = self._gui.gui.aMSNSplashScreen(self, self._main)
+        image = self._gui.gui.Image(self, self._main)
         image.loadFromFile("/path/to/image/here")
         
         splash.setImage(image)
-        splash.showText("Loading...")
-        splash.show() """
+        splash.setText("Loading...")
+        splash.show()
         
-        login = self._gui.getLoginWindow()
+        login = self._gui.gui.aMSNLoginWindow(self, self._main)
         
         profile = None
         if self._options.account is not None:
@@ -84,8 +81,10 @@ class aMSNCore(object):
             profile = self._profile_manager.addProfile("")
             profile.password = ""
             
-        #splash.hide()
         login.switch_to_profile(profile)
+        
+        splash.hide()
+        self._main.setTitle("aMSN 2 - Login")
         login.show()
 
     def getMainWindow(self):
@@ -115,10 +114,11 @@ class aMSNCore(object):
         elif state == pymsn.event.ClientState.SYNCHRONIZED:
             profile.login.onConnecting("Contact list downloaded successfully\nHappy Chatting")
         elif state == pymsn.event.ClientState.OPEN:
-            cl = self._gui.getContactList()
+            cl = self._gui.gui.aMSNContactList(self, self._main)
             cl.profile = profile
             profile.cl = cl
             profile.login.hide()
+            self._main.setTitle("aMSN 2")
             profile.cl.show()
             profile.login = None
 
@@ -158,7 +158,7 @@ class aMSNCore(object):
     
     def buildContact(self, contact):
         contactV = ContactView.getContact(contact.id)
-        contactV.icon = self._gui.createImage(self._main)
+        contactV.icon = self._gui.gui.Image(self, self._main)
         contactV.icon.loadFromFile(self._skin_manager.skin. \
                         getFilename("buddy_" + self.p2s[contact.presence]));
         contactV.name = StringView() # TODO : default colors

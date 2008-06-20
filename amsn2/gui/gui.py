@@ -18,27 +18,9 @@ class GUIManager(object):
         if GUIManager.frontEndExists(self._name) is False:
             raise InvalidFrontEndException("Invalid Front End. Available front ends are : " + str(GUIManager.listFrontEnds()))
         else:
-            self._gui = GUIManager.front_ends[self._name]
-            self._gui = self._gui.load()
+            self.gui = GUIManager.front_ends[self._name]
+            self.gui = self.gui.load()
         
-    def getMainLoop(self):
-        return self._gui.aMSNMainLoop(self._core)
-
-    def getMainWindow(self):
-        return self._gui.aMSNMainWindow(self._core)
-    
-    def getLoginWindow(self):
-        return self._gui.aMSNLoginWindow(self._core)
-    
-    def getSplashScreen(self):
-        return self._gui.aMSNSplashScreen(self._core)
-    
-    def getContactList(self):
-        return self._gui.aMSNContactList(self._core)
-
-    def createImage(self, window):
-        return self._gui.Image(self._core, window)
-    
     @staticmethod
     def registerFrontEnd(name, module):
         GUIManager.front_ends[name] = module
