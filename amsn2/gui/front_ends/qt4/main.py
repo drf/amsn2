@@ -47,7 +47,7 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
     def hide(self):
         self.setVisible(False)
 
-    def set_title(self, title):
+    def setTitle(self, title):
         self.setWindowTitle(title)
 
     def set_view(self, view):

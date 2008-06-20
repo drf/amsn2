@@ -6,22 +6,21 @@ from ui_contactlist import Ui_ContactList
 from styledwidget import StyledWidget
 
 class aMSNContactList(StyledWidget, base.aMSNContactList):
-    def __init__(self, amsn_core, parent=None):
+    def __init__(self, amsn_core, parent):
         """ Should we consider switching the contact view to a Model+View
         instead of a QTreeWidget? This can surely give us some advantages... """
         StyledWidget.__init__(self, parent)
         self._amsn_core = amsn_core
         self.ui = Ui_ContactList()
         self.ui.setupUi(self)
-        self._main_win = self._amsn_core.getMainWindow()
+        self._parent = parent
         self.ui.cList.clear()
 
     def show(self):
-        self._main_win.fadeIn(self)
-        self._main_win.setWindowTitle('aMSN 2')
+        self._parent.fadeIn(self)
 
     def hide(self):
-        pass
+        self._parent.fadeOut(self)
 
     def groupAdded(self, group):
         groupItem = QTreeWidgetItem(self.ui.cList)

@@ -7,7 +7,7 @@ from styledwidget import StyledWidget
 
 
 class LoginThrobber(StyledWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         StyledWidget.__init__(self, parent)
         # Throbber
         self.plsWait = QLabel(self)
@@ -39,12 +39,12 @@ class LoginThrobber(StyledWidget):
         self.setStyleSheet("background: white;")
 
 class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
-    def __init__(self, amsn_core, parent=None):
+    def __init__(self, amsn_core, parent):
         StyledWidget.__init__(self, parent)
         self._amsn_core = amsn_core
         self.ui = Ui_Login()
         self.ui.setupUi(self)
-        self._main_win = self._amsn_core.getMainWindow()
+        self._parent = parent
         QObject.connect(self.ui.pushSignIn, SIGNAL("clicked()"), self.signin)
         QObject.connect(self.ui.styleDesktop, SIGNAL("clicked()"), self.setTestStyle)
         QObject.connect(self.ui.styleRounded, SIGNAL("clicked()"), self.setTestStyle)
@@ -65,11 +65,10 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
             self.setStyleSheet(styleReader.readAll())
 
     def show(self):
-        self._main_win.fadeIn(self)
-        self._main_win.setWindowTitle('aMSN 2 - Login')
+        self._parent.fadeIn(self)
 
     def hide(self):
-        pass
+        self._parent.fadeOut(self)
 
     def switch_to_profile(self, profile):
         self._username = ""
@@ -85,7 +84,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
 
     def signin(self):
         self.loginThrobber = LoginThrobber(self)
-        self._main_win.fadeIn(self.loginThrobber)
+        self._parent.fadeIn(self.loginThrobber)
         self.current_profile.username = str(self.ui.comboAccount.currentText())
         self.current_profile.email = str(self.ui.comboAccount.currentText())
         self.current_profile.password = str(self.ui.linePassword.text())

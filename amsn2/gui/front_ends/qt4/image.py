@@ -4,10 +4,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
     
 class Image(QPixmap, base.Image):
-    def __init__(self, amsn_core, window):
+    def __init__(self, amsn_core, parent):
         QPixmap.__init__(self)
         self._core = amsn_core
-        self._window = window
 
     def loadFromFile(self, filename):
         self.load(filename)
