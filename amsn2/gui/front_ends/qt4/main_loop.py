@@ -1,14 +1,8 @@
 from amsn2.gui import base
-import sys
 
-try:
-    from PyQt4.QtCore import *
-    from PyQt4.QtGui import *
-    import gobject
-except ImportError, msg:
-    print "Could not import all required modules for the Qt 4 GUI."
-    print "ImportError: " + str(msg)
-    sys.exit()
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+import gobject
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):

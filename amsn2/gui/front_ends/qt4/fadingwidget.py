@@ -1,12 +1,6 @@
-import sys
 
-try:
-    from PyQt4.QtCore import *
-    from PyQt4.QtGui import *
-except ImportError, msg:
-    print "Could not import all required modules for the Qt 4 GUI."
-    print "ImportError: " + str(msg)
-    sys.exit()
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 
 class FadingWidget(QWidget):
     def __init__(self, bgColor, parent=None):

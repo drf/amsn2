@@ -1,14 +1,7 @@
-import sys
 
-try:
-    from PyQt4.QtCore import *
-    from PyQt4.QtGui import *
-    from ui_login import Ui_Login
-    from fadingwidget import FadingWidget
-except ImportError, msg:
-    print "Could not import all required modules for the Qt 4 GUI."
-    print "ImportError: " + str(msg)
-    sys.exit()
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from fadingwidget import FadingWidget
 
 # Styled Widget: QWidget subclass that directly supports Qt StyleSheets
 class StyledWidget(QWidget):
