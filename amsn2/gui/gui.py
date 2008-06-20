@@ -14,7 +14,7 @@ class GUIManager(object):
     def __init__(self, core, gui_name):
         self._core = core
         self._name = gui_name
-
+        
         if GUIManager.frontEndExists(self._name) is False:
             raise InvalidFrontEndException("Invalid Front End. Available front ends are : " + str(GUIManager.listFrontEnds()))
         else:
@@ -29,6 +29,9 @@ class GUIManager(object):
     
     def getLoginWindow(self):
         return self._gui.aMSNLoginWindow(self._core)
+    
+    def getSplashScreen(self):
+        return self._gui.aMSNSplashScreen(self._core)
     
     def getContactList(self):
         return self._gui.aMSNContactList(self._core)

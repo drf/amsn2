@@ -47,8 +47,21 @@ class aMSNCore(object):
 
     def mainWindowShown(self):
         # TODO : load the profiles from disk and all settings
-        # and show a splash screen in the main window, until all is loaded
         # then show the login window if autoconnect is disabled
+        
+        """ I have implemented an interface to a splashscreen. 
+        It works (tested with Qt), though I disabled it until 
+        all frontends implement it (and until we have a decent
+        splashscreen too ^^) """
+        
+        """ splash = self._gui.getSplashScreen()
+        image = self._gui.createImage(None)
+        image.loadFromFile("/path/to/image/here")
+        
+        splash.setImage(image)
+        splash.showText("Loading...")
+        splash.show() """
+        
         login = self._gui.getLoginWindow()
         
         profile = None
@@ -71,6 +84,7 @@ class aMSNCore(object):
             profile = self._profile_manager.addProfile("")
             profile.password = ""
             
+        #splash.hide()
         login.switch_to_profile(profile)
         login.show()
 

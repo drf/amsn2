@@ -3,3 +3,4 @@ from login import *
 from contact_list import *
 from main import *
 from image import *
+from splash import *
