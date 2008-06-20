@@ -1,8 +1,10 @@
 
 class aMSNSplashScreen(object):
     """ This interface will represent the splashscreen of the UI"""
-    def __init__(self, amsn_core):
-        """Initialize the interface. You should store the reference to the core in here """
+    def __init__(self, amsn_core, window):
+        """Initialize the interface. You should store the reference to the core in here
+        as well as a reference to the window where you will show the splash screen
+        """
         raise NotImplementedError
 
     def show(self):
@@ -13,11 +15,12 @@ class aMSNSplashScreen(object):
         """ Hide the splashscreen """
         raise NotImplementedError
     
-    def showText(self, text):
+    def setText(self, text):
         """ Shows a different text inside the splashscreen """
         raise NotImplementedError
     
-    def setImage(self, image): #TODO: Should we give a path here or is Image correct?
+    def setImage(self, image)
+    """ Set the image to show in the splashscreen. This is a gui.Image object """
         raise NotImplementedError
 
 
