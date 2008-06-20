@@ -14,6 +14,12 @@ class aMSNMainWindow(object):
         and should notify the core of the main window being created"""
         raise NotImplementedError
 
+    def setTitle(self, text):
+        """ This will allow the core to change the current window's title
+        @text : a string
+        """
+        raise NotImplementedError
+    
     def setMainMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
