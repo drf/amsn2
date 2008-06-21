@@ -7,10 +7,9 @@ import etk
 from amsn2.gui import base
 
 class aMSNLoginWindow(base.aMSNLoginWindow):
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
-        self._amsn_gui = self._amsn_core.getMainWindow()
-        self._evas = self._amsn_gui._evas
+        self._evas = parent._evas
 
         edje.frametime_set(1.0 / 30)
         try:

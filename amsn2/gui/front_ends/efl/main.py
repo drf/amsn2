@@ -13,7 +13,6 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._evas.callback_delete_request = self.__on_delete_request
         self._evas.callback_resize = self.__on_resize
         self._evas.callback_show = self.__on_show
-        self._evas.title = TITLE
         self._evas.name_class = (WM_NAME, WM_CLASS)
         self._evas.fullscreen = False
         self._evas.size = (WIDTH, HEIGHT)
@@ -24,6 +23,12 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def hide(self):
         self._evas.hide()
+        
+    def setTitle(self, text):
+        self._evas.title = text
+
+    def setMainMenu(self, menu):
+        pass
         
     # Private methods
     def __on_show(self, evas_obj):

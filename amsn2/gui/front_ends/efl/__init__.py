@@ -6,8 +6,11 @@ import sys
 # We need to import the front end module and return it
 # so the guimanager can access its classes
 def load():
-    import efl
-    return efl
+    try:
+        import efl
+        return efl
+    except ImportError:
+        return None
 
 
 # Initialize the front end by checking for any
