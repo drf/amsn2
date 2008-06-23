@@ -76,6 +76,12 @@ class aMSNProfile(object):
 
     def setPluginKey(self, plugin_name, key, value):
         return self.plugins.setKey(plugin_name, key, value)
+    
+    def addPlugin(self, plugin_name, plugin_config_dict):
+        self.plugins[plugin_name] = aMSNProfilePlugin(self, plugin_config_dict)
+    
+    def removePlugin(self, plugin_name):
+        return self.plugins.pop(plugin_name, None)
 
 class aMSNProfileManager(object):
     """ aMSNProfileManager : The profile manager that takes care of storing
@@ -204,14 +210,17 @@ class aMSNProfileManager(object):
 
         for profile_dir in profiles_dirs :
             profile_file_path = os.path.join(self._profiles_dir, profile_dir, "settings.xml")
+            
+            ### Prepares XML Elements
             root_tree = xml.etree.ElementTree.parse(profile_file_path)
             settings = root_tree.find("Settings")
             settings_tree = xml.etree.ElementTree.ElementTree(settings)
             configs = settings_tree.find("Configurations")
             settings.remove(configs)
-            plugins = root_tree.find("Plugins")
+            plugins = settings_tree.find("Plugins")
             settings.remove(plugins)
             
+            ### Loads Settings
             settings_dict = elementToDict(settings) 
             profile = aMSNProfile(settings_dict['email'])
             profile.username = settings_dict['username']
@@ -224,18 +233,21 @@ class aMSNProfileManager(object):
                 profile.password = None
             if profile.account == "" :
                 profile.account = None
-
+                
+            ### Loads Configurations
             configs_dict = elementToDict(configs)
             profile.config.config = configs_dict
-
+            
+            ### Loads Plugins
             plugins_dict = {}
             for plugin_element in plugins:
                 plugins_dict[plugin_element.tag] = elementToDict(plugin_element)
             
             profile.plugins = {}
             for plugin_name, plugin_config_dict in plugins_dict.iteritems():
-                profile.plugins[plugin_name] = aMSNProfilePlugin(profile, plugin_config_dict)
+                profile.addPlugin(plugin_name, plugin_config_dict)
             
+            ### Finally loads the Profile
             self.profiles[profile.email] = profile
 
 def elementToDict(element):
