@@ -1,4 +1,4 @@
-export PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig/
+export PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig/:/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig
 rm -f etk/*.[ch]
 rm -rf build
 python setup.py build && sudo -E python setup.py install

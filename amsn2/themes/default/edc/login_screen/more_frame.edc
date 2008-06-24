@@ -1,29 +1,29 @@
 CREATE_FRAME("more_frame", "update_frame", 20)
  
 part {
-  name, "more_button";
-  type, TEXT;
-  clip_to, "more_frame";
+  name: "more_button";
+  type: TEXT;
+  clip_to: "more_frame";
   description {
-    state, "default" 0.0;
+    state: "default" 0.0;
     rel1 {
-      to, "more_frame";
-      relative, 0.8 0.0;
-      offset, -40 0;
+      to: "more_frame";
+      relative: 0.8 0.0;
+      offset: -40 0;
     }
     rel2 {
-      to, "more_frame";
-      relative, 0.8 0.0;
-      offset, 0 20;
+      to: "more_frame";
+      relative: 0.8 0.0;
+      offset: 0 20;
     }
-    color, 10 50 100 255 ;
+    color: 10 50 100 255 ;
     text {
-      align, 0.5 0.5;
-      font, "VeraBd";
-      size, 10;
-      text, "More";
-      min, 0 0;
-      elipsis, 0.0;
+      align: 0.5 0.5;
+      font: "VeraBd";
+      size: 10;
+      text: "More";
+      min: 0 0;
+      elipsis: 0.0;
     }
   } 
 }

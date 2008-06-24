@@ -1,104 +1,104 @@
 part {
-  name, "language_frame";
-  type, RECT;
+  name: "language_frame";
+  type: RECT;
   description {
-    state, "default" 0.0;
-    visible, 1;
+    state: "default" 0.0;
+    visible: 1;
     rel1 {
-      relative, 0.0 0.0;
-      offset, 0 0;
+      relative: 0.0 0.0;
+      offset: 0 0;
     }
     rel2 {
-      relative, 1.0 0.0;
-      offset, 0 70;
+      relative: 1.0 0.0;
+      offset: 0 70;
     }
   }
   description {
-    state, "hidden" 0.0;
-    inherit, "default" 0.0;
-    visible, 0;
+    state: "hidden" 0.0;
+    inherit: "default" 0.0;
+    visible: 0;
     rel1 {
-      relative, 0.0 0.0;
-      offset, 0 0;
+      relative: 0.0 0.0;
+      offset: 0 0;
     }
     rel2 {
-      relative, 1.0 0.0;
-      offset, 0 0;
+      relative: 1.0 0.0;
+      offset: 0 0;
     }
   }
   description {
-    state, "connecting" 0.0;
-    inherit, "hidden" 0.0;
+    state: "connecting" 0.0;
+    inherit: "hidden" 0.0;
   }
 }
 
 part {
-  name, "language_button";
-  type, IMAGE;
-  clip_to, "language_frame";
+  name: "language_button";
+  type: IMAGE;
+  clip_to: "language_frame";
   description {
-    state, "default" 0.0;
+    state: "default" 0.0;
 
     rel1 {
-      to, "language_frame";
-      relative, 0.0 0.0;
-      offset, 4 4;
+      to: "language_frame";
+      relative: 0.0 0.0;
+      offset: 4 4;
     }
     rel2 {
-      to, "language_frame";
-      relative, 0.0 1.0;
-      offset, 67 -4;
+      to: "language_frame";
+      relative: 0.0 1.0;
+      offset: 67 -4;
     }
     image {
-      normal, "login_screen/language_icon.png";
-      border, 0 0 0 0;
+      normal: "login_screen/language_icon.png";
+      border: 0 0 0 0;
     }
   }
 }
 part {
-  name, "language_spacer";
-  type, RECT;
-  clip_to, "language_frame";
+  name: "language_spacer";
+  type: RECT;
+  clip_to: "language_frame";
   description {
-    state, "default" 0.0;
-    color, 0 0 0 0;
+    state: "default" 0.0;
+    color: 0 0 0 0;
     rel1 {
-      to, "language_button";
-      relative, 1.0 0.0;
-      offset, 0 0;
+      to: "language_button";
+      relative: 1.0 0.0;
+      offset: 0 0;
     }
     rel2 {
-      to, "language_button";
-      relative, 1.0 1.0;
-      offset, 5 0;
+      to: "language_button";
+      relative: 1.0 1.0;
+      offset: 5 0;
     }
   }
 }
 part {
-  name, "language_text";
-  type, TEXT;
-  clip_to, "language_frame";
+  name: "language_text";
+  type: TEXT;
+  clip_to: "language_frame";
   description {
-    state, "default" 0.0;
+    state: "default" 0.0;
     rel1 {
-      to, "language_spacer";
-      relative, 1.0 0.0;
-      offset, 0 0;
+      to: "language_spacer";
+      relative: 1.0 0.0;
+      offset: 0 0;
     }
     rel2 {
-      to_y, "language_spacer";
-      relative, 1.0 1.0;
-      offset, -4 0;
+      to_y: "language_spacer";
+      relative: 1.0 1.0;
+      offset: -4 0;
     }
-    color, 0 0 0 255;
-    color2, 225 225 225 128;
+    color: 0 0 0 255;
+    color2: 225 225 225 128;
     text {
-      align, 0.0 0.5;
-      font, "VeraBd";
-      size, 10;
-      text, "Change Language";
-      min, 0 0;
-      elipsis, 0.0;
+      align: 0.0 0.5;
+      font: "VeraBd";
+      size: 10;
+      text: "Change Language";
+      min: 0 0;
+      elipsis: 0.0;
     }
   }
 }

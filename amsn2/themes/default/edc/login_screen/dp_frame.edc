@@ -1,81 +1,83 @@
 CREATE_FRAME("dp_frame", "language_frame", 118)
-/* part { */
-/*   name, "dp_frame"; */
-/*   type, RECT; */
-/*   description { */
-/*     state, "default" 0.0; */
-/*     color, 255 255 255 100; */
-/*     rel1 { */
-/*       to, "language_frame"; */
-/*       relative, 0.0 1.0; */
-/*       offset, 0 0; */
-/*     } */
-/*     rel2 { */
-/*       to, "language_frame"; */
-/*       relative, 1.0 1.0; */
-/*       offset, 0 118; */
-/*     } */
-/*   } */
-/*   description { */
-/*     state, "hidden" 0.0; */
-/*     inherit, "default" 0.0; */
-/*     visible, 0; */
-/*     rel1 { */
-/*       to, "language_frame"; */
-/*       relative, 0.0 1.0; */
-/*       offset, 0 0; */
-/*     } */
-/*     rel2 { */
-/*       to, "language_frame"; */
-/*       relative, 1.0 1.0; */
-/*       offset, 0 0; */
-/*     } */
-/*   } */
-/* } */
-
+/*
 part {
-  name, "dp_border";
-  type, IMAGE;
-  clip_to, "dp_frame";
-  mouse_events, 0;
+  name: "dp_frame";
+  type: RECT;
   description {
-    state, "default" 0.0;
+    state: "default" 0.0;
+    color: 255 255 255 100;
     rel1 {
-      to, "dp_frame";
-      relative, 0.5 0.0;
-      offset, -56 3;
+      to: "language_frame";
+      relative: 0.0 1.0;
+      offset: 0 0;
     }
     rel2 {
-      to, "dp_frame";
-      relative, 0.5 1.0;
-      offset, 56 -3;
+      to: "language_frame";
+      relative: 1.0 1.0;
+      offset: 0 118;
+    }
+  }
+  description {
+    state: "hidden" 0.0;
+    inherit: "default" 0.0;
+    visible: 0;
+    rel1 {
+      to: "language_frame";
+      relative: 0.0 1.0;
+      offset: 0 0;
+    }
+    rel2 {
+      to: "language_frame";
+      relative: 1.0 1.0;
+      offset: 0 0;
+    }
+  }
+}
+*/
+
+part {
+  name: "dp_border";
+  type: IMAGE;
+  clip_to: "dp_frame";
+  mouse_events: 0;
+  description {
+    state: "default" 0.0;
+    rel1 {
+      to: "dp_frame";
+      relative: 0.5 0.0;
+      offset: -56 3;
+    }
+    rel2 {
+      to: "dp_frame";
+      relative: 0.5 1.0;
+      offset: 56 -3;
     }
     image {
-      normal, "login_screen/dp_border.png";
-      border, 8 8 8 8;
+      normal: "login_screen/dp_border.png";
+      border: 8 8 8 8;
     }
   }
 }
 
 part {
-  name, "dp_image";
-  type, IMAGE;
-  clip_to, "dp_frame";
-  mouse_events, 0;
+  name: "dp_image";
+  type: IMAGE;
+  clip_to: "dp_frame";
+  mouse_events: 0;
   description {
-    state, "default" 0.0;
+    state: "default" 0.0;
     rel1 {
-      to, "dp_border";
-      relative, 0.0 0.0;
-      offset, 8 8;
+      to: "dp_border";
+      relative: 0.0 0.0;
+      offset: 8 8;
     }
     rel2 {
-      to, "dp_border";
-      relative, 1.0 1.0;
-      offset, -9 -9;
+      to: "dp_border";
+      relative: 1.0 1.0;
+      offset: -9 -9;
     }
     image {
-      normal, "login_screen/amsn.png";
+      normal: "login_screen/amsn.png";
     }
   }
 }
