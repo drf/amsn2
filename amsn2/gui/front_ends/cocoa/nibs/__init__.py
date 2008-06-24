@@ -1,3 +1,4 @@
 
 import CocoaMainWindow
+import CocoaSplashScreenView
 import CocoaLoginView

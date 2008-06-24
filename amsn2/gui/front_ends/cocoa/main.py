@@ -21,11 +21,10 @@ class aMSNMainWindow(base.aMSNMainWindow):
     def hide(self):
         self.cocoaWin.orderOut_(self.cocoaWin)
     
-    def _loadView(self, view, resize=True):
+    def _loadView(self, view, resize=False):
         prevFrame = self.cocoaWin.frame()
         frame = self.cocoaWin.frameRectForContentRect_(view.frame())
-        if resize == True:
-            self.cocoaWin.setFrame_display_animate_((prevFrame.origin, frame.size), True, True)
+        self.cocoaWin.setFrame_display_animate_((prevFrame.origin, frame.size), True, bool(resize))
         self.cocoaWin.setContentView_(view)
         self.cocoaWin.orderFront_(self.cocoaWin)
     

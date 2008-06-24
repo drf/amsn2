@@ -1,5 +1,10 @@
 
 from amsn2.gui import base
+
+from amsn2.core.views import StringView
+from amsn2.core.views import GroupView
+from amsn2.core.views import ContactView
+
 import pymsn
 
 class Contact(object):
@@ -40,7 +45,7 @@ class Group(object):
             
 
 class aMSNContactList(base.aMSNContactList):
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self.groups = {}
         self.contacts = {}
@@ -53,7 +58,7 @@ class aMSNContactList(base.aMSNContactList):
 
     def contactStateChange(self, contact):
         for group in contact.groups:
-            self.groups[group.id].contacts[contact.id].presence = contact.presence
+            self.groups[group.uid].contacts[contact.id].presence = contact.presence
             
         self.__update_view()
 
@@ -85,7 +90,7 @@ class aMSNContactList(base.aMSNContactList):
         pass
 
     def contactAdded(self, group, contact):
-        self.groups[group.id].contacts[contact.id] = Contact(contact.display_name, contact.presence)
+        self.groups[group.uid].contacts[contact.id] = Contact(contact.display_name, contact.presence)
         self.__update_view()
     
     def contactRemoved(self, group, contact):
@@ -98,7 +103,7 @@ class aMSNContactList(base.aMSNContactList):
         pass
 
     def groupAdded(self, group):
-        self.groups[group.id] = Group(group.name)
+        self.groups[group.uid] = Group(group.name)
         self.__update_view()
 
     def groupRemoved(self, group):

@@ -11,8 +11,6 @@ def getView():
 
 # This is a view that we can load into the main window.
 class aMSNCocoaLoginView(NSView):
-    loginCallback = None
-    
     loginButton =       IBOutlet('loginButton')         # loginButton fires the login: action.
     usernameField =     IBOutlet('usernameField')       # Text field with user/profile name.
     usernameLabel =     IBOutlet('usernameLabel')       # Text label next to usernameField.
@@ -25,12 +23,13 @@ class aMSNCocoaLoginView(NSView):
         global loginView
         loginView = self
     
+    def setParent(self, parent):
+        self.parent = parent
+    
     def login_(self):
         username = str(self.usernameField.stringValue())
         password = str(self.passwordField.stringValue())
-        self.loginCallback(username, password)
-    
-    def registerLoginCallback(self, function):
-        self.loginCallback = function
+        self.parent.login(username, password)
+
 
 NSBundle.loadNibNamed_owner_('aMSNCocoaLoginView', NSApplication.sharedApplication())

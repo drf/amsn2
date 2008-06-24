@@ -1,5 +1,4 @@
 
-import os
 from objc import *
 from Foundation import *
 from AppKit import *
@@ -13,6 +12,9 @@ def getView():
 class aMSNCocoaLoggingInView(NSView):
     statusText =        IBOutlet('statusText')          # Text field with status text.
     progressIndicator = IBOutlet('progressIndicator')   # Spinner.
+    
+    def setParent(self, parent):
+        self.parent = parent
     
     def awakeFromNib(self):
         global view
