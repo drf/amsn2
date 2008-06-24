@@ -2,13 +2,13 @@ import gtk
 import gobject
 
 class aMSNLoginWindow(gtk.VBox):
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         
         gtk.VBox.__init__(self, spacing=10)
         
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
-        self._main_win = self._amsn_core.getMainWindow()
+        self._main_win = parent
         
         self.status = gtk.Label('')
         self.pack_start(self.status, True, False)
@@ -112,7 +112,7 @@ class aMSNLoginWindow(gtk.VBox):
         
         
     def show(self):
-        self._main_win.set_title('aMSN 2 - Login')
+        pass
 
     def hide(self):
         pass

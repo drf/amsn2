@@ -16,7 +16,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self.main_win.show()
         self._amsn_core.idlerAdd(self.__on_show)
         
-    def set_title(self, title):
+    def setTitle(self, title):
         self.main_win.set_title(title)
         
     def hide(self):
