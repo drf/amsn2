@@ -20,11 +20,12 @@ class aMSNProfileConfiguration(object):
     def setKey(self, key, value):
         self.config[key] = value
 
-class aMSNProfilePlugin(object):
+class aMSNPluginConfiguration(object):
     """ aMSNProfilePlugin : A plugin object for profiles."""
-    def __init__(self, profile, config_dict):
+    def __init__(self, profile, plugin, config_dict):
         """ config_dict must be a dictionary of configurations ("option": value, ...) """
         self._profile = profile
+        self._plugin = plugin
         self.config = config_dict
 
     def getKey(self, key, default = None):
@@ -51,7 +52,7 @@ class aMSNProfile(object):
         ###self.plugins must be a dictionary like {"Plugin1_name":aMSNProfilePlugin(self,{"option1":123}),
         ###                                        "Plugin2_name":aMSNProfilePlugin(self,{"option1":"sdda","option2":345})
         ###                                        }
-        self.plugins = {}
+        self.plugin_configs = {}
     
     def isLocked(self):
         """ Returns whether the profile is locked or not"""
@@ -72,13 +73,21 @@ class aMSNProfile(object):
         return self.config.setKey(key, value)
 
     def getPluginKey(self, plugin_name, key, default = None):
-        return self.plugins.getKey(plugin_name, key, default)
+        try:
+            return self.plugin_configs[plugin_name].getKey(key, default)
+        except KeyError:
+            return default
 
     def setPluginKey(self, plugin_name, key, value):
-        return self.plugins.setKey(plugin_name, key, value)
+        try:
+            self.plugin_configs[plugin_name].setKey(key, default)
+            return True
+        except KeyError:
+            return False
     
     def addPlugin(self, plugin_name, plugin_config_dict):
-        self.plugins[plugin_name] = aMSNProfilePlugin(self, plugin_config_dict)
+        self.plugin_configs[plugin_name] = \
+            aMSNPluginConfiguration(self, plugin_name, plugin_config_dict)
     
     def removePlugin(self, plugin_name):
         return self.plugins.pop(plugin_name, None)
