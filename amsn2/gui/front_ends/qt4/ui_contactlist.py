@@ -75,7 +75,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
         self.cList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.cList.setSortingEnabled(True)
         self.cList.setAnimated(True)
-        self.cList.setHeaderHidden(True)
+        #self.cList.setHeaderHidden(True)
         self.cList.setObjectName("cList")
         self.verticalLayout.addWidget(self.cList)
 
