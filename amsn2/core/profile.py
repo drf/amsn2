@@ -142,7 +142,7 @@ class aMSNProfileManager(object):
         
     def deleteProfile(self, profile):
         """ Removes a profile from the current instance of aMSN and deletes it from disk """
-        profile_dir_path = os.path.join(os.environ['HOME'], ".amsn2", "profiles", profile.email)
+        profile_dir_path = os.path.join(self._profiles_dir, profile.email)
         
         for root, dirs, files in os.walk(profile_dir_path, topdown=False):
             for name in files:
@@ -160,7 +160,7 @@ class aMSNProfileManager(object):
         """ Stores a profile on disk """        
         config = profile.config.config
             
-        config_section = dictToElement("Configurations", config)
+        config_section = self.__dictToElement("Configurations", config)
         
         settings = {"email":profile.email,
                     "username":profile.username,
@@ -174,14 +174,14 @@ class aMSNProfileManager(object):
         if profile.account == None :
             settings["account"] = ""
         
-        settings_section = dictToElement("Settings", settings)
+        settings_section = self.__dictToElement("Settings", settings)
         
         plugins = profile.plugins
         
         plugins_section = xml.etree.ElementTree.Element("Plugins")
         
         for plugin_name, plugin in plugins.iteritems():
-            plugin_section = dictToElement(plugin_name, plugin.config)
+            plugin_section = self.__dictToElement(plugin_name, plugin.config)
             plugins_section.append(plugin_section)
         
         root_section = xml.etree.ElementTree.Element("aMSNProfile")
@@ -202,7 +202,7 @@ class aMSNProfileManager(object):
         except :
             pass
         
-        profile_path = os.path.join(self._profiles_dir, profile.email, "settings.xml")
+        profile_path = os.path.join(self._profiles_dir, profile.email, "config.xml")
         profile_file = file(profile_path, "w")
         xml_tree.write(profile_file)
         profile_file.close()
@@ -220,7 +220,7 @@ class aMSNProfileManager(object):
             break
 
         for profile_dir in profiles_dirs :
-            profile_file_path = os.path.join(self._profiles_dir, profile_dir, "settings.xml")
+            profile_file_path = os.path.join(self._profiles_dir, profile_dir, "config.xml")
             
             ### Prepares XML Elements
             root_tree = xml.etree.ElementTree.parse(profile_file_path)
@@ -232,7 +232,7 @@ class aMSNProfileManager(object):
             settings.remove(plugins)
             
             ### Loads Settings
-            settings_dict = elementToDict(settings) 
+            settings_dict = self.__elementToDict(settings) 
             profile = aMSNProfile(settings_dict['email'])
             profile.username = settings_dict['username']
             profile.alias = settings_dict['alias']
@@ -246,13 +246,13 @@ class aMSNProfileManager(object):
                 profile.account = None
                 
             ### Loads Configurations
-            configs_dict = elementToDict(configs)
+            configs_dict = self.__elementToDict(configs)
             profile.config.config = configs_dict
             
             ### Loads Plugins
             plugins_dict = {}
             for plugin_element in plugins:
-                plugins_dict[plugin_element.tag] = elementToDict(plugin_element)
+                plugins_dict[plugin_element.tag] = self.__elementToDict(plugin_element)
             
             profile.plugins = {}
             for plugin_name, plugin_config_dict in plugins_dict.iteritems():
@@ -261,9 +261,8 @@ class aMSNProfileManager(object):
             ### Finally loads the Profile
             self.profiles[profile.email] = profile
 
-def elementToDict(element):
-    """ Converts an XML Element into a proper profile dictionary """
-    def dictToTuple(name, dict):
+            
+    def __dictToTuple(self, name, dict):
         """ Converts a dictionary returned by expat XML parser into a proper tuple and adds it to a list ready for dict() """
         key = dict['name']
         type = dict['type']
@@ -272,37 +271,40 @@ def elementToDict(element):
         config_pair = (key,eval(type)(value))
         
         config_pair_list.append(config_pair)
-    
-    config_pair_list = []
-    
-    for entry in element :
-        entry_str = xml.etree.ElementTree.tostring(entry)
-        
-        parser=xml.parsers.expat.ParserCreate()
-        parser.StartElementHandler = dictToTuple
-        parser.Parse(entry_str, 1)
-        del parser
-        
-    config_dict = dict(config_pair_list)
-    
-    return config_dict
 
-def dictToElement(name, dict):
-    """ Converts a dictionary into a proper XML Element with tag 'name' """
-    keys=[]
-    types=[]
-    values=[]
+    def __elementToDict(self, element):
+        """ Converts an XML Element into a proper profile dictionary """
     
-    root_element = xml.etree.ElementTree.Element(name)
+        config_pair_list = []
     
-    for key, value in dict.iteritems() :
-        keys.append(key)
-        values.append(str(value))
-        type_obj = __builtin__.type(value)
-        types.append(str(type_obj)[7:-2])
+        for entry in element :
+            entry_str = xml.etree.ElementTree.tostring(entry)
+        
+            parser=xml.parsers.expat.ParserCreate()
+            parser.StartElementHandler = self.__dictToTuple
+            parser.Parse(entry_str, 1)
+            del parser
+        
+            config_dict = dict(config_pair_list)
     
-    for key, type, value in zip(keys, types, values) :
-        element = xml.etree.ElementTree.Element("entry", {"name":key, "type":type, "value":value})
-        root_element.append(element)
+            return config_dict
+
+    def __dictToElement(self, name, dict):
+        """ Converts a dictionary into a proper XML Element with tag 'name' """
+        keys=[]
+        types=[]
+        values=[]
     
-    return root_element
+        root_element = xml.etree.ElementTree.Element(name)
+    
+        for key, value in dict.iteritems() :
+            keys.append(key)
+            values.append(str(value))
+            type_obj = __builtin__.type(value)
+            types.append(str(type_obj)[7:-2])
+    
+        for key, type, value in zip(keys, types, values) :
+            element = xml.etree.ElementTree.Element("entry", {"name":key, "type":type, "value":value})
+            root_element.append(element)
+    
+        return root_element
