@@ -68,7 +68,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         self._parent.fadeIn(self)
 
     def hide(self):
-        self._parent.fadeOut(self)
+        pass
 
     def switch_to_profile(self, profile):
         self._username = ""

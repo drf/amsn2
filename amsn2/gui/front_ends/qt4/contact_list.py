@@ -20,7 +20,7 @@ class aMSNContactList(StyledWidget, base.aMSNContactList):
         self._parent.fadeIn(self)
 
     def hide(self):
-        self._parent.fadeOut(self)
+        pass
 
     def groupAdded(self, group):
         groupItem = QTreeWidgetItem(self.ui.cList)
