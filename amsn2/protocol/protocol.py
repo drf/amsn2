@@ -1,6 +1,8 @@
 
 import pymsn
 import pymsn.event
+from client import *
+from contact import *
 
 class Client(pymsn.Client):
     def __init__(self, amsn_core, profile):
