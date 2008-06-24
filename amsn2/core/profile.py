@@ -98,9 +98,11 @@ class aMSNProfileManager(object):
     """
     def __init__(self):
         if os.name == "posix":
-            self._profiles_dir = os.path.join(os.environ['HOME'], ".amsn2", "profiles")
+            self._profiles_dir = os.path.join(os.environ['HOME'], ".amsn2")
         elif os.name == "nt":
-            self._profiles_dir = os.path.join(os.environ['USERPROFILE'], "amsn2", "profiles")
+            self._profiles_dir = os.path.join(os.environ['USERPROFILE'], "amsn2")
+        else:
+            self._profiles_dir = os.path.join(os.curdir, "amsn2")
         self.profiles = {}
         self.loadAllProfiles()
 
