@@ -23,7 +23,8 @@ class aMSNProfilesList(object):
         else :
             self.root_element = xml.etree.ElementTree.Element("aMSNProfilesList")
             
-            self.tree = xml.etree.ElementTree.ElementTree(element = profiles_element)
+            self.tree = xml.etree.ElementTree.ElementTree(element =
+                                                          self.root_element)
     
     def setProfileKey(self, profile_name, key, value):
         pass
@@ -296,7 +297,9 @@ class aMSNProfileManager(object):
             profile_file_path = os.path.join(self._profiles_dir, \
                                              profile_name, \
                                              "config.xml")
-            
+            if os.path.exists(profile_file_path) is False:
+                continue
+
             ### Prepares XML Elements
             root_tree = xml.etree.ElementTree.parse(profile_file_path)
             settings = root_tree.find("Settings")
