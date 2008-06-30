@@ -82,7 +82,24 @@ class ContactHolder(evas.SmartObject):
     def contact_updated(self, contact):
         self.contacts[contact.uid].\
             part_text_set("contact_data", contact.name.toString())
-
+        
+        # add the buddy icon
+        print contact.icon._img.file_get()
+        part_size = self.contacts[contact.uid].\
+            part_size_get("buddy_icon")
+        print part_size
+        # Remove the current icon
+        obj_swallowed = self.contacts[contact.uid].\
+            part_swallow_get("buddy_icon")
+        if obj_swallowed is not None:
+            # Delete ?
+            obj_swallowed.hide()
+        contact.icon._img.size_set(part_size[0], part_size[1])
+        contact.icon._img.fill_set(0,0, part_size[0], part_size[1])
+        self.contacts[contact.uid].\
+            part_swallow("buddy_icon", contact.icon._img)
+        
+        """
         status = ""
         found = False
         for x in contact.name._elements:
@@ -96,6 +113,7 @@ class ContactHolder(evas.SmartObject):
                 found = False
         if status != "":
             self.contacts[contact.uid].signal_emit("state_changed", status.strip("()"))
+        """
 
     def add_contact(self, contact):
         new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,

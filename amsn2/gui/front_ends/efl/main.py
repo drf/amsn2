@@ -2,6 +2,7 @@ from constants import *
 import ecore
 import ecore.evas
 import ecore.x
+import skins
 
 from amsn2.gui import base
 

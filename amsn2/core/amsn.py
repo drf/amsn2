@@ -4,7 +4,6 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
-import skins
     
 class aMSNCore(object):
     def __init__(self, options):
@@ -23,8 +22,8 @@ class aMSNCore(object):
         self._gui_name = self._options.front_end
         self._gui = gui.GUIManager(self, self._gui_name)
         self._loop = self._gui.gui.aMSNMainLoop(self)
-        self._main = self._gui.gui.aMSNMainWindow(self);
-        self._skin_manager = skins.SkinManager(self)
+        self._main = self._gui.gui.aMSNMainWindow(self)
+        self._skin_manager = self._gui.gui.SkinManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
@@ -35,7 +34,7 @@ class aMSNCore(object):
                     pymsn.Presence.OUT_TO_LUNCH:"lunch",
                     pymsn.Presence.INVISIBLE:"hidden",
                     pymsn.Presence.OFFLINE:"offline"}
-        
+
         if self._options.debug:
             import logging
             logging.basicConfig(level=logging.DEBUG)
@@ -159,8 +158,7 @@ class aMSNCore(object):
     def buildContact(self, contact):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = self._gui.gui.Image(self, self._main)
-        contactV.icon.loadFromFile(self._skin_manager.skin. \
-                        getFilename("buddy_" + self.p2s[contact.presence]));
+        contactV.icon.loadFromResource("buddy_" + self.p2s[contact.presence])
         contactV.name = StringView() # TODO : default colors
         contactV.name.openTag("nickname")
         contactV.name.appendText(contact.display_name) # TODO parse

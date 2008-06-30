@@ -10,18 +10,22 @@ class Image(base.Image):
         self._amsn_core = amsn_core
         self._amsn_gui = self._amsn_core.getMainWindow()
         self._evas = self._amsn_gui._evas
+        self._skin = self._amsn_core._skin_manager.skin
         self._img = self._evas.evas.Image()
 
     def loadFromFile(self, filename):
+        print "loading image %s" % filename
         try:
             self._img.file_set(filename)
         except evas.EvasLoadError, e:
-            print "EvasLoadError: %s" % e
-        else:
-            print self._img.load_error
-
+            print "EvasLoadError: %s" % (e,)
+            #TODO : raise ImgLoadError ?
 
     def loadFromResource(self, resource_name):
-        raise NotImplementedError
+        #TODO: the image can be an edje part...
+        # getKey should return smthg like (value, type) ?
+        file = self._skin.getKey(resource_name)
+        if file is not None:
+            self.loadFromFile(file)
 
 

@@ -11,8 +11,6 @@ class Skin(object):
     def setKey(self, key, value):
         pass
 
-    def getFilename(self, name):
-        return os.path.join(self._path, name + ".png")
 
 
 class SkinManager(object):
@@ -25,4 +23,3 @@ class SkinManager(object):
 
     def listSkins(self, path):
         pass
-

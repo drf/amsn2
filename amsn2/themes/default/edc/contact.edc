@@ -11,10 +11,12 @@ group {
   parts {
     part {
       name: "buddy_icon";
-      type: IMAGE;
+      type: SWALLOW;
       mouse_events: 0;
       description {
         state: "default" 0.0;
+        min: 24 24;
+        max: 24 24;
         rel1 {
           relative: 0.0 0.0;
           offset: 0 0;
@@ -24,24 +26,7 @@ group {
           offset: 24 0;
         }
       }
-#define CONTACT_STATUS(STATE, IMG)   \
-      description {                  \
-        state: STATE 0.0;            \
-        inherit: "default" 0.0;	     \
-	image {                      \
-          normal: IMG".png";         \
-          border: 0 0 0 0;           \
-        }                            \
-      }
-      CONTACT_STATUS("away", "away")
-      CONTACT_STATUS("busy", "busy")
-      CONTACT_STATUS("online", "online")
-      CONTACT_STATUS("offline", "offline")
-      CONTACT_STATUS("brb", "away")
-      CONTACT_STATUS("phone", "away")
-      CONTACT_STATUS("launch", "away")
-      CONTACT_STATUS("idle", "away")
-    }
+    } 
     part {
       name: "contact_data";
       type: TEXTBLOCK;
@@ -65,24 +50,4 @@ group {
     }
   }
     
-  programs {
-#define PROGRAM_STATUS(STATE)                            \
-    program {                                            \
-      name: "state_changed_to_"STATE;                    \
-      signal: "state_changed";				 \
-      source: STATE;					 \
-      script {                                           \
-	set_state(PART:"buddy_icon", STATE, 0.0);        \
-      }	                                                 \
-    }
-    
-    PROGRAM_STATUS("away")
-    PROGRAM_STATUS("busy")
-    PROGRAM_STATUS("online")
-    PROGRAM_STATUS("offline")
-    PROGRAM_STATUS("brb")
-    PROGRAM_STATUS("phone")
-    PROGRAM_STATUS("launch")
-    PROGRAM_STATUS("idle")
-  }
 }
