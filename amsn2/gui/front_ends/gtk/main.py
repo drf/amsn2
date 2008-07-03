@@ -1,6 +1,7 @@
 
 from amsn2.gui import base
 
+import skins
 import gtk
 
 class aMSNMainWindow(base.aMSNMainWindow):
