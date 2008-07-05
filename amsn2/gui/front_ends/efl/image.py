@@ -21,11 +21,18 @@ class Image(base.Image):
             print "EvasLoadError: %s" % (e,)
             #TODO : raise ImgLoadError ?
 
+    def loadFromEET(self, (eetfile, key)):
+        print "eetfile = %s, key = %s" % (eetfile, key)
+        self._img.file_set(eetfile, key)
+
+
     def loadFromResource(self, resource_name):
-        #TODO: the image can be an edje part...
-        # getKey should return smthg like (value, type) ?
-        file = self._skin.getKey(resource_name)
-        if file is not None:
-            self.loadFromFile(file)
+        (type, value) = self._skin.getKey(resource_name)
+        try:
+            loadMethod = getattr(self, "loadFrom%s" % type)
+        except AttributeError, e:
+            print "From loadFromResource in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
+        else:
+            loadMethod(value)
 
 

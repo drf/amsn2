@@ -5,15 +5,19 @@ class Skin(object):
         self._path = path
         self._dict = {}
         #TODO : remove, it's just here for test purpose
-        self.setKey("buddy_away", "amsn2/themes/default/images/away.png")
-        self.setKey("buddy_brb", "amsn2/themes/default/images/away.png")
-        self.setKey("buddy_busy", "amsn2/themes/default/images/busy.png")
-        self.setKey("buddy_hidden", "amsn2/themes/default/images/offline.png")
-        self.setKey("buddy_idle", "amsn2/themes/default/images/away.png")
-        self.setKey("buddy_lunch", "amsn2/themes/default/images/away.png")
-        self.setKey("buddy_offline", "amsn2/themes/default/images/offline.png")
-        self.setKey("buddy_online", "amsn2/themes/default/images/online.png")
-        self.setKey("buddy_phone", "amsn2/themes/default/images/busy.png")
+        #TODO : explain a bit :D
+        self.setKey("buddy_away", ("File", "amsn2/themes/default/images/away.png"))
+        self.setKey("buddy_brb", ("File", "amsn2/themes/default/images/away.png"))
+
+        # Just to show you can use an image from the edj file
+        self.setKey("buddy_busy", ("EET", ("amsn2/themes/default.edj", "images/0")))
+
+        self.setKey("buddy_hidden", ("File", "amsn2/themes/default/images/offline.png"))
+        self.setKey("buddy_idle", ("File", "amsn2/themes/default/images/away.png"))
+        self.setKey("buddy_lunch", ("File", "amsn2/themes/default/images/away.png"))
+        self.setKey("buddy_offline", ("File", "amsn2/themes/default/images/offline.png"))
+        self.setKey("buddy_online", ("File", "amsn2/themes/default/images/online.png"))
+        self.setKey("buddy_phone", ("File", "amsn2/themes/default/images/busy.png"))
 
          
     def getKey(self, key, default = None):
