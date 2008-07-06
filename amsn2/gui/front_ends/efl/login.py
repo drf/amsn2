@@ -97,7 +97,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
     # Private methods
     def __on_key_down(self, obj, event):
-        if event.keyname in ("F6"):
+        if event.keyname == "F6":
             self._evas.fullscreen = not self._evas.fullscreen
         elif event.keyname == "F5":
             self._evas.borderless = not self._evas.borderless
