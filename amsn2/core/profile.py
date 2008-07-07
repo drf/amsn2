@@ -27,10 +27,32 @@ class aMSNProfilesList(object):
                                                           self.root_element)
     
     def setProfileKey(self, profile_name, key, value):
-        pass
+        self.updateProfilesList()
+        if self.ProfileIsListed(profile_name):
+            profile_element = self.root_element.find(profile_name.replace("@", "_"))
+            self.root_element.remove(profile_element)
+            profile_dict = elementToDict(profile_element)
+            
+            if profile_dict.has_key(key):
+                profile_dict[key] = value
+                profile_element = dictToElement(profile_name.replace("@", "_"), profile_dict)
+                self.root_element.append(profile_element)
+                self.saveProfilesList()
+            else:
+                raise ProfileKeyNotListedError
     
-    def getProfileKey(self, profile_name, key):
-        pass
+    def getProfileKey(self, profile_name, key, default=None):
+        self.updateProfilesList()
+        if self.ProfileIsListed(profile_name):
+            profile_element = self.root_element.find(profile_name.replace("@", "_"))
+            profile_dict = elementToDict(profile_element)
+            
+            try:
+                return profile_dict[key]
+            except KeyError:
+                return default
+        else:
+            return default
     
     def addProfile(self, profile, attributes_dict):
         """ Adds a profile section in profiles.xml """
@@ -47,7 +69,7 @@ class aMSNProfilesList(object):
                 self.root_element.remove(profile_element)
         self.saveProfilesList()
     
-    def getProfilesNamesList(self):
+    def getAllProfilesNames(self):
         """ Returns a list of all profiles' email addresses """
         self.updateProfilesList()
         names_list = []
@@ -57,6 +79,9 @@ class aMSNProfilesList(object):
             names_list.append(profile_dict["email"])
         
         return names_list
+    
+    def ProfileIsListed(self, profile_name):
+        return (profile_name in self.getAllProfilesNames())
 
     def saveProfilesList(self):
         """ Dumps aMSNProfilesList XML tree into profiles.xml """
@@ -291,7 +316,7 @@ class aMSNProfileManager(object):
     
     def loadAllProfiles(self):
         """ Loads all profiles from disk """  
-        profiles_names = self.profiles_list.getProfilesNamesList()
+        profiles_names = self.profiles_list.getAllProfilesNames()
         
         for profile_name in profiles_names :
             profile_file_path = os.path.join(self._profiles_dir, \
