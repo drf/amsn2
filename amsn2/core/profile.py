@@ -57,9 +57,10 @@ class aMSNProfilesList(object):
     def addProfile(self, profile, attributes_dict):
         """ Adds a profile section in profiles.xml """
         self.updateProfilesList()
-        profile_element = dictToElement(profile.email.replace("@","_"), attributes_dict)
-        self.root_element.append(profile_element)
-        self.saveProfilesList()
+        if self.ProfileIsListed(profile.email) is False:
+            profile_element = dictToElement(profile.email.replace("@","_"), attributes_dict)
+            self.root_element.append(profile_element)
+            self.saveProfilesList()
     
     def deleteProfile(self, profile):
         """ Deletes a profile section from profiles.xml """
@@ -81,6 +82,7 @@ class aMSNProfilesList(object):
         return names_list
     
     def ProfileIsListed(self, profile_name):
+        """ Returns True if the profile is in profiles.xml """
         return (profile_name in self.getAllProfilesNames())
 
     def saveProfilesList(self):
@@ -120,6 +122,34 @@ class aMSNPluginConfiguration(object):
     def setKey(self, key, value):
         self.config[key] = value
 
+class aMSNSmileyConfiguration(object):
+    """ aMSNSmileyCinfiguration : A smiley object for profiles."""
+    def __init__(self, profile, smiley, config_dict):
+        """ config_dict must be a dictionary of configurations ("option": value, ...), 
+            the "shortcut" and "image" keys are mandatory."""
+        self._profile = profile
+        self._smiley = smiley
+        self.config = config_dict
+        self.config["valid"] = self.smileyIsValid()
+
+    def smileyIsValid(self):
+        """ Checks whether a shortcut and a image file are defined 
+            and if the image file is accessible. Accordingly sets the "valid" key"""
+        if self.config.has_key("shortcut") and self.config.has_key("image") :
+            self.image_path = os.path.join(self._profile.directory, "smileys", self.config["image"])
+            if os.access(self.image_path, os.R_OK) :
+                return True
+        return False
+
+    def getKey(self, key, default = None):
+        try:
+            return self.config[key]
+        except KeyError:
+            return default
+        
+    def setKey(self, key, value):
+        self.config[key] = value
+
 class aMSNProfile(object):
     """ aMSNProfile : a Class to represent an aMSN profile
     This class will contain all settings relative to a profile
@@ -133,10 +163,14 @@ class aMSNProfile(object):
         self.account = None
         self.directory = os.path.join(profiles_dir, self.email)
         self.config = aMSNProfileConfiguration(self)
-        ###self.plugin_configs must be a dictionary like {"Plugin1_name":aMSNPluginConfiguration(self,"Plugin1_name",{"option1":123}),
+        ###self.plugins_configs must be a dictionary like {"Plugin1_name":aMSNPluginConfiguration(self,"Plugin1_name",{"option1":123}),
         ###                                        "Plugin2_name":aMSNPluginConfiguration(self,"Plugin2_name",{"option1":"sdda","option2":345})
         ###                                        }
-        self.plugin_configs = {}
+        self.plugins_configs = {}
+        ###self.smileys_configs must be a dictionary like {"Smiley1_name":aMSNSmileyConfiguration(self,"Smiley1_name",{"shortcut":";D", "image":image_file_name}),
+        ###                                        "Smiley2_name":.....
+        ###                                        }
+        self.smileys_configs = {}
     
     def isLocked(self):
         """ Returns whether the profile is locked or not"""
@@ -171,23 +205,43 @@ class aMSNProfile(object):
 
     def getPluginKey(self, plugin_name, key, default = None):
         try:
-            return self.plugin_configs[plugin_name].getKey(key, default)
+            return self.plugins_configs[plugin_name].getKey(key, default)
         except KeyError:
             return default
 
     def setPluginKey(self, plugin_name, key, value):
         try:
-            self.plugin_configs[plugin_name].setKey(key, default)
+            self.plugins_configs[plugin_name].setKey(key, default)
             return True
         except KeyError:
             return False
     
-    def addPlugin(self, plugin_name, plugin_config_dict):
-        self.plugin_configs[plugin_name] = \
+    def addPlugin(self, plugin_name, plugin_config_dict={}):
+        self.plugins_configs[plugin_name] = \
             aMSNPluginConfiguration(self, plugin_name, plugin_config_dict)
     
     def removePlugin(self, plugin_name):
-        return self.plugin_configs.pop(plugin_name, None)
+        return self.plugins_configs.pop(plugin_name, None)
+    
+    def getSmileyKey(self, plugin_name, key, default = None):
+        try:
+            return self.plugins_configs[plugin_name].getKey(key, default)
+        except KeyError:
+            return default
+
+    def setSmileyKey(self, plugin_name, key, value):
+        try:
+            self.plugins_configs[plugin_name].setKey(key, default)
+            return True
+        except KeyError:
+            return False
+    
+    def addSmiley(self, smiley_name, smiley_config_dict={"shortcut":"dummy", "image":"dummy"}):
+        self.smileys_configs[smiley_name] = \
+            aMSNSmileyConfiguration(self, smiley_name, smiley_config_dict)
+    
+    def removeSmiley(self, smiley_name):
+        return self.smileys_configs.pop(smiley_name, None)
     
 
 class aMSNProfileManager(object):
@@ -282,18 +336,25 @@ class aMSNProfileManager(object):
         
         settings_section = dictToElement("Settings", settings)
         
-        plugins = profile.plugin_configs
-        
+        plugins = profile.plugins_configs        
         plugins_section = xml.etree.ElementTree.Element("Plugins")
-        
+
         for plugin_name, plugin in plugins.iteritems():
             plugin_section = dictToElement(plugin_name, plugin.config)
             plugins_section.append(plugin_section)
+
+        smileys = profile.smileys_configs
+        smileys_section = xml.etree.ElementTree.Element("Smileys")
+        
+        for smiley_name, smiley in smileys.iteritems():
+            smiley_section = dictToElement(smiley_name, smiley.config)
+            smileys_section.append(smiley_section)
         
         root_section = xml.etree.ElementTree.Element("aMSNProfile")
         
         settings_section.append(config_section)
         settings_section.append(plugins_section)
+        settings_section.append(smileys_section)
         root_section.append(settings_section)
         
         xml_tree = xml.etree.ElementTree.ElementTree(root_section)
@@ -314,6 +375,10 @@ class aMSNProfileManager(object):
         xml_tree.write(profile_file)
         profile_file.close()
     
+    def saveAllProfiles(self):
+        for profile in self.getAllProfiles():
+            self.saveProfile(profile)
+    
     def loadAllProfiles(self):
         """ Loads all profiles from disk """  
         profiles_names = self.profiles_list.getAllProfilesNames()
@@ -333,6 +398,8 @@ class aMSNProfileManager(object):
             settings.remove(configs)
             plugins = settings_tree.find("Plugins")
             settings.remove(plugins)
+            smileys = settings_tree.find("Smileys")
+            settings.remove(smileys)
             
             ### Loads Settings
             settings_dict = elementToDict(settings)
@@ -357,10 +424,17 @@ class aMSNProfileManager(object):
             for plugin_element in plugins:
                 plugins_dict[plugin_element.tag] = elementToDict(plugin_element)
             
-            profile.plugins = {}
             for plugin_name, plugin_config_dict in plugins_dict.iteritems():
                 profile.addPlugin(plugin_name, plugin_config_dict)
+
+            ### Loads Smileys
+            smileys_dict = {}
+            for smiley_element in smileys:
+                smileys_dict[smiley_element.tag] = elementToDict(smiley_element)
             
+            for smiley_name, smiley_config_dict in smileys_dict.iteritems():
+                profile.addSmiley(smiley_name, smiley_config_dict)
+
             ### Finally loads the Profile
             self.profiles[profile.email] = profile
 
