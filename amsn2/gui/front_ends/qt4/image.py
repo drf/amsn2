@@ -12,4 +12,5 @@ class Image(QPixmap, base.Image):
         self.load(filename)
 
     def loadFromResource(self, resource_name):
-        raise NotImplementedError
+        #raise NotImplementedError
+        pass
