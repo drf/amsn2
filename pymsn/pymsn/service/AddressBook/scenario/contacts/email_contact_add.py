@@ -40,7 +40,7 @@ class EmailContactAddScenario(BaseScenario):
         return self.__email_address
     email_address = property(__get_email_address, __set_email_address,
                             doc="The mail address of the contact")
-    
+
     def __set_contact_info(self, contact_info):
         self.__contact_info = contact_info
     def __get_contact_info(self):
@@ -50,9 +50,9 @@ class EmailContactAddScenario(BaseScenario):
                                 "information about the contact")
 
     def execute(self):
-        contact_info['passport_name'] = self.__mail_address
+        contact_info['passport_name'] = self.__email_address
         contact_info['is_messenger_user'] = False
-        self.__ab.ContactAdd((self.__contact_add_callback,), 
+        self.__ab.ContactAdd((self.__contact_add_callback,),
                              (self.__contact_add_errback,),
                              self.__scenario, self.__contact_info, {})
 
