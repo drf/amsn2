@@ -1,24 +1,14 @@
+from base import BaseUIView
 
-class ContactView (object):
-    contacts = {}
+class ContactView (BaseUIView):
     def __init__(self, uid):
-        self.uid = uid
-        self.icon = None
-        self.name = None 
+        BaseUIView.__init__(self, uid)
         self.dp = None
-        self.menu = None
-        self.tooltip = None
-        ContactView.registerContact(self.uid, self)
-
-
-    @staticmethod
-    def registerContact(uid, contact):
-        ContactView.contacts[uid] = contact
 
     @staticmethod
     def getContact(uid):
-        try:
-            return ContactView.contacts[uid]
-        except KeyError:
+        contact = BaseUIView.getView(uid)
+        if contact is None:
             return ContactView(uid)
-
+        else:
+            return contact

@@ -1,22 +1,14 @@
+from base import BaseUIView
 
-class GroupView (object):
-    groups = {}
+class GroupView (BaseUIView):
     def __init__(self, uid):
-        self.uid = uid
-        self.icon = None
-        self.name = None
+        BaseUIView.__init__(self, uid)
         self.contacts = []
-        self.menu = None
-        self.tooltip = None
-        GroupView.registerGroup(self.uid, self)
-
-    @staticmethod
-    def registerGroup(uid, group):
-        GroupView.groups[uid] = group
 
     @staticmethod
     def getGroup(uid):
-        try:
-            return GroupView.groups[uid]
-        except KeyError:
+        group = BaseUIView.getView(uid)
+        if group is None:
             return GroupView(uid)
+        else:
+            return group
