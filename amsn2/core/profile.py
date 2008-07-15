@@ -292,12 +292,8 @@ class aMSNProfileManager(object):
     def createProfile(self, email):
         """ Creates a profile and stores it on disk and adds it to the current instance """
         new_profile = self.addProfile(email)
-        new_profile_opts = {"email":email, 
-                            "auto_connect":False
-                            } ### Other attributes
-        self.profiles_list.addProfile(new_profile, new_profile_opts)
         self.saveProfile(new_profile)
-        return new_profile
+        return self.getProfile(email)
 
     def removeProfile(self, profile, and_delete=False):
         """ Removes a profile from the current instance of aMSN """
@@ -374,6 +370,11 @@ class aMSNProfileManager(object):
         profile_file = file(profile_path, "w")
         xml_tree.write(profile_file)
         profile_file.close()
+        
+        list_opts={"email":profile.email,
+                   "auto_connect":False
+                   }
+        self.profiles_list.addProfile(profile, list_opts)
     
     def saveAllProfiles(self):
         for profile in self.getAllProfiles():
