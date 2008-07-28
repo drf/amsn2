@@ -150,7 +150,7 @@ class aMSNCore(object):
         groupV = GroupView.getGroup(group.id if group else 0)
         groupV.icon = None # TODO : expanded/collapsed icon
         groupV.name = StringView() # TODO : default color from skin/settings
-        groupV.name.appendText(group.name if group else "No Group") # TODO : prase or translation
+        groupV.name.appendText(group.name if group else "No Group") # TODO : parse or translation
         groupV.name.appendText("(" + str(active) + "/" + str(total) + ")")
         
         return groupV
@@ -159,6 +159,8 @@ class aMSNCore(object):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = self._gui.gui.Image(self, self._main)
         contactV.icon.loadFromResource("buddy_" + self.p2s[contact.presence])
+        contactV.dp = self._gui.gui.Image(self, self._main)
+        contactV.dp.loadFromResource("default_dp")
         contactV.name = StringView() # TODO : default colors
         contactV.name.openTag("nickname")
         contactV.name.appendText(contact.display_name) # TODO parse

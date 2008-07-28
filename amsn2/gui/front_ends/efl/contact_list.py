@@ -80,40 +80,34 @@ class ContactHolder(evas.SmartObject):
         self.contacts = {}
 
     def contact_updated(self, contact):
+        #TODO : clean :)
         self.contacts[contact.uid].\
             part_text_set("contact_data", contact.name.toString())
+       
+        if DP_IN_CL:
+            # add the dp
+            # Remove the current dp
+            obj_swallowed = self.contacts[contact.uid].\
+                part_swallow_get("buddy_icon")
+            if obj_swallowed is not None:
+                # Delete ?
+                obj_swallowed.hide()
+            #add emblem on dp
+            #shouldn't be done there, but in the core...
+            contact.dp.addFromResource("emblem_busy") #yeah, everyone is busy!!
+            self.contacts[contact.uid].\
+                part_swallow("buddy_icon", contact.dp)
+        else:
+            # add the buddy icon
+            # Remove the current icon
+            obj_swallowed = self.contacts[contact.uid].\
+                part_swallow_get("buddy_icon")
+            if obj_swallowed is not None:
+                # Delete ?
+                obj_swallowed.hide()
+            self.contacts[contact.uid].\
+                part_swallow("buddy_icon", contact.icon)
         
-        # add the buddy icon
-        print contact.icon._img.file_get()
-        part_size = self.contacts[contact.uid].\
-            part_size_get("buddy_icon")
-        print part_size
-        # Remove the current icon
-        obj_swallowed = self.contacts[contact.uid].\
-            part_swallow_get("buddy_icon")
-        if obj_swallowed is not None:
-            # Delete ?
-            obj_swallowed.hide()
-        contact.icon._img.size_set(part_size[0], part_size[1])
-        contact.icon._img.fill_set(0,0, part_size[0], part_size[1])
-        self.contacts[contact.uid].\
-            part_swallow("buddy_icon", contact.icon._img)
-        
-        """
-        status = ""
-        found = False
-        for x in contact.name._elements:
-            if x.getType() == StringView.OPEN_TAG_ELEMENT and \
-                   x.getValue() == "status":
-                found = True
-            if found and x.getType() == StringView.TEXT_ELEMENT:
-                status += x.getValue()
-            if x.getType() == StringView.CLOSE_TAG_ELEMENT and \
-                   x.getValue() == "status":
-                found = False
-        if status != "":
-            self.contacts[contact.uid].signal_emit("state_changed", status.strip("()"))
-        """
 
     def add_contact(self, contact):
         new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,
@@ -127,9 +121,11 @@ class ContactHolder(evas.SmartObject):
         return new_contact
         
     def show(self):
+        print "show", self.size
         self.update_widget(self.size[0], self.size[1])
         
     def hide(self):
+        print "hide" ,self.size
         self.update_widget(self.size[0], self.size[1])
 
     def clip_set(self, obj):

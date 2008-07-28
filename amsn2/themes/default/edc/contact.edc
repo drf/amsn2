@@ -15,7 +15,7 @@ group {
       mouse_events: 0;
       description {
         state: "default" 0.0;
-        min: 24 24;
+        min: 0 0;
         max: 24 24;
         rel1 {
           relative: 0.0 0.0;
@@ -35,7 +35,7 @@ group {
 
         rel1 {
           relative: 0.0 0.0;
-          offset: 24 0;
+          offset: 25 0;
         }
         rel2 {
           relative: 1.0 1.0;

@@ -19,6 +19,10 @@ class Skin(object):
         self.setKey("buddy_online", ("File", "amsn2/themes/default/images/online.png"))
         self.setKey("buddy_phone", ("File", "amsn2/themes/default/images/busy.png"))
 
+        self.setKey("default_dp", ("File", "amsn2/themes/default/images/contact_list/nopic.png"))
+
+        self.setKey("emblem_busy", ("File", "amsn2/themes/default/images/contact_list/busy_emblem.png"))
+
          
     def getKey(self, key, default = None):
         try:
