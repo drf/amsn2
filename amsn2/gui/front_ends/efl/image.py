@@ -14,62 +14,70 @@ class Image(evas.SmartObject, base.Image):
 
         
         self._skin = self._amsn_core._skin_manager.skin
+        self._imgs = []
+
+
+
+    #######################################################
+    #Public methods
+    def load(self, resource_type, value):
         self._imgs = [ self._evas.evas.Image() ]
-
-    def loadFromFile(self, filename):
-        print "loading image %s" % filename
         try:
-            self._imgs[1:] = []
-            self._imgs[0].file_set(filename)
+            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From load in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value)
+        
+    def append(self, resource_type, value):
+        self._imgs.append(self._evas.evas.Image())
+        try:
+            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From append in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value, pos=-1)
+
+    def prepend(self, resource_type, value):
+        self._imgs.insert(0, self._evas.evas.Image())
+        try:
+            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From prepend in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value, pos=0)
+
+
+
+    #######################################################
+    # Private methods
+    def __loadFromFile(self, filename, pos=0):
+        try:
+            self._imgs[pos].file_set(filename)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
-            #TODO : raise ImgLoadError ?
 
-    def loadFromEET(self, (eetfile, key)):
-        print "eetfile = %s, key = %s" % (eetfile, key)
+    def __loadFromEET(self, (eetfile, key), pos=0):
         try:
-            self._imgs[1:] = []
-            self._imgs[0].file_set(eetfile, key)
+            self._imgs[pos].file_set(eetfile, key)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
-            #TODO : raise ImgLoadError ?
 
-
-    def loadFromResource(self, resource_name):
+    def __loadFromSkin(self, resource_name, pos=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
             (type, value) = res
             try:
-                loadMethod = getattr(self, "loadFrom%s" % type)
+                loadMethod = getattr(self, "__loadFrom%s" % type)
             except AttributeError, e:
-                print "From loadFromResource in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
+                print "From __loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
             else:
-                loadMethod(value)
-
-    def addFromFile(self, filename): 
-        print "loading image %s" % filename
-        try:
-            self._imgs.append(self._evas.evas.Image())
-            self._imgs[-1].file_set(filename)
-        except evas.EvasLoadError, e:
-            print "EvasLoadError: %s" % (e,)
-            #TODO : raise ImgLoadError ?
-
-    def addFromResource(self, resource_name):
-        res = self._skin.getKey(resource_name)
-        if res is not None:
-            (type, value) = res
-            try:
-                addMethod = getattr(self, "addFrom%s" % type)
-            except AttributeError, e:
-                print "From addFromResource in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
-            else:
-                addMethod(value)
+                loadMethod(value, pos)
 
 
 
-
-
+    #######################################################
+    # Need to overwritre some evas.SmartObject methods:
 
     def show(self):
         print "show", self.size
