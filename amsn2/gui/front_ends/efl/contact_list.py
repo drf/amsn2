@@ -94,7 +94,7 @@ class ContactHolder(evas.SmartObject):
                 obj_swallowed.hide()
             #add emblem on dp
             #shouldn't be done there, but in the core...
-            contact.dp.addFromResource("emblem_busy") #yeah, everyone is busy!!
+            contact.dp.append("Skin","emblem_busy") #yeah, everyone is busy!!
             self.contacts[contact.uid].\
                 part_swallow("buddy_icon", contact.dp)
         else:
@@ -121,11 +121,9 @@ class ContactHolder(evas.SmartObject):
         return new_contact
         
     def show(self):
-        print "show", self.size
         self.update_widget(self.size[0], self.size[1])
         
     def hide(self):
-        print "hide" ,self.size
         self.update_widget(self.size[0], self.size[1])
 
     def clip_set(self, obj):

@@ -23,7 +23,7 @@ class Image(evas.SmartObject, base.Image):
     def load(self, resource_type, value):
         self._imgs = [ self._evas.evas.Image() ]
         try:
-            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
             print "From load in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
         else:
@@ -32,7 +32,7 @@ class Image(evas.SmartObject, base.Image):
     def append(self, resource_type, value):
         self._imgs.append(self._evas.evas.Image())
         try:
-            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
             print "From append in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
         else:
@@ -41,7 +41,7 @@ class Image(evas.SmartObject, base.Image):
     def prepend(self, resource_type, value):
         self._imgs.insert(0, self._evas.evas.Image())
         try:
-            loadMethod = getattr(self, "__loadFrom%s" % resource_type)
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
             print "From prepend in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
         else:
@@ -49,28 +49,26 @@ class Image(evas.SmartObject, base.Image):
 
 
 
-    #######################################################
-    # Private methods
-    def __loadFromFile(self, filename, pos=0):
+    def _loadFromFile(self, filename, pos=0):
         try:
             self._imgs[pos].file_set(filename)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
 
-    def __loadFromEET(self, (eetfile, key), pos=0):
+    def _loadFromEET(self, (eetfile, key), pos=0):
         try:
             self._imgs[pos].file_set(eetfile, key)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
 
-    def __loadFromSkin(self, resource_name, pos=0):
+    def _loadFromSkin(self, resource_name, pos=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
             (type, value) = res
             try:
-                loadMethod = getattr(self, "__loadFrom%s" % type)
+                loadMethod = getattr(self, "_loadFrom%s" % type)
             except AttributeError, e:
-                print "From __loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
+                print "From _loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
             else:
                 loadMethod(value, pos)
 
