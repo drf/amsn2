@@ -248,7 +248,7 @@ class NotificationProtocol(BaseProtocol, gobject.GObject):
     # Handlers ---------------------------------------------------------------
     # --------- Connection ---------------------------------------------------
     def _handle_VER(self, command):
-        assert(len(command.arguments) > 1), "Invalid VER response : " + str(command)
+        assert(len(command.arguments) >= 1), "Invalid VER response : " + str(command)
         self._protocol_version = int(command.arguments[0].lstrip('MSNP'))
         self._send_command('CVR',
                 ProtocolConstant.CVR + (self._client.profile.account,))
