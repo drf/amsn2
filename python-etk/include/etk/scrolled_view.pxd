@@ -21,6 +21,14 @@ cdef extern from "etk_scrolled_view.h":
     Etk_Range* etk_scrolled_view_hscrollbar_get(Etk_Scrolled_View* __self)
     void etk_scrolled_view_policy_get(Etk_Scrolled_View* __self, Etk_Scrolled_View_Policy* hpolicy, Etk_Scrolled_View_Policy* vpolicy)
     void etk_scrolled_view_policy_set(Etk_Scrolled_View* __self, int hpolicy, int vpolicy)
+    Etk_Bool etk_scrolled_view_dragable_get(Etk_Scrolled_View* __self)
+    void etk_scrolled_view_dragable_set(Etk_Scrolled_View* __self, Etk_Bool dragable)
+    Etk_Bool etk_scrolled_view_drag_bouncy_get(Etk_Scrolled_View* __self)
+    void etk_scrolled_view_drag_bouncy_set(Etk_Scrolled_View* __self, Etk_Bool bouncy)
+    double etk_scrolled_view_drag_sample_interval_get(Etk_Scrolled_View* __self)
+    double etk_scrolled_view_drag_sample_interval_set(Etk_Scrolled_View* __self, double interval)
+    unsigned int etk_scrolled_view_drag_damping_get(Etk_Scrolled_View* __self)
+    unsigned int etk_scrolled_view_drag_damping_set(Etk_Scrolled_View* __self, unsigned int damping)
     Etk_Range* etk_scrolled_view_vscrollbar_get(Etk_Scrolled_View* __self)
 
 #########################################################################

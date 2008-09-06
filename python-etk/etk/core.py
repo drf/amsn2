@@ -158,3 +158,43 @@ class VSeparator(c_etk.VSeparator):
 class HSeparator(c_etk.HSeparator):
     __metaclass__ = EtkMeta
     _etk_type = "Etk_HSeparator"
+
+class PopupWindow(c_etk.PopupWindow, c_etk.PopupDirectionEnums):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Popup_Window"
+
+class MenuShell(c_etk.MenuShell):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Shell"
+
+class Menu(c_etk.Menu):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu"
+
+class MenuBar(c_etk.MenuBar):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Bar"
+
+class MenuItem(c_etk.MenuItem):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Item"
+
+class MenuItemSeparator(c_etk.MenuItemSeparator):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Item_Separator"
+
+class MenuItemImage(c_etk.MenuItemImage):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Item_Image"
+
+class MenuItemCheck(c_etk.MenuItemCheck):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Item_Check"
+
+class MenuItemRadio(c_etk.MenuItemRadio):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Menu_Item_Radio"
+
+class EvasObject(c_etk.EvasObject):
+    __metaclass__ = EtkMeta
+    _etk_type = "Etk_Evas_Object"
