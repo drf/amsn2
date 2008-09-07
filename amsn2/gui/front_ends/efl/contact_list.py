@@ -51,32 +51,32 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
     
-        self.groups = GroupHolder(self._evas, self)
-        self.group_holders = {}
+        self.group_holder = GroupHolder(self._evas, self)
+        self.group_items = {}
                 
         self._etk_evas_object.evas_object = self._edje
         self.add_with_viewport(self._etk_evas_object)
 
-        self._edje.part_swallow("groups", self.groups);
+        self._edje.part_swallow("groups", self.group_holder);
         
         self._edje.focus = True
         
         self._edje.show()
         self._etk_evas_object.show()
 
+
     def contactUpdated(self, contact):
-        for gid in self.group_holders:
-            gi = self.group_holders[gid]
-            if contact in gi.group.contacts:
+        for gid in self.group_items:
+            gi = self.group_items[gid]
+            if contact.uid in gi.contact_holder.contacts:
                 gi.contact_holder.contact_updated(contact)
 
     def groupUpdated(self, group):
         raise NotImplementedError
     
     def groupAdded(self, group):
-        pass
-        gi = self.groups.add_group(group)
-        self.group_holders[group.uid] = gi
+        gi = self.group_holder.add_group(group)
+        self.group_items[group.uid] = gi
         for c in group.contacts:
             gi.add_contact(c)
 
@@ -92,14 +92,24 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
     def size_request_set(self, w,h):
         self._etk_evas_object.size_request_set(w,h)
 
+    def setContactCallback(self, cb):
+        #cb is func(cid)
+        self.group_holder.setContactCallback(cb)
+
+    def setContactContextMenu(self, cb):
+        #TODO:
+        pass
+
+
 
 class ContactHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas, parent):
+    def __init__(self, ecanvas, parent, cb = None):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.contacts = {}
         self._parent = parent
+        self._callback = cb
 
     def contact_updated(self, contact):
         #TODO : clean :)
@@ -141,6 +151,12 @@ class ContactHolder(evas.SmartObject):
         
         self.member_add(new_contact)
 
+        if self._callback is not None:
+            def cb_(obj,event):
+                self._callback(obj.data["view"].uid)
+            new_contact.on_mouse_down_add(cb_)
+
+
         new_contact.show()
         return new_contact
     
@@ -179,21 +195,34 @@ class ContactHolder(evas.SmartObject):
     def num_contacts(self):
         return len(self.contacts)
 
+    def setCallback(self, cb):
+        self._callback = cb
+        for cid in self.contacts:
+            c = self.contacts[cid]
+            if cb is not None:
+                def cb_(obj,event):
+                    cb(obj.data["view"].uid)
+                c.on_mouse_down_add(cb_)
+            else:
+                c.on_mouse_down_del()
+        
 
 class GroupItem(edje.Edje):
-    def __init__(self, parent, evas_obj, group):
+    def __init__(self, parent, evas_obj, group, ccb = None):
         self.evas_obj = evas_obj
         self._parent = parent
         self.expanded = True
         self.group = group
         self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
-        self.contact_holder = ContactHolder(self.evas_obj, self)
+        self.contact_holder = ContactHolder(self.evas_obj, self, cb = ccb)
         self.part_text_set("group_name", group.name.toString())
         self.part_swallow("contacts", self.contact_holder);
 
         self.signal_callback_add("collapsed", "*", self.__collapsed_cb)
         self.signal_callback_add("expanded", "*", self.__expanded_cb)
 
+    def setContactCallback(self, ccb):
+        self.contact_holder.setCallback(ccb)
 
     def add_contact(self, contact):
         c = self.contact_holder.add_contact(contact)
@@ -232,20 +261,26 @@ class GroupItem(edje.Edje):
 
 class GroupHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas, parent):
+    def __init__(self, ecanvas, parent, ccb = None):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
-        self.groups = []
+        self.group_items = []
         self._parent = parent
+        self._ccb = ccb
 
     def add_group(self, group):
-        new_group = GroupItem(self, self.evas_obj, group)
+        new_group = GroupItem(self, self.evas_obj, group, ccb = self._ccb)
         new_group.show()
-        self.groups.append(new_group)
+        self.group_items.append(new_group)
         self.member_add(new_group)
         self.update_widget(self.size[0], self.size[1])
         return new_group
-        
+    
+    def setContactCallback(self, ccb):
+        self._ccb = ccb
+        for gi in self.group_items:
+            gi.setContactCallback(ccb)
+
     def resize(self, w, h):
         self.update_widget(w, h)
 
@@ -253,20 +288,20 @@ class GroupHolder(evas.SmartObject):
         #FIXME:
         #ugly fix to get the correct clip
         self.clip_set(self._parent._edje.clip_get())
-        for g in self.groups:
+        for g in self.group_items:
             g.show()
         
     def hide(self):
-        for g in self.groups:
+        for g in self.group_items:
             g.hide()
 
     def update_widget(self, w, h):
         x = self.top_left[0]
         y = self.top_left[1]
-        if len(self.groups) > 0:
+        if len(self.group_items) > 0:
             spacing = 5
-            total_spacing = spacing * len(self.groups)
-            for i in self.groups:
+            total_spacing = spacing * len(self.group_items)
+            for i in self.group_items:
                 item_height = 40 + (29 * i.num_contacts()) - 5
                 i.move(x, y)
                 i.size = (w, item_height)
@@ -274,10 +309,11 @@ class GroupHolder(evas.SmartObject):
         self._parent.size_request_set(w,y)
 
     def clip_set(self, obj):
-        for g in self.groups:
+        for g in self.group_items:
             g._clip_set(obj)
 
     def clip_unset(self):
-        for g in self.groups:
+        for g in self.group_items:
             g._clip_unset()
+
 
