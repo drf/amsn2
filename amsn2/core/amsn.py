@@ -4,6 +4,7 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
+import contact_manager
     
 class aMSNCore(object):
     def __init__(self, options):
@@ -24,6 +25,7 @@ class aMSNCore(object):
         self._loop = self._gui.gui.aMSNMainLoop(self)
         self._main = self._gui.gui.aMSNMainWindow(self)
         self._skin_manager = self._gui.gui.SkinManager(self)
+        self._contact_manager = contact_manager.aMSNContactManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
@@ -123,69 +125,11 @@ class aMSNCore(object):
             self._main.setTitle("aMSN 2")
             profile.clwin.show()
             profile.login = None
+            #TODO: use a method for that in aMSNContactManager
+            self._contact_manager._cl_listeners.append(clwin._clwidget)
 
-            for group in profile.client.address_book.groups:
-                contacts = profile.client.address_book.contacts.search_by_groups(group)
-                groupV = self.buildGroup(group, 0, len(contacts))
-                groupV.contacts = []
-                
-                for contact in contacts:
-                    contactV = self.buildContact(contact)
-                    groupV.contacts.append(contactV)
-                                
-                profile.clwin._clwidget.groupAdded(groupV)
+            self._contact_manager.onCLDownloaded(profile.client.address_book)
 
-            groupV = self.buildGroup(None, 0, 0)
-            groupV.contacts = []
-                
-            contacts = profile.client.address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
-            for contact in contacts:
-                if len(contact.groups) == 0:
-                    contactV = self.buildContact(contact)
-                    groupV.contacts.append(contactV)
-                                
-            if len(groupV.contacts) > 0:
-                groupV = self.buildGroup(None, 0, len(groupV.contacts))
-                profile.clwin._clwidget.groupAdded(groupV)
-
-
-    def buildGroup(self, group, active, total):
-        groupV = GroupView.getGroup(group.id if group else 0)
-        groupV.icon = None # TODO : expanded/collapsed icon
-        groupV.name = StringView() # TODO : default color from skin/settings
-        groupV.name.appendText(group.name if group else "No Group") # TODO : parse or translation
-        groupV.name.appendText("(" + str(active) + "/" + str(total) + ")")
-        
-        return groupV
-    
-    def buildContact(self, contact):
-        contactV = ContactView.getContact(contact.id)
-        contactV.icon = self._gui.gui.Image(self, self._main)
-        contactV.icon.load("Skin","buddy_" + self.p2s[contact.presence])
-        contactV.dp = self._gui.gui.Image(self, self._main)
-        contactV.dp.load("Skin","default_dp")
-        contactV.name = StringView() # TODO : default colors
-        contactV.name.openTag("nickname")
-        contactV.name.appendText(contact.display_name) # TODO parse
-        contactV.name.closeTag("nickname")
-        contactV.name.appendText(" ")
-        contactV.name.openTag("status")
-        contactV.name.appendText("(")
-        contactV.name.appendText(self.p2s[contact.presence])
-        contactV.name.appendText(")")
-        contactV.name.closeTag("status")
-        contactV.name.appendText(" ")
-        contactV.name.openTag("psm")
-        contactV.name.setItalic()
-        contactV.name.appendText(contact.personal_message)
-        contactV.name.unsetItalic()
-        contactV.name.closeTag("psm")
-        
-        return contactV
-        
-    def contactPresenceChanged(self, profile, contact):
-        c = self.buildContact(contact)
-        profile.clwin._clwidget.contactUpdated(c)
 
 
     def idlerAdd(self, func):

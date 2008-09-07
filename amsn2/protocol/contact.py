@@ -9,5 +9,5 @@ class ContactEvents(pymsn.event.ContactEventInterface):
         pymsn.event.ContactEventInterface.__init__(self, client)
         
     def on_contact_presence_changed(self, contact):
-        self._amsn_core.contactPresenceChanged(self._client._amsn_profile, contact)
+        self._amsn_core._contact_manager.onContactPresenceChanged(contact)
 
