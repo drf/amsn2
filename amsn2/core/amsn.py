@@ -85,6 +85,9 @@ class aMSNCore(object):
         splash.hide()
         self._main.setTitle("aMSN 2 - Login")
         login.show()
+        
+        menu = self.createMainMenuView()
+        self._main.setMenu(menu)
 
     def getMainWindow(self):
         return self._main
@@ -193,3 +196,14 @@ class aMSNCore(object):
 
     def quit(self):
         self._loop.quit()
+
+    def createMainMenuView(self):
+        menu = MenuView() 
+        quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
+                                    = self.quit)
+        mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
+        mainMenu.addItem(quitMenuItem)
+        
+        menu.addItem(mainMenu)
+
+        return menu
