@@ -15,11 +15,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._amsn_core = amsn_core
         self._evas = parent._evas
         self._parent = parent
-        mainChild = etk.EvasObject()
         self._clwidget = aMSNContactListWidget(amsn_core, self)
-        mainChild.evas_object = self._clwidget._edje
-        parent.setChild(mainChild)
-        mainChild.show()
+        parent.setChild(self._clwidget)
+        self._clwidget.show()
 
     def show(self):
         self._clwidget.show()
@@ -37,10 +35,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         pass #TODO
 
 
-class aMSNContactListWidget(base.aMSNContactListWidget):
+class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
+
+        self._etk_evas_object = etk.EvasObject()
+        etk.ScrolledView.__init__(self)
 
         edje.frametime_set(1.0 / 30)
         try:
@@ -49,21 +50,19 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         except edje.EdjeLoadError, e:
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
-
-
     
-        self.groups = GroupHolder(self._evas)
+        self.groups = GroupHolder(self._evas, self)
         self.group_holders = {}
-        
+                
+        self._etk_evas_object.evas_object = self._edje
+        self.add_with_viewport(self._etk_evas_object)
+
         self._edje.part_swallow("groups", self.groups);
         
         self._edje.focus = True
 
-    def show(self):
         self._edje.show()
-
-    def hide(self):
-        self._edje.hide()
+        self._etk_evas_object.show()
 
     def contactUpdated(self, contact):
         pass
@@ -91,7 +90,8 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
     def cget(self, option, value):
         pass
 
-
+    def size_request_set(self, w,h):
+        self._etk_evas_object.size_request_set(w,h)
 
 class ContactHolder(evas.SmartObject):
 
@@ -165,7 +165,7 @@ class ContactHolder(evas.SmartObject):
         if len(self.contacts) > 0:
             spacing = 5
             total_spacing = spacing * len(self.contacts)
-            item_height = (h - total_spacing) / len(self.contacts)
+            item_height = 24
             for i in self.contacts:
                 self.contacts[i].move(x, y)
                 self.contacts[i].size = (w, item_height)
@@ -221,10 +221,11 @@ class GroupItem(edje.Edje):
 
 class GroupHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas):
+    def __init__(self, ecanvas, parent):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.groups = []
+        self._parent = parent
 
     def add_group(self, group):
         new_group = GroupItem(self, self.evas_obj, group)
@@ -243,19 +244,18 @@ class GroupHolder(evas.SmartObject):
     def hide(self):
         self.update_widget(self.size[0], self.size[1])
 
-    def update_widget(self,w, h):
+    def update_widget(self, w, h):
         x = self.top_left[0]
         y = self.top_left[1]
-        h = h +100
         if len(self.groups) > 0:
             spacing = 5
             total_spacing = spacing * len(self.groups)
-            item_height = (h - total_spacing) / len(self.groups)
             for i in self.groups:
-                item_height = 40 + (24 * i.num_contacts())
+                item_height = 40 + (29 * i.num_contacts()) - 5
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
+        self._parent.size_request_set(w,y)
 
     def clip_set(self, obj):
         for g in self.groups:
