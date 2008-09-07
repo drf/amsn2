@@ -1,6 +1,14 @@
+"""TODO:
+    Let the aMSNContactListWidget be selectable to choose contacts to add to a
+    conversation... each contact should have a checkbox on front of it
+"""
 
-class aMSNContactList(object):
-    """ This interface implements the contact list of the UI """
+
+class aMSNContactListWindow(object):
+    """ This interface represents the main Contact List Window
+        self._clwiget is an aMSNContactListWidget 
+    """
+    
     def __init__(self, amsn_core, parent):
         raise NotImplementedError
 
@@ -12,7 +20,38 @@ class aMSNContactList(object):
         """ Hide the contact list window """
         raise NotImplementedError
 
-    def contactListUpdated(self, cl):
+    def setTitle(self, text):
+        """ This will allow the core to change the current window's title
+        @text : a string
+        """
+        raise NotImplementedError
+    
+    def setMainMenu(self, menu):
+        """ This will allow the core to change the current window's main menu
+        @menu : a MenuView
+        """
+        raise NotImplementedError
+
+    def setTopCL(self, contactView):
+        """ This will the core to change the top of the CL
+        @contactView: the contactView of the user (contains DP, nick, psm,
+        currentMedia,...)"""
+        raise NotImplementedError
+
+class aMSNContactListWidget(object):
+    """ This interface implements the contact list of the UI """
+    def __init__(self, amsn_core, parent):
+        raise NotImplementedError
+
+    def show(self):
+        """ Show the contact list widget """
+        raise NotImplementedError
+
+    def hide(self):
+        """ Hide the contact list widget """
+        raise NotImplementedError
+
+    def contactListUpdated(self, clView):
         """ This method will be called when the core wants to notify
         the contact list of the groups that it contains, and where they
         should be drawn a group should be drawn.
@@ -24,7 +63,7 @@ class aMSNContactList(object):
         for all the contacts to show in the group."""
         raise NotImplementedError
     
-    def groupUpdated(self, group):
+    def groupUpdated(self, groupView):
         """ This method will be called to notify the contact list
         that a group has been updated.
         The contact list should update its icon and name
@@ -34,7 +73,7 @@ class aMSNContactList(object):
         """
         raise NotImplementedError
     
-    def contactUpdated(self, contact):
+    def contactUpdated(self, contactView):
         """ This method will be called to notify the contact list
         that a contact has been updated.
         The contact can be in any group drawn and his icon,

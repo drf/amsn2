@@ -10,8 +10,7 @@ from amsn2.core.views import StringView
 from amsn2.gui import base
 import pymsn
 
-class aMSNContactListWindow:
-    #TODO : add base.aMSNContactListWindow
+class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
@@ -31,8 +30,8 @@ class aMSNContactListWindow:
 
 
 
-class aMSNContactListWidget(base.aMSNContactList):
-    #TODO: add base.aMSNContactListWidget
+
+class aMSNContactListWidget(base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
