@@ -23,7 +23,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
         mainChild.evas_object = self._edje
-        parent._win.child = mainChild
 
         self.password = etk.Entry()
         embed = etk.Embed(self._evas)
@@ -59,6 +58,8 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         # We start with no profile set up, we let the Core set our starting profile
         self.switch_to_profile(None)
+        
+        parent.setChild(mainChild)
 
     def show(self):
         self._edje.show()

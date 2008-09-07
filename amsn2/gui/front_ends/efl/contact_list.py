@@ -18,9 +18,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         mainChild = etk.EvasObject()
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         mainChild.evas_object = self._clwidget._edje
-        if parent._win.child is not None:
-            parent._win.child.hide()
-        parent._win.child = mainChild
+        parent.setChild(mainChild)
         mainChild.show()
 
     def show(self):
@@ -29,7 +27,14 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
     def hide(self):
         self._clwidget.hide()
 
+    def setTitle(self, text):
+        self._parent.setTitle(text)
 
+    def setMenu(self, menu):
+        self._parent.setMenu(menu)
+
+    def topCLUpdated(self, contactView):
+        pass #TODO
 
 
 class aMSNContactListWidget(base.aMSNContactListWidget):
