@@ -78,12 +78,10 @@ class Image(evas.SmartObject, base.Image):
     # Need to overwritre some evas.SmartObject methods:
 
     def show(self):
-        print "show", self.size
         for img in self._imgs:
             img.show()
 
     def hide(self):
-        print "hide", self.size
         for img in self._imgs:
             img.hide()
 
