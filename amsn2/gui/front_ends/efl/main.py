@@ -53,25 +53,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
             else:
                 menu_bar = etk.MenuBar()
                 self._vbox.prepend(menu_bar, etk.VBox.START, etk.VBox.FILL, 0)
-            #TODO: improve :)
-            for item in menu.items:
-                if item.type is MenuItemView.CASCADE_MENU:
-                    m = etk.Menu()
-                    mi = etk.MenuItem(label=item.label)
-                    print item.label
-                    for item_ in item.items:
-                        if item_.type is MenuItemView.COMMAND:
-                            if item_.icon is None:
-                                mi_ = etk.MenuItem(label=item_.label)
-                            else:
-                                mi_ = etk.MenuItemImage(label=item_.label)
-                            m.append(mi_)
-                            print item_.label
-                            #TODO: command
-                    mi.submenu = m
-                    menu_bar.append(mi)
-
-
+            createEtkMenuFromMenuView(menu.items, menu_bar)
         
     
     def setChild(self, child):
@@ -104,4 +86,28 @@ class aMSNMainWindow(base.aMSNMainWindow):
             self._amsn_core.quit()
         #TODO: ^M: show menu or not
 
+def createEtkMenuFromMenuView(items, etkmenu):
+    for item in items:
+        if item.type is MenuItemView.CASCADE_MENU:
+            m = etk.Menu()
+            mi = etk.MenuItem(label=item.label)
+            createEtkMenuFromMenuView(item.items, m)
+            mi.submenu = m
+            etkmenu.append(mi)
+        elif item.type is MenuItemView.COMMAND:
+            if item.icon is None:
+                mi = etk.MenuItem(label=item.label)
+            else:
+                #TODO: icon
+                mi = etk.MenuItemImage(label=item.label)
+            #TODO: define the prototype of item.command
+            #=> for the moment, it's item.command() i.e. no argument
+            def cb(obj):
+                item.command()
+            mi.on_activated(cb)
+            etkmenu.append(mi)
+        elif item.type is MenuItemView.SEPARATOR:
+            mi = etk.MenuItemSeparator()
+            etkmenu.append(mi)
 
+        #TODO: CHECKBUTTON, RADIOBUTTON, RADIOBUTTONGROUP
