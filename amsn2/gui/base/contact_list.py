@@ -26,14 +26,14 @@ class aMSNContactListWindow(object):
         """
         raise NotImplementedError
     
-    def setMainMenu(self, menu):
+    def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
         """
         raise NotImplementedError
 
-    def setTopCL(self, contactView):
-        """ This will the core to change the top of the CL
+    def topCLUpdated(self, contactView):
+        """ This will allow the core to change the top of the CL
         @contactView: the contactView of the user (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
