@@ -6,6 +6,7 @@ import etk
 import skins
 
 from amsn2.gui import base
+from amsn2.core.views import MenuView, MenuItemView
 
 class aMSNMainWindow(base.aMSNMainWindow):
     def __init__(self, amsn_core):     
@@ -38,7 +39,40 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._win.title_set(text)
 
     def setMenu(self, menu):
-        pass
+        if menu is None:
+            if self._has_menu:
+                #Remove the menubar
+                menu_bar = self._vbox.child_get_at(etk.VBox.START, 1)
+                menu_bar.parent = None
+        else:
+            if self._has_menu:
+                menu_bar = self._vbox.child_get_at(etk.VBox.START, 1)
+                #Clear the menubar:
+                for menu_item in menu_bar.items_get:
+                    menu_bar.remove(menu_item)
+            else:
+                menu_bar = etk.MenuBar()
+                self._vbox.prepend(menu_bar, etk.VBox.START, etk.VBox.FILL, 0)
+            #TODO: improve :)
+            for item in menu.items:
+                if item.type is MenuItemView.CASCADE_MENU:
+                    m = etk.Menu()
+                    mi = etk.MenuItem(label=item.label)
+                    print item.label
+                    for item_ in item.items:
+                        if item_.type is MenuItemView.COMMAND:
+                            if item_.icon is None:
+                                mi_ = etk.MenuItem(label=item_.label)
+                            else:
+                                mi_ = etk.MenuItemImage(label=item_.label)
+                            m.append(mi_)
+                            print item_.label
+                            #TODO: command
+                    mi.submenu = m
+                    menu_bar.append(mi)
+
+
+        
     
     def setChild(self, child):
         obj = self.getChild()
@@ -69,3 +103,5 @@ class aMSNMainWindow(base.aMSNMainWindow):
         elif event.keyname == "Escape":
             self._amsn_core.quit()
         #TODO: ^M: show menu or not
+
+
