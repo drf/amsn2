@@ -10,41 +10,45 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
+        self._parent = parent
 
         edje.frametime_set(1.0 / 30)
+        
+        mainChild = etk.EvasObject()
+
         try:
-            self._edje = edje.Edje(self._evas.evas, file=THEME_FILE,
+            self._edje = edje.Edje(self._evas, file=THEME_FILE,
                                 group="login_screen")
         except edje.EdjeLoadError, e:
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
-        self._edje.size = self._evas.size
-        self._evas.data["login_window"] = self._edje
+        mainChild.evas_object = self._edje
+        parent._win.child = mainChild
         
         self._edje.on_key_down_add(self.__on_key_down)
 
         self.password = etk.Entry()
-        embed = etk.Embed(self._evas.evas)
+        embed = etk.Embed(self._evas)
         embed.add(self.password)
         embed.show_all()
         self.password.password_mode = True
         self._edje.part_swallow("login_screen.password", embed.object)
 
         self.status = etk.Entry()
-        embed = etk.Embed(self._evas.evas)
+        embed = etk.Embed(self._evas)
         embed.add(self.status)
         embed.show_all()
         self._edje.part_swallow("login_screen.status", embed.object)
 
         self.username = etk.Entry()
-        embed = etk.Embed(self._evas.evas)
+        embed = etk.Embed(self._evas)
         embed.add(self.username)
         embed.show_all()
         self._edje.part_swallow("login_screen.username", embed.object)
         
         if self._edje.part_exists("login_screen.signin"):
            self.signin_b = etk.Button()
-           embed = etk.Embed(self._evas.evas)
+           embed = etk.Embed(self._evas)
            embed.add(self.signin_b)
            embed.show_all()
            self._edje.part_swallow("login_screen.signin", embed.object)

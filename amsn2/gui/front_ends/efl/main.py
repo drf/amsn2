@@ -2,6 +2,7 @@ from constants import *
 import ecore
 import ecore.evas
 import ecore.x
+import etk
 import skins
 
 from amsn2.gui import base
@@ -9,24 +10,27 @@ from amsn2.gui import base
 class aMSNMainWindow(base.aMSNMainWindow):
     def __init__(self, amsn_core):     
         self._amsn_core = amsn_core
-
-        self._evas = ecore.evas.SoftwareX11(w=WIDTH, h=HEIGHT)
-        self._evas.callback_delete_request = self.__on_delete_request
-        self._evas.callback_resize = self.__on_resize
-        self._evas.callback_show = self.__on_show
-        self._evas.name_class = (WM_NAME, WM_CLASS)
-        self._evas.fullscreen = False
-        self._evas.size = (WIDTH, HEIGHT)
-        self._evas.size_min_set(MIN_WIDTH, MIN_HEIGHT)
+        counter = 0
+        msg = "Button clicked %d times"
+        b = etk.Button(label=msg % counter)
+        self._win = etk.Window(title="aMSN", size_request=(MIN_WIDTH,MIN_HEIGHT))
+        self._win.on_destroyed(self.__on_delete_request)
+        self._win.on_shown(self.__on_show)
+        self._win.fullscreen = False
+        self._win.wmclass_set(WM_NAME, WM_CLASS)
+        self._win.resize(WIDTH, HEIGHT)
+    @property
+    def _evas(self):
+        return self._win.toplevel_evas_get()
 
     def show(self):
-        self._evas.show()
+        self._win.show_all()
 
     def hide(self):
-        self._evas.hide()
+        self._win.hide()
         
     def setTitle(self, text):
-        self._evas.title = text
+        self._win.title_set(text)
 
     def setMainMenu(self, menu):
         pass
@@ -34,12 +38,6 @@ class aMSNMainWindow(base.aMSNMainWindow):
     # Private methods
     def __on_show(self, evas_obj):
         self._amsn_core.mainWindowShown()
-
-    def __on_resize(self, evas_obj):
-        x, y, w, h = evas_obj.evas.viewport
-        size = (w, h)
-        for key in evas_obj.data.keys():
-            evas_obj.data[key].size = size
 
     def __on_delete_request(self, evas_obj):
         self._amsn_core.quit()

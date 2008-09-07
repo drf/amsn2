@@ -10,7 +10,7 @@ class Image(evas.SmartObject, base.Image):
         self._amsn_core = amsn_core
         self._amsn_gui = self._amsn_core.getMainWindow()
         self._evas = self._amsn_gui._evas
-        evas.SmartObject.__init__(self, self._evas.evas)
+        evas.SmartObject.__init__(self, self._evas)
 
         
         self._skin = self._amsn_core._skin_manager.skin
@@ -21,7 +21,7 @@ class Image(evas.SmartObject, base.Image):
     #######################################################
     #Public methods
     def load(self, resource_type, value):
-        self._imgs = [ self._evas.evas.Image() ]
+        self._imgs = [ self._evas.Image() ]
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
@@ -30,7 +30,7 @@ class Image(evas.SmartObject, base.Image):
             loadMethod(value)
         
     def append(self, resource_type, value):
-        self._imgs.append(self._evas.evas.Image())
+        self._imgs.append(self._evas.Image())
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
@@ -39,7 +39,7 @@ class Image(evas.SmartObject, base.Image):
             loadMethod(value, pos=-1)
 
     def prepend(self, resource_type, value):
-        self._imgs.insert(0, self._evas.evas.Image())
+        self._imgs.insert(0, self._evas.Image())
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
