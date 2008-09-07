@@ -42,17 +42,19 @@ class aMSNMainWindow(base.aMSNMainWindow):
         if menu is None:
             if self._has_menu:
                 #Remove the menubar
-                menu_bar = self._vbox.child_get_at(etk.VBox.START, 1)
+                menu_bar = self._vbox.child_get_at(etk.VBox.START, 0)
                 menu_bar.parent = None
+                self._has_menu = False
         else:
             if self._has_menu:
-                menu_bar = self._vbox.child_get_at(etk.VBox.START, 1)
+                menu_bar = self._vbox.child_get_at(etk.VBox.START, 0)
                 #Clear the menubar:
                 for menu_item in menu_bar.items_get:
                     menu_bar.remove(menu_item)
             else:
                 menu_bar = etk.MenuBar()
                 self._vbox.prepend(menu_bar, etk.VBox.START, etk.VBox.FILL, 0)
+                self._has_menu = True
             createEtkMenuFromMenuView(menu.items, menu_bar)
         
     
@@ -64,11 +66,20 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def getChild(self):
         if self._has_menu:
-            pos = 2
-        else:
             pos = 1
+        else:
+            pos = 0
         pass
         return self._vbox.child_get_at(etk.VBox.START, pos)
+
+    def toggleMenu(self):
+        if self._has_menu:
+            menu_bar = self._vbox.child_get_at(etk.VBox.START, 0)
+            if menu_bar.is_visible():
+                menu_bar.hide()
+            else:
+                menu_bar.show()
+
 
     # Private methods
     def __on_show(self, evas_obj):
@@ -84,7 +95,9 @@ class aMSNMainWindow(base.aMSNMainWindow):
             self._win.decorated = not self._win.decorated
         elif event.keyname == "Escape":
             self._amsn_core.quit()
-        #TODO: ^M: show menu or not
+        elif (event.keyname == "m" and
+              event.modifiers == etk.core.c_etk.EventEnums.MODIFIER_CTRL):
+            self.toggleMenu()
 
 def createEtkMenuFromMenuView(items, etkmenu):
     for item in items:
