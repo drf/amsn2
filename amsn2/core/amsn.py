@@ -125,6 +125,15 @@ class aMSNCore(object):
             self._main.setTitle("aMSN 2")
             profile.clwin.show()
             profile.login = None
+
+            def simple_ccb(cid):
+                print "--->"
+                print "Contact Id is %s" % (cid,)
+                cv = ContactView.getContact(cid)
+                print "Contact name is %s" %(cv.name,)  
+                print "<---"
+            clwin._clwidget.setContactCallback(simple_ccb)
+
             #TODO: use a method for that in aMSNContactManager
             self._contact_manager._cl_listeners.append(clwin._clwidget)
 
