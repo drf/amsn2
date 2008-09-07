@@ -15,13 +15,18 @@ class Image(evas.SmartObject, base.Image):
         
         self._skin = self._amsn_core._skin_manager.skin
         self._imgs = []
+        self.propagate_events = True
 
 
 
     #######################################################
     #Public methods
     def load(self, resource_type, value):
+        for img in self._imgs:
+            self.member_del(img)
+
         self._imgs = [ self._evas.Image() ]
+        self.member_add(self._imgs[0])
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
@@ -30,7 +35,9 @@ class Image(evas.SmartObject, base.Image):
             loadMethod(value)
         
     def append(self, resource_type, value):
-        self._imgs.append(self._evas.Image())
+        img = self._evas.Image()
+        self.member_add(img)
+        self._imgs.append(img)
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
@@ -39,7 +46,9 @@ class Image(evas.SmartObject, base.Image):
             loadMethod(value, pos=-1)
 
     def prepend(self, resource_type, value):
-        self._imgs.insert(0, self._evas.Image())
+        img = self._evas.Image()
+        self.member_add(img)
+        self._imgs.insert(0, img) 
         try:
             loadMethod = getattr(self, "_loadFrom%s" % resource_type)
         except AttributeError, e:
@@ -71,7 +80,7 @@ class Image(evas.SmartObject, base.Image):
                 print "From _loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
             else:
                 loadMethod(value, pos)
-
+    
 
 
     #######################################################

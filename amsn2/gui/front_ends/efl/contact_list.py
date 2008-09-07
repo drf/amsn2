@@ -65,7 +65,6 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
         self._etk_evas_object.show()
 
     def contactUpdated(self, contact):
-        pass
         for gid in self.group_holders:
             gi = self.group_holders[gid]
             if contact in gi.group.contacts:
@@ -118,6 +117,7 @@ class ContactHolder(evas.SmartObject):
             #add emblem on dp
             #shouldn't be done there, but in the core...
             contact.dp.append("Skin","emblem_busy") #yeah, everyone is busy!!
+            contact.dp.repeat_events = True
             self.contacts[contact.uid].\
                 part_swallow("buddy_icon", contact.dp)
         else:
@@ -130,11 +130,12 @@ class ContactHolder(evas.SmartObject):
                 obj_swallowed.hide()
             self.contacts[contact.uid].\
                 part_swallow("buddy_icon", contact.icon)
-        
+
 
     def add_contact(self, contact):
         new_contact = edje.Edje(self.evas_obj, file=THEME_FILE,
                                 group="contact_item")
+        new_contact.data["view"] = contact
         self.contacts[contact.uid] = new_contact
         self.contact_updated(contact)
         
