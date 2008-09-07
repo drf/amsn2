@@ -15,12 +15,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._amsn_core = amsn_core
         self._evas = parent._evas
         self._parent = parent
-        #FIXME: the child may not be an EvasObject
-        #mainChild = etk.EvasObject()
-        mainChild = parent._win.child
+        mainChild = etk.EvasObject()
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         mainChild.evas_object = self._clwidget._edje
+        if parent._win.child is not None:
+            parent._win.child.hide()
         parent._win.child = mainChild
+        mainChild.show()
 
     def show(self):
         self._clwidget.show()
