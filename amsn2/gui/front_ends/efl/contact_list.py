@@ -45,7 +45,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
 
-        self._edje.on_key_down_add(self.__on_key_down)
 
     
         self.groups = GroupHolder(self._evas)
@@ -88,13 +87,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         pass
 
 
-    # Private methods
-    def __on_key_down(self, obj, event):
-        #FIXME
-        if event.keyname in ("F6", "f"):
-            self._evas.fullscreen = not self._evas.fullscreen
-        elif event.keyname == "b":
-            self._evas.borderless = not self._evas.borderless
 
 class ContactHolder(evas.SmartObject):
 

@@ -24,8 +24,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         mainChild.evas_object = self._edje
         parent._win.child = mainChild
-        
-        self._edje.on_key_down_add(self.__on_key_down)
 
         self.password = etk.Entry()
         embed = etk.Embed(self._evas)
@@ -109,16 +107,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self._edje.part_text_set("connection_status", msg1)
         self._edje.part_text_set("connection_status2", msg2)
 
-
-    # Private methods
-    def __on_key_down(self, obj, event):
-        #FIXME
-        if event.keyname == "F6":
-            self._evas.fullscreen = not self._evas.fullscreen
-        elif event.keyname == "F5":
-            self._evas.borderless = not self._evas.borderless
-        elif event.keyname == "Escape":
-            self._amsn_core.quit()
 
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()

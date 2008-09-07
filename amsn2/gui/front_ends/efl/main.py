@@ -14,6 +14,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._win = etk.Window(title="aMSN", size_request=(MIN_WIDTH,MIN_HEIGHT))
         self._win.on_destroyed(self.__on_delete_request)
         self._win.on_shown(self.__on_show)
+        self._win.on_key_down(self.__on_key_down)
         self._win.fullscreen = False
         self._win.wmclass_set(WM_NAME, WM_CLASS)
         self._win.resize(WIDTH, HEIGHT)
@@ -40,3 +41,12 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def __on_delete_request(self, evas_obj):
         self._amsn_core.quit()
+
+    def __on_key_down(self, obj, event):
+        if event.keyname in ("F6", "f"):
+            self._win.fullscreen = not self._win.fullscreen
+        elif event.keyname in ("F5", "b"):
+            self._win.decorated = not self._win.decorated
+        elif event.keyname == "Escape":
+            self._amsn_core.quit()
+        #TODO: ^M: show menu or not
