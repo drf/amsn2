@@ -60,7 +60,7 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
         self._edje.part_swallow("groups", self.groups);
         
         self._edje.focus = True
-
+        
         self._edje.show()
         self._etk_evas_object.show()
 
@@ -93,12 +93,14 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
     def size_request_set(self, w,h):
         self._etk_evas_object.size_request_set(w,h)
 
+
 class ContactHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas):
+    def __init__(self, ecanvas, parent):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.contacts = {}
+        self._parent = parent
 
     def contact_updated(self, contact):
         #TODO : clean :)
@@ -142,18 +144,20 @@ class ContactHolder(evas.SmartObject):
         return new_contact
     
     def clip_set(self, obj):
-        for c in self.contacts:
-            c.clip_set(obj)
+        for i in self.contacts:
+            self.contacts[i].clip_set(obj)
 
     def clip_unset(self):
-        for c in self.contacts:
-            c.clip_unset
+        for i in self.contacts:
+            self.contacts[i].clip_unset()
 
     def show(self):
-        self.update_widget(self.size[0], self.size[1])
+        for i in self.contacts:
+            self.contacts[i].show()
         
     def hide(self):
-        self.update_widget(self.size[0], self.size[1])
+        for i in self.contacts:
+            self.contacts[i].hide()
 
 
     def resize(self, w, h):
@@ -174,8 +178,6 @@ class ContactHolder(evas.SmartObject):
     def num_contacts(self):
         return len(self.contacts)
 
-    def clip_unset(self):
-        pass
 
 class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, group):
@@ -184,13 +186,13 @@ class GroupItem(edje.Edje):
         self.expanded = True
         self.group = group
         self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
-        self.contact_holder = ContactHolder(self.evas_obj)
+        self.contact_holder = ContactHolder(self.evas_obj, self)
         self.part_text_set("group_name", group.name.toString())
         self.part_swallow("contacts", self.contact_holder);
 
         self.signal_callback_add("collapsed", "*", self.__collapsed_cb)
         self.signal_callback_add("expanded", "*", self.__expanded_cb)
-        
+
 
     def add_contact(self, contact):
         c = self.contact_holder.add_contact(contact)
@@ -219,6 +221,14 @@ class GroupItem(edje.Edje):
         self.expanded = False
         self.__update_parent()
 
+    def _clip_set(self, obj):
+        self.clip_set(obj)
+        self.contact_holder.clip_set(obj)
+
+    def _clip_unset(self):
+        self.clip_unset()
+        self.contact_holder.clip_unset()
+
 class GroupHolder(evas.SmartObject):
 
     def __init__(self, ecanvas, parent):
@@ -239,10 +249,15 @@ class GroupHolder(evas.SmartObject):
         self.update_widget(w, h)
 
     def show(self):
-        self.update_widget(self.size[0], self.size[1])
+        #FIXME:
+        #ugly fix to get the correct clip
+        self.clip_set(self._parent._edje.clip_get())
+        for g in self.groups:
+            g.show()
         
     def hide(self):
-        self.update_widget(self.size[0], self.size[1])
+        for g in self.groups:
+            g.hide()
 
     def update_widget(self, w, h):
         x = self.top_left[0]
@@ -259,8 +274,9 @@ class GroupHolder(evas.SmartObject):
 
     def clip_set(self, obj):
         for g in self.groups:
-            g.clip_set(obj)
+            g._clip_set(obj)
 
     def clip_unset(self):
         for g in self.groups:
-            g.clip_unset()
+            g._clip_unset()
+
