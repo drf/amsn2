@@ -67,6 +67,17 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     
     def hide(self):
         self._edje.hide()
+        #FIXME: those are not hidden by self._edje.hide() 
+        self.password.hide()
+        self.status.hide()
+        self.username.hide()
+        try:
+            getattr(self, "signin_b")
+        except AttributeError:
+            pass
+        else:
+            self.signin_b.hide()
+        self._edje.focus = False
 
     def switch_to_profile(self, profile):
         self.current_profile = profile
@@ -101,6 +112,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
     # Private methods
     def __on_key_down(self, obj, event):
+        #FIXME
         if event.keyname == "F6":
             self._evas.fullscreen = not self._evas.fullscreen
         elif event.keyname == "F5":

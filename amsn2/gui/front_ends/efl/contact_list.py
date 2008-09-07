@@ -4,35 +4,56 @@ import evas
 import edje
 import ecore
 import ecore.evas
+import etk
 
 from amsn2.core.views import StringView
 from amsn2.gui import base
 import pymsn
 
-class aMSNContactList(base.aMSNContactList):
+class aMSNContactListWindow:
+    #TODO : add base.aMSNContactListWindow
+    def __init__(self, amsn_core, parent):
+        self._amsn_core = amsn_core
+        self._evas = parent._evas
+        self._parent = parent
+        #FIXME: the child may not be an EvasObject
+        #mainChild = etk.EvasObject()
+        mainChild = parent._win.child
+        self._clwidget = aMSNContactListWidget(amsn_core, self)
+        mainChild.evas_object = self._clwidget._edje
+        parent._win.child = mainChild
+
+    def show(self):
+        self._clwidget.show()
+    
+    def hide(self):
+        self._clwidget.hide()
+
+
+
+class aMSNContactListWidget(base.aMSNContactList):
+    #TODO: add base.aMSNContactListWidget
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
 
         edje.frametime_set(1.0 / 30)
         try:
-            self._edje = edje.Edje(self._evas.evas, file=THEME_FILE,
+            self._edje = edje.Edje(self._evas, file=THEME_FILE,
                                 group="contact_list")
         except edje.EdjeLoadError, e:
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
-        self._edje.size = self._evas.size
-        self._evas.data["contact_list"] = self._edje 
 
         self._edje.on_key_down_add(self.__on_key_down)
 
-        self._edje.focus = True
     
         self.groups = GroupHolder(self._evas)
         self.group_holders = {}
         
         self._edje.part_swallow("groups", self.groups);
-        self.groups.show();
+        
+        self._edje.focus = True
 
     def show(self):
         self._edje.show()
@@ -41,6 +62,7 @@ class aMSNContactList(base.aMSNContactList):
         self._edje.hide()
 
     def contactUpdated(self, contact):
+        pass
         for gid in self.group_holders:
             gi = self.group_holders[gid]
             if contact in gi.group.contacts:
@@ -50,6 +72,7 @@ class aMSNContactList(base.aMSNContactList):
         raise NotImplementedError
     
     def groupAdded(self, group):
+        pass
         gi = self.groups.add_group(group)
         self.group_holders[group.uid] = gi
         for c in group.contacts:
@@ -67,6 +90,7 @@ class aMSNContactList(base.aMSNContactList):
 
     # Private methods
     def __on_key_down(self, obj, event):
+        #FIXME
         if event.keyname in ("F6", "f"):
             self._evas.fullscreen = not self._evas.fullscreen
         elif event.keyname == "b":
@@ -75,7 +99,7 @@ class aMSNContactList(base.aMSNContactList):
 class ContactHolder(evas.SmartObject):
 
     def __init__(self, ecanvas):
-        evas.SmartObject.__init__(self, ecanvas.evas)
+        evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.contacts = {}
 
@@ -110,7 +134,7 @@ class ContactHolder(evas.SmartObject):
         
 
     def add_contact(self, contact):
-        new_contact = edje.Edje(self.evas_obj.evas, file=THEME_FILE,
+        new_contact = edje.Edje(self.evas_obj, file=THEME_FILE,
                                 group="contact_item")
         self.contacts[contact.uid] = new_contact
         self.contact_updated(contact)
@@ -119,15 +143,21 @@ class ContactHolder(evas.SmartObject):
 
         new_contact.show()
         return new_contact
-        
+    
+    def clip_set(self, obj):
+        for c in self.contacts:
+            c.clip_set(obj)
+
+    def clip_unset(self):
+        for c in self.contacts:
+            c.clip_unset
+
     def show(self):
         self.update_widget(self.size[0], self.size[1])
         
     def hide(self):
         self.update_widget(self.size[0], self.size[1])
 
-    def clip_set(self, obj):
-        pass
 
     def resize(self, w, h):
         self.update_widget(w, h)
@@ -147,13 +177,16 @@ class ContactHolder(evas.SmartObject):
     def num_contacts(self):
         return len(self.contacts)
 
+    def clip_unset(self):
+        pass
+
 class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, group):
         self.evas_obj = evas_obj
         self._parent = parent
         self.expanded = True
         self.group = group
-        self._edje = edje.Edje.__init__(self, self.evas_obj.evas, file=THEME_FILE, group="group_item")
+        self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
         self.contact_holder = ContactHolder(self.evas_obj)
         self.part_text_set("group_name", group.name.toString())
         self.part_swallow("contacts", self.contact_holder);
@@ -175,7 +208,7 @@ class GroupItem(edje.Edje):
             return 0
         else:
             return self.contact_holder.num_contacts()
-        
+    
 
     # Private methods
     def __update_parent(self):
@@ -192,7 +225,7 @@ class GroupItem(edje.Edje):
 class GroupHolder(evas.SmartObject):
 
     def __init__(self, ecanvas):
-        evas.SmartObject.__init__(self, ecanvas.evas)
+        evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.groups = []
 
@@ -226,3 +259,11 @@ class GroupHolder(evas.SmartObject):
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
+
+    def clip_set(self, obj):
+        for g in self.groups:
+            g.clip_set(obj)
+
+    def clip_unset(self):
+        for g in self.groups:
+            g.clip_unset()

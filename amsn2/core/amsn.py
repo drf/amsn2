@@ -113,12 +113,12 @@ class aMSNCore(object):
         elif state == pymsn.event.ClientState.SYNCHRONIZED:
             profile.login.onConnecting("Contact list downloaded successfully\nHappy Chatting")
         elif state == pymsn.event.ClientState.OPEN:
-            cl = self._gui.gui.aMSNContactList(self, self._main)
-            cl.profile = profile
-            profile.cl = cl
+            clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
+            clwin.profile = profile
+            profile.clwin = clwin
             profile.login.hide()
             self._main.setTitle("aMSN 2")
-            profile.cl.show()
+            profile.clwin.show()
             profile.login = None
 
             for group in profile.client.address_book.groups:
@@ -130,7 +130,7 @@ class aMSNCore(object):
                     contactV = self.buildContact(contact)
                     groupV.contacts.append(contactV)
                                 
-                profile.cl.groupAdded(groupV)
+                profile.clwin._clwidget.groupAdded(groupV)
 
             groupV = self.buildGroup(None, 0, 0)
             groupV.contacts = []
@@ -143,7 +143,7 @@ class aMSNCore(object):
                                 
             if len(groupV.contacts) > 0:
                 groupV = self.buildGroup(None, 0, len(groupV.contacts))
-                profile.cl.groupAdded(groupV)
+                profile.clwin._clwidget.groupAdded(groupV)
 
 
     def buildGroup(self, group, active, total):
@@ -182,7 +182,7 @@ class aMSNCore(object):
         
     def contactPresenceChanged(self, profile, contact):
         c = self.buildContact(contact)
-        profile.cl.contactUpdated(c)
+        profile.clwin._clwidget.contactUpdated(c)
 
 
     def idlerAdd(self, func):
