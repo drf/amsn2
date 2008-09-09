@@ -31,7 +31,7 @@ class aMSNContactManager:
             groupV.contacts = []
             
             for contact in contacts:
-                contactV = self.buildContact(contact)
+                contactV = self.buildContactView(contact)
                 groupV.contacts.append(contactV)
             
             for l in self._cl_listeners:
