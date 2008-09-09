@@ -30,7 +30,7 @@ from pymsn.util.decorator import rw_property
 
 import gobject
 
-__all__ = ['Profile', 'Contact', 'Group', 
+__all__ = ['Profile', 'Contact', 'Group',
         'Presence', 'Membership', 'ContactType', 'Privacy', 'NetworkID', 'ClientCapabilities']
 
 
@@ -38,7 +38,7 @@ class ClientCapabilities(object):
     """Capabilities of the client. This allow adverstising what the User Agent
     is capable of, for example being able to receive video stream, and being
     able to receive nudges...
-    
+
         @ivar is_bot: is the client a bot
         @type is_bot: bool
 
@@ -273,7 +273,7 @@ class ContactType(object):
     """Contact has no automatic update relationship with the user"""
 
     LIVE = "Live"
-    """Contact has an automatic update relationship with the user and an 
+    """Contact has an automatic update relationship with the user and an
     automatic update already occured"""
 
     LIVE_PENDING = "LivePending"
@@ -489,6 +489,8 @@ class Profile(gobject.GObject):
 
     def _server_property_changed(self, name, value):
         attr_name = "_" + name.lower().replace("-", "_")
+        if attr_name == "_msn_object" and value is not None:
+            value = self.__pending_set_presence[2]
         old_value = getattr(self, attr_name)
         if value != old_value:
             setattr(self, attr_name, value)
@@ -552,7 +554,7 @@ class Contact(gobject.GObject):
             "contact-type": (gobject.TYPE_PYOBJECT,
                 "Contact type",
                 "The contact automatic update status flag",
-                 gobject.PARAM_READABLE),        
+                 gobject.PARAM_READABLE),
 
             "client-capabilities": (gobject.TYPE_UINT64,
                 "Client capabilities",
@@ -637,7 +639,7 @@ class Contact(gobject.GObject):
         """Contact account
             @type: utf-8 encoded string"""
         return self._account
-    
+
     @property
     def presence(self):
         """Contact presence
@@ -691,7 +693,7 @@ class Contact(gobject.GObject):
         """Contact client capabilities
             @type: L{ClientCapabilities}"""
         return self._client_capabilities
-    
+
     @property
     def msn_object(self):
         """Contact MSN Object
@@ -801,4 +803,3 @@ class Group(gobject.GObject):
         name = pspec.name.lower().replace("-", "_")
         return getattr(self, name)
 gobject.type_register(Group)
-

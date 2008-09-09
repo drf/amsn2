@@ -1,5 +1,22 @@
-pymsn-0.3.1 (Green Moustache)
+pymsn-0.3.2 (Green Moustache)
 ===============================
+
+  * List of changes between 0.3.2 and 0.3.3
+    o Removed an assert statement causing pymsn to fail with the newest CVR response
+    o Removed the python-adns dependency
+    o Fixed a DNS resolution issue
+    o Fixed a small error in the decorator module
+
+  * List of changes between 0.3.1 and 0.3.2
+    o Fixed MSNObject handling in Profile
+    o Added Profile events support
+    o Fixed typo in the EmailContactAdd scenario
+    o Fixed Unicode problems in Contact.attributes
+    o Fixed a ContactMembershipsUpdate bug
+    o Removed the unused SLPTransferRequestBody check, this still not supported by our msnp2p stack
+    o Fixed the msnp2p test file
+    o Fixed iterating over the switchboard handlers and changing the handlers set (Stéphan Kochen)
+    o Fixed a missing AddressBookError import (Stéphan Kochen)
 
   * List of changes between 0.3.0 and 0.3.1
     o Fixed adding contacts already in Memberships list but not with isMessengerUser

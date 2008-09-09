@@ -21,11 +21,9 @@
 
 import socket
 
-try:
-    import adns
-except:
-    pass
 import gobject
+
+from pymsn.util.decorator import async
 
 __all__ = ['HostnameResolver']
 
@@ -54,52 +52,23 @@ class HostnameResponse(object):
 
 class HostnameResolver(object):
     def __init__(self):
-        self._c = None
-        try:
-            self._c = adns.init(adns.iflags.noautosys)
-        except:
-            pass
         self._queries = {}
 
     def query(self, host, callback):
-        if self._is_ip(host):
-            self._emit_response(callback, (0, None, 0, ((2, host),)))
-            return
-        if self._c is None:
-            ip = socket.gethostbyname(host)
-            print ip
-            self._emit_response(callback, (0, None, 0, ((2, ip),)))
-            return
-            
-        query = self._c.submit(host, adns.rr.ADDR)
-        self._queries[query] = host, callback
-        if len(self._queries) == 1:
-            gobject.timeout_add(10, self._process_queries)
+        result = socket.getaddrinfo(host, None, socket.AF_INET, socket.SOCK_STREAM)
+        if len(result) == 0:
+            status = 1
+            cname = ''
+            expires = 0
+            addresses = ()
+        else:
+            status = 0
+            cname = result[0][3]
+            expires = 0
+            addresses = ((socket.AF_INET, result[0][4][0]),)
+        self._emit_response(callback, (status, cname, expires, addresses))
 
-    def _is_ip(self, address):
-        try:
-            socket.inet_pton(socket.AF_INET, address)
-        except socket.error:
-            try:
-                socket.inet_pton(socket.AF_INET6, address)
-            except socket.error:
-                return False
-        except:
-            try:
-                socket.inet_aton(address)
-            except socket.error:
-                return False
-                
-        return True
-
-    def _process_queries(self):
-        for query in self._c.completed(0):
-            response = query.check()
-            qname, callback = self._queries[query]
-            del self._queries[query]
-            self._emit_response(callback, response)
-        return len(self._queries) > 0
-
+    @async
     def _emit_response(self, callback, response):
         callback[0](HostnameResponse(response), *callback[1:])
         return False
@@ -121,10 +90,9 @@ if __name__ == "__main__":
         return False
 
     resolver = HostnameResolver()
-    
+
     gobject.timeout_add(10, print_throbber)
     gobject.timeout_add(100, resolve_hostname, resolver, 'www.google.com')
     #gobject.timeout_add(100, resolve_hostname, resolver, '209.85.129.104')
-    
-    mainloop.run()
 
+    mainloop.run()

@@ -296,7 +296,12 @@ class AddressBook(gobject.GObject):
                             c._add_group_ownership(group)
                     c._add_membership(profile.Membership.FORWARD)
                     c._add_membership(profile.Membership.ALLOW)
-                    contact_infos = {ContactGeneral.ANNOTATIONS : contact.Annotations}
+
+                    annotations = contact.Annotations
+                    for key in annotations:
+                        annotations[key] = annotations[key].encode("utf-8")
+                    contact_infos = {ContactGeneral.ANNOTATIONS : annotations}
+
                     c._server_infos_changed(contact_infos)
                     c.thaw_notify()
                     self.unblock_contact(c)
@@ -479,7 +484,10 @@ class AddressBook(gobject.GObject):
             if display_name == "":
                 display_name = external_email.Email
 
-            contact_infos = { ContactGeneral.ANNOTATIONS : contact.Annotations }
+            annotations = contact.Annotations
+            for key in annotations:
+                annotations[key] = annotations[key].encode("utf-8")
+            contact_infos = { ContactGeneral.ANNOTATIONS : annotations }
 
             if contact.IsMessengerUser:
                 memberships = profile.Membership.FORWARD
@@ -510,7 +518,11 @@ class AddressBook(gobject.GObject):
             if display_name == "":
                 display_name = contact.PassportName
 
-            contact_infos = {ContactGeneral.ANNOTATIONS : contact.Annotations}
+            annotations = contact.Annotations
+            for key in annotations:
+                annotations[key] = annotations[key].encode("utf-8")
+            contact_infos = {ContactGeneral.ANNOTATIONS : annotations}
+
             if contact.IsMessengerUser:
                 memberships = profile.Membership.FORWARD
             else:
@@ -552,13 +564,13 @@ class AddressBook(gobject.GObject):
                     cid = member.CID
                 except AttributeError:
                     cid = None
-                msg = member.Annotations.get('MSN.IM.InviteMessage', '')
+                msg = member.Annotations.get('MSN.IM.InviteMessage', u'')
                 c = profile.Contact("00000000-0000-0000-0000-000000000000",
                         network,
                         member.Account.encode("utf-8"),
                         member.DisplayName.encode("utf-8"),
                         cid)
-                c._server_attribute_changed('invite_message', msg)
+                c._server_attribute_changed('invite_message', msg.encode("utf-8"))
                 self.contacts.add(c)
                 contact = c
 

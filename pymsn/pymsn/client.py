@@ -26,18 +26,18 @@ This module contains the main class used to login into the MSN Messenger
 network. The following example demonstrates a simple client.
 
     >>> import pymsn
-    >>> 
+    >>>
     >>> server = ('messenger.hotmail.com', 1863)
     >>> account = ('pymsn@hotmail.com', 'pymsn is great !')
-    >>> 
+    >>>
     >>> client = pymsn.Client(server)
     >>> client.login(*account)
-    >>> 
+    >>>
     >>> if __name__ == "__main__":
     ...     import gobject
     ...     import logging
     ...     logging.basicConfig(level=logging.DEBUG) # allows us to see the protocol debug
-    ... 
+    ...
     ...     mainloop = gobject.MainLoop()
     ...     mainloop.run()
 
@@ -47,7 +47,7 @@ password was wrong, this will lead us to use the L{pymsn.event} interfaces:
 
     >>> import pymsn
     >>> import pymsn.event
-    >>> 
+    >>>
     >>> class ClientEventHandler(pymsn.event.ClientEventInterface):
     ...     def on_client_error(self, error_type, error):
     ...         if error_type == pymsn.event.ClientErrorType.AUTHENTICATION:
@@ -57,22 +57,22 @@ password was wrong, this will lead us to use the L{pymsn.event} interfaces:
     ...             print "********************************************************"
     ...         else:
     ...             print "ERROR :", error_type, " ->", error
-    >>> 
-    >>> 
+    >>>
+    >>>
     >>> server = ('messenger.hotmail.com', 1863)
     >>> account = ('pymsn@hotmail.com', 'pymsn is great !')
-    >>> 
+    >>>
     >>> client = pymsn.Client(server)
     >>> client_events_handler = ClientEventHandler(client)
-    >>> 
+    >>>
     >>> client.login(*account)
-    >>> 
+    >>>
     >>> if __name__ == "__main__":
     ...     import gobject
     ...     import logging
-    ... 
+    ...
     ...     logging.basicConfig(level=logging.DEBUG) # allows us to see the protocol debug
-    ... 
+    ...
     ...     mainloop = gobject.MainLoop()
     ...     mainloop.run()
 
@@ -146,7 +146,7 @@ class Client(EventsDispatcher):
         self._profile = None
         self._address_book = None
         self._oim_box = None
-        
+
         self.__die = False
         self.__connect_transport_signals()
         self.__connect_protocol_signals()
@@ -202,6 +202,7 @@ class Client(EventsDispatcher):
             logger.warning('login already in progress')
         self.__die = False
         self._profile = profile.Profile((account, password), self._protocol)
+        self.__connect_profile_signals()
         self._transport.establish_connection()
         self._state = ClientState.CONNECTING
 
@@ -239,6 +240,18 @@ class Client(EventsDispatcher):
         del self._external_conversations[contact]
 
     ### private:
+    def __connect_profile_signals(self):
+        """Connect profile signals"""
+        def property_changed(profile, pspec):
+            method_name = "on_profile_%s_changed" % pspec.name.replace("-", "_")
+            self._dispatch(method_name)
+
+        self.profile.connect("notify::presence", property_changed)
+        self.profile.connect("notify::display-name", property_changed)
+        self.profile.connect("notify::personal-message", property_changed)
+        self.profile.connect("notify::current-media", property_changed)
+        self.profile.connect("notify::msn-object", property_changed)
+
     def __connect_contact_signals(self, contact):
         """Connect contact signals"""
         def event(contact, *args):
@@ -266,7 +279,7 @@ class Client(EventsDispatcher):
     def __connect_transport_signals(self):
         """Connect transport signals"""
         def connect_success(transp):
-            self._sso = SSO.SingleSignOn(self.profile.account, 
+            self._sso = SSO.SingleSignOn(self.profile.account,
                                          self.profile.password,
                                          self._proxies)
             self._address_book = AB.AddressBook(self._sso, self._proxies)
@@ -389,4 +402,3 @@ class Client(EventsDispatcher):
         connect_signal("messages-fetched")
         connect_signal("message-sent")
         connect_signal("messages-deleted")
-

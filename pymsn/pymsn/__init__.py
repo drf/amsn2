@@ -26,7 +26,7 @@ instant messaging service.
     @group Network Layer: gnet
 """
 
-__version__ = "0.3.1"
+__version__ = "0.3.3"
 __author__ = "Ali Sabil <ali.sabil@gmail.com>"
 __url__ = "http://telepathy.freedesktop.org/wiki/Pymsn"
 __license__ = "GNU GPL"

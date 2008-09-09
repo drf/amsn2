@@ -109,7 +109,9 @@ class UpdateMembershipsScenario(BaseScenario):
         if memberships == []:
             if self.__late_pending_delete:
                 membership = UpdateMembershipsScenario.__mapping[Membership.PENDING]
-                self.__sharing.DeleteMember(self._callback,
+                callback = list(self._callback)
+                callback.insert(1, self.__done)
+                self.__sharing.DeleteMember(callback,
                                             (self.__common_errback, self.__done,
                                              Membership.PENDING),
                                             self._scenario, membership,

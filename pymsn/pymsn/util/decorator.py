@@ -30,7 +30,7 @@ def decorator(function):
     """decorator to be used on decorators, it preserves the docstring and
     function attributes of functions to which it is applied."""
     def new_decorator(f):
-        g = decorator(f)
+        g = function(f)
         g.__name__ = f.__name__
         g.__doc__ = f.__doc__
         g.__dict__.update(f.__dict__)
@@ -43,7 +43,7 @@ def decorator(function):
 
 def rw_property(function):
     """This decorator implements read/write properties, as follow:
-    
+
         @rw_property
         def my_property():
             "Documentation"
@@ -114,10 +114,8 @@ class throttled(object):
                 last_call_delta = now - self._last_call_time
                 process_queue_timeout = int(self._min_delay * len(self._queue) - last_call_delta)
                 gobject.timeout_add(process_queue_timeout, process_queue)
-                
+
         new_function.__name__ = func.__name__
         new_function.__doc__ = func.__doc__
         new_function.__dict__.update(func.__dict__)
         return new_function
-
-
