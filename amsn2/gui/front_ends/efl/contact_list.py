@@ -186,7 +186,7 @@ class ContactHolder(evas.SmartObject):
         if len(self.contacts) > 0:
             spacing = 5
             total_spacing = spacing * len(self.contacts)
-            item_height = 24
+            item_height = (h - total_spacing) / len(self.contacts)
             for i in self.contacts:
                 self.contacts[i].move(x, y)
                 self.contacts[i].size = (w, item_height)
