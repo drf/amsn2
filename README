@@ -1,7 +1,6 @@
 TEMPORARY README:
 
 In theory, you don't need much... 
-python-adns
 python-pyopenssl
 python-crypto
 maybe some other stuff...
