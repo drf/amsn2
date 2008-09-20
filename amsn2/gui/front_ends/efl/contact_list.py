@@ -93,7 +93,7 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
         self._etk_evas_object.size_request_set(w,h)
 
     def setContactCallback(self, cb):
-        #cb is func(cid)
+        #cb is func(contactview)
         self.group_holder.setContactCallback(cb)
 
     def setContactContextMenu(self, cb):
@@ -153,7 +153,7 @@ class ContactHolder(evas.SmartObject):
 
         if self._callback is not None:
             def cb_(obj,event):
-                self._callback(obj.data["view"].uid)
+                self._callback(obj.data["view"])
             new_contact.on_mouse_down_add(cb_)
 
 
@@ -201,7 +201,7 @@ class ContactHolder(evas.SmartObject):
             c = self.contacts[cid]
             if cb is not None:
                 def cb_(obj,event):
-                    cb(obj.data["view"].uid)
+                    cb(obj.data["view"])
                 c.on_mouse_down_add(cb_)
             else:
                 c.on_mouse_down_del()
