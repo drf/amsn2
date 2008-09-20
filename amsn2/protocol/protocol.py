@@ -3,6 +3,7 @@ import pymsn
 import pymsn.event
 from client import *
 from contact import *
+from invite import *
 
 class Client(pymsn.Client):
     def __init__(self, amsn_core, profile):
@@ -14,6 +15,7 @@ class Client(pymsn.Client):
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
         self._contact_events_handler = ContactEvents(self, self._amsn_core)
+        self._invite_events_handles = InviteEvents(self, self._amsn_core)
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)

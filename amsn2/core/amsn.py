@@ -4,7 +4,8 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
-import contact_manager
+from contact_manager import *
+from conversation_manager import *
     
 class aMSNCore(object):
     def __init__(self, options):
@@ -25,7 +26,8 @@ class aMSNCore(object):
         self._loop = self._gui.gui.aMSNMainLoop(self)
         self._main = self._gui.gui.aMSNMainWindow(self)
         self._skin_manager = self._gui.gui.SkinManager(self)
-        self._contact_manager = contact_manager.aMSNContactManager(self)
+        self._contact_manager = aMSNContactManager(self)
+        self._conversation_manager = aMSNConversationManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
