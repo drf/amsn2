@@ -50,8 +50,9 @@ class aMSNConversation:
 
     """ Actions from ourselves """
     def sendMessage(self, msg):
-        print "Sending: %s" %(msg,)
-        message = pymsn.ConversationMessage(msg)
+        """ msg is a StringView """
+        # for the moment, no formatting
+        message = pymsn.ConversationMessage(msg.toString())
         self._conv.send_text_message(message)
 
     def sendNudge(self):
