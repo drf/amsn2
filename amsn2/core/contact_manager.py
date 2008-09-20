@@ -84,6 +84,6 @@ class aMSNContactManager:
         contactV.name.appendText(contact.personal_message)
         contactV.name.unsetItalic()
         contactV.name.closeTag("psm")
-        
+        contactV.pymsn_contact = contact
         return contactV
         

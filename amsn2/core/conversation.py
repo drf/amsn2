@@ -12,7 +12,8 @@ class aMSNConversation:
         self._contacts = contacts
         if conv is None:
             #New conversation
-            self._conv = pymsn.Conversation(self, contacts)
+            pymsn_contacts = [c.pymsn_contact for c in contacts]
+            self._conv = pymsn.Conversation(self._core._profile.client, pymsn_contacts)
         else:
             #From an existing conversation
             self._conv = conv

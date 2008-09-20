@@ -104,6 +104,7 @@ class aMSNCore(object):
         print "Signing in to account %s" % (profile.email)
         profile.login = login_window
         profile.client = protocol.Client(self, profile)
+        self._profile = profile
         profile.client.connect()
 
     def connectionStateChanged(self, profile, state):
@@ -128,13 +129,12 @@ class aMSNCore(object):
             profile.clwin.show()
             profile.login = None
 
-            def simple_ccb(cid):
+            def startConversation_cb(contact):
                 print "--->"
-                print "Contact Id is %s" % (cid,)
-                cv = ContactView.getContact(cid)
-                print "Contact name is %s" %(cv.name,)  
+                print "Contact is %s" % (contact,)
                 print "<---"
-            clwin._clwidget.setContactCallback(simple_ccb)
+                self._conversation_manager.newConversation([contact])
+            clwin._clwidget.setContactCallback(startConversation_cb)
 
             #TODO: use a method for that in aMSNContactManager
             self._contact_manager._cl_listeners.append(clwin._clwidget)

@@ -7,6 +7,7 @@ class ContactView (BaseUIView):
         self.dp = None
         self.emblem = None
         self.name = None
+        self.pymsn_contact = None
 
     @staticmethod
     def getContact(uid):
