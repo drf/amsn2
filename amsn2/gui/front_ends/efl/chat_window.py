@@ -27,22 +27,34 @@ class aMSNChatWidgetContainer:
 
 
 
-class aMSNChatWidget(etk.HBox, base.aMSNChatWidget):
+class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
     def __init__(self, amsn_conversation, parent):
         self._parent = parent
         self._amsn_conversation = amsn_conversation
-        etk.HBox.__init__(self)
-        self._input = etk.Entry()
+        etk.VPaned.__init__(self)
+        self._input = etk.TextView()
+        self._output = etk.TextView()
+        self._input_container = etk.HBox()
         self._send_button = etk.Button(label="Send")
         self._send_button.on_clicked(self.__sendButton_cb)
-        self.append(self._input, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
-        self.append(self._send_button, etk.HBox.END, etk.HBox.FILL, 0)
+        self._input_container.append(self._input, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
+        self._input_container.append(self._send_button, etk.HBox.END, etk.HBox.FILL, 0)
+        self.child2_set(self._input_container, 1)
+        self.child1_set(self._output, 1)
 
+        self.__input_tb = self._input.textblock_get()
+        self.__output_tb = self._output.textblock_get()
+        self.__iter_out = etk.TextblockIter(self.__output_tb)
+        self.__iter_out.forward_end()
 
     def __sendButton_cb(self, button):
-        msg = self._input.text
-        self._input.text = ""
+        msg = self.__input_tb.text_get(0)
+        self.__input_tb.clear()
         self._amsn_conversation.sendMessage(msg)
+        self.__outputAppendMsg("/me says:\n"+msg+"\n")
+
+    def __outputAppendMsg(self, msg):
+        self.__output_tb.insert(self.__iter_out, msg)
 
 
     def onUserJoined(self, contact):
@@ -55,6 +67,8 @@ class aMSNChatWidget(etk.HBox, base.aMSNChatWidget):
         print "%s is typing" % (contact,)
 
     def onMessageReceived(self, sender, message):
+        str = "%s says:\n%s\n" % (sender.account, message.content)
+        self.__outputAppendMsg(str)
         print "%s says: %s" % (sender.account, message.content)
 
     def onNudgeReceived(self, sender):
