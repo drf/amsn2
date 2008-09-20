@@ -7,7 +7,7 @@ import etk
 import skins
 import window
 from amsn2.gui import base
-from amsn2.core.views import MenuView, MenuItemView
+from amsn2.core.views import ContactView, StringView
 
 class aMSNChatWindow(window.aMSNWindow, base.aMSNChatWindow):
     def __init__(self, conversation_manager):     
@@ -46,11 +46,14 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         self.__output_tb = self._output.textblock_get()
         self.__iter_out = etk.TextblockIter(self.__output_tb)
         self.__iter_out.forward_end()
+        self.position = 450 #doesn't work for the moment, maybe a bug in etk
 
     def __sendButton_cb(self, button):
         msg = self.__input_tb.text_get(0)
         self.__input_tb.clear()
-        self._amsn_conversation.sendMessage(msg)
+        strv = StringView()
+        strv.appendText(msg)
+        self._amsn_conversation.sendMessage(strv)
         self.__outputAppendMsg("/me says:\n"+msg+"\n")
 
     def __outputAppendMsg(self, msg):
@@ -67,9 +70,8 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         print "%s is typing" % (contact,)
 
     def onMessageReceived(self, sender, message):
-        str = "%s says:\n%s\n" % (sender.account, message.content)
+        str = "%s says:\n%s\n" % (sender.name.toString(), message.toString())
         self.__outputAppendMsg(str)
-        print "%s says: %s" % (sender.account, message.content)
 
     def onNudgeReceived(self, sender):
         print "Nudge received from: %s" %(sender,)
