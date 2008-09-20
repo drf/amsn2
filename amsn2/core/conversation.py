@@ -29,30 +29,29 @@ class aMSNConversation:
         print "state changed"
 
     def onError(self, type, error):
-        pass
+        print error
 
-    """ Events from contacts """
     def onUserJoined(self, contact):
-        print "user joined"
+        self._convWidget.onUserJoined(contact)
 
     def onUserLeft(self, contact):
+        self._convWidget.onUserJoined(contact)
         pass
 
     def onUserTyping(self, contact):
-        print "user typing"
+        self._convWidget.onUserJoined(contact)
 
     def onMessageReceived(self, sender, message):
-        print "%s says: %s" % (sender.account, message.content)
         self._convWidget.onMessageReceived(sender, message)
 
     def onNudgeReceived(self, sender):
-        pass
+        self._convWidget.onNudgeReceived(sender)
 
     """ Actions from ourselves """
     def sendMessage(self, msg):
         print "Wants to send : %s" %(msg,)
 
-    def sendNudget(self):
-        pass
+    def sendNudge(self):
+        print "Wants to nudge"
 
     #TODO: ...

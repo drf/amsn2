@@ -21,10 +21,11 @@ class aMSNChatWindow(window.aMSNWindow, base.aMSNChatWindow):
         self.child = chat_widget
 
 #TODO: ChatWidgetContainer
-
-
 class aMSNChatWidgetContainer:
     pass
+
+
+
 
 class aMSNChatWidget(etk.Widget, base.aMSNChatWidget):
     def __init__(self, amsn_conversation, parent):
@@ -33,5 +34,17 @@ class aMSNChatWidget(etk.Widget, base.aMSNChatWidget):
         #TODO
 
 
+    def onUserJoined(self, contact):
+        print "%s joined the conversation" % (contact,)
+
+    def onUserLeft(self, contact):
+        print "%s left the conversation" % (contact,)
+
+    def onUserTyping(self, contact):
+        print "%s is typing" % (contact,)
+
     def onMessageReceived(self, sender, message):
-        pass
+        print "%s says: %s" % (sender.account, message.content)
+
+    def onNudgeReceived(self, sender):
+        print "Nudge received from: %s" %(sender,)
