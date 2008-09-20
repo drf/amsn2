@@ -14,7 +14,7 @@ class Client(pymsn.Client):
         pymsn.Client.__init__(self, server)
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
-        self._contact_events_handler = ContactEvents(self, self._amsn_core)
+        self._contact_events_handler = ContactEvents(self, self._amsn_core._contact_manager)
         self._invite_events_handles = InviteEvents(self, self._amsn_core)
 
     def connect(self):
