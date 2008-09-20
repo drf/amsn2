@@ -49,7 +49,9 @@ class aMSNConversation:
 
     """ Actions from ourselves """
     def sendMessage(self, msg):
-        print "Wants to send : %s" %(msg,)
+        print "Sending: %s" %(msg,)
+        message = pymsn.ConversationMessage(msg)
+        self._conv.send_text_message(message)
 
     def sendNudge(self):
         print "Wants to nudge"
