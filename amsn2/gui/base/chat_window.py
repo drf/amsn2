@@ -1,6 +1,6 @@
 
 class aMSNChatWindow(object):
-    def __init__(self, amsn_core, parent):
+    def __init__(self, amsn_core):
         raise NotImplementedError
 
     def show(self):
