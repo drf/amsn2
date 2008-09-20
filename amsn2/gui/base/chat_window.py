@@ -3,29 +3,26 @@ class aMSNChatWindow(object):
     def __init__(self, amsn_core):
         raise NotImplementedError
 
-    def show(self):
-        """ Show the chat window """
+    def addChatWidget(self, chat_widget):
         raise NotImplementedError
 
-    def hide(self):
-        """ Hide the chat window """
+
+class aMSNChatWidget(object):
+    def __init__(self, amsn_conversation, parent):
         raise NotImplementedError
 
-    def messageSent(self,  message):
-        """ This method will be called to notify the chat window that a new message was sent and should be displayed.
-        Message is a stringview, so the GUI doesn't care who sent it.
-        """
+    def onUserJoined(self, contact):
         raise NotImplementedError
-    
-    def nudgeSent(self):
-        """ This method will be called to notify the chat window that a nudge was sent.
-        """
+
+    def onUserLeft(self, contact):
         raise NotImplementedError
-        
-    
-    def userTyping(self,  message):
-        """ This method notifies the window a user is typing. Message is the message that should be
-        displayed, and is a stringview
-        """
+
+    def onUserTyping(self, contact):
+        raise NotImplementedError
+
+    def onMessageReceived(self, sender, message):
+        raise NotImplementedError
+
+    def onNudgeReceived(self, sender):
         raise NotImplementedError
 
