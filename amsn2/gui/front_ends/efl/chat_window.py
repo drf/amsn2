@@ -27,11 +27,22 @@ class aMSNChatWidgetContainer:
 
 
 
-class aMSNChatWidget(etk.Widget, base.aMSNChatWidget):
+class aMSNChatWidget(etk.HBox, base.aMSNChatWidget):
     def __init__(self, amsn_conversation, parent):
         self._parent = parent
         self._amsn_conversation = amsn_conversation
-        #TODO
+        etk.HBox.__init__(self)
+        self._input = etk.Entry()
+        self._send_button = etk.Button(label="Send")
+        self._send_button.on_clicked(self.__sendButton_cb)
+        self.append(self._input, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
+        self.append(self._send_button, etk.HBox.END, etk.HBox.FILL, 0)
+
+
+    def __sendButton_cb(self, button):
+        msg = self._input.text
+        self._input.text = ""
+        self._amsn_conversation.sendMessage(msg)
 
 
     def onUserJoined(self, contact):
