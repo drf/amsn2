@@ -58,4 +58,10 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
         print "set_view request"
         
     def setMenu(self, menu):
-        print "menu here ^^"
+        mb = QMenuBar()
+        
+        for item in menu.items:
+            if item.type == "cascade":
+                mb.addMenu(item.label)
+                
+        self.setMenuBar(mb)
