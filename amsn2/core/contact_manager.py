@@ -29,26 +29,26 @@ class aMSNContactManager:
             contacts = address_book.contacts.search_by_groups(group)
             groupV = self.buildGroupView(group, 0, len(contacts))
             groupV.contacts = []
-            
+
             for contact in contacts:
                 contactV = self.buildContactView(contact)
                 groupV.contacts.append(contactV)
-            
+
             for l in self._cl_listeners:
                 l.groupAdded(groupV)
 
         groupV = self.buildGroupView(None, 0, 0)
         groupV.contacts = []
-            
+
         contacts = address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
         for contact in contacts:
             if len(contact.groups) == 0:
                 contactV = self.buildContactView(contact)
                 groupV.contacts.append(contactV)
-                            
+
         if len(groupV.contacts) > 0:
             groupV = self.buildGroupView(None, 0, len(groupV.contacts))
-            
+
             for l in self._cl_listeners:
                 l.groupAdded(groupV)
 
@@ -59,9 +59,9 @@ class aMSNContactManager:
         groupV.name = StringView() # TODO : default color from skin/settings
         groupV.name.appendText(group.name if group else "No Group") # TODO : parse or translation
         groupV.name.appendText("(" + str(active) + "/" + str(total) + ")")
-        
+
         return groupV
-    
+
     def buildContactView(self, contact):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = self._core._gui.gui.Image(self._core, self._core._main)
@@ -86,4 +86,4 @@ class aMSNContactManager:
         contactV.name.closeTag("psm")
         contactV.pymsn_contact = contact
         return contactV
-        
+

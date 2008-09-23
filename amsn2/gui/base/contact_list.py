@@ -11,7 +11,7 @@ class aMSNContactListWindow(object):
     """ This interface represents the main Contact List Window
         self._clwiget is an aMSNContactListWidget 
     """
-    
+
     def __init__(self, amsn_core, parent):
         raise NotImplementedError
 
@@ -28,16 +28,17 @@ class aMSNContactListWindow(object):
         @text : a string
         """
         raise NotImplementedError
-    
+
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
         """
         raise NotImplementedError
 
-    def topCLUpdated(self, contactView):
-        """ This will allow the core to change the top of the CL
-        @contactView: the contactView of the user (contains DP, nick, psm,
+    def myInfoUpdated(self, view):
+        """ This will allow the core to change pieces of information about
+        ourself, such as DP, nick, psm, the current media being played,...
+        @view: the contactView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
@@ -65,7 +66,7 @@ class aMSNContactListWidget(object):
         the contact list which will contain the list of ContactViews
         for all the contacts to show in the group."""
         raise NotImplementedError
-    
+
     def groupUpdated(self, groupView):
         """ This method will be called to notify the contact list
         that a group has been updated.
@@ -75,7 +76,7 @@ class aMSNContactListWidget(object):
         A contact can also be added or removed from a group using this method
         """
         raise NotImplementedError
-    
+
     def contactUpdated(self, contactView):
         """ This method will be called to notify the contact list
         that a contact has been updated.
@@ -87,7 +88,7 @@ class aMSNContactListWidget(object):
         in the affects groups.
         """
         raise NotImplementedError
-    
+
     def setContactCallback(self, cb):
         """ Set the callback when a contact is clicked or double clicked (choice
         is given to the front-end developer)
@@ -96,7 +97,7 @@ class aMSNContactListWidget(object):
         cid is the contact id of the contact actionned
         """
         raise NotImplementedError
-    
+
     def setContactContextMenu(self, cb):
         """ Set the callback when a context menu for a contact should be
         displayed (choice is given to the front-end developer, usually on right
@@ -107,7 +108,7 @@ class aMSNContactListWidget(object):
         That function must return a MenuView
         """
         raise NotImplementedError
-    
+
     def setGroupCallback(self, cb):
         """ Set the callback when a group is clicked or double clicked (choice
         is given to the front-end developer)

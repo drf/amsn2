@@ -21,7 +21,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
     def show(self):
         self._clwidget.show()
-    
+
     def hide(self):
         self._clwidget.hide()
 
@@ -31,7 +31,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
     def setMenu(self, menu):
         self._parent.setMenu(menu)
 
-    def topCLUpdated(self, contactView):
+    def myInfoUpdated(self, view):
         pass #TODO
 
 
@@ -50,17 +50,17 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
         except edje.EdjeLoadError, e:
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
-    
+
         self.group_holder = GroupHolder(self._evas, self)
         self.group_items = {}
-                
+
         self._etk_evas_object.evas_object = self._edje
         self.add_with_viewport(self._etk_evas_object)
 
         self._edje.part_swallow("groups", self.group_holder);
-        
+
         self._edje.focus = True
-        
+
         self._edje.show()
         self._etk_evas_object.show()
 
@@ -73,7 +73,7 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
 
     def groupUpdated(self, group):
         raise NotImplementedError
-    
+
     def groupAdded(self, group):
         gi = self.group_holder.add_group(group)
         self.group_items[group.uid] = gi
@@ -115,7 +115,7 @@ class ContactHolder(evas.SmartObject):
         #TODO : clean :)
         self.contacts[contact.uid].\
             part_text_set("contact_data", contact.name.toString())
-       
+
         if DP_IN_CL:
             # add the dp
             # Remove the current dp
@@ -148,7 +148,7 @@ class ContactHolder(evas.SmartObject):
         new_contact.data["view"] = contact
         self.contacts[contact.uid] = new_contact
         self.contact_updated(contact)
-        
+
         self.member_add(new_contact)
 
         if self._callback is not None:
@@ -159,7 +159,7 @@ class ContactHolder(evas.SmartObject):
 
         new_contact.show()
         return new_contact
-    
+
     def clip_set(self, obj):
         for i in self.contacts:
             self.contacts[i].clip_set(obj)
@@ -171,7 +171,7 @@ class ContactHolder(evas.SmartObject):
     def show(self):
         for i in self.contacts:
             self.contacts[i].show()
-        
+
     def hide(self):
         for i in self.contacts:
             self.contacts[i].hide()
@@ -191,7 +191,7 @@ class ContactHolder(evas.SmartObject):
                 self.contacts[i].move(x, y)
                 self.contacts[i].size = (w, item_height)
                 y += item_height + spacing
-            
+
     def num_contacts(self):
         return len(self.contacts)
 
@@ -205,7 +205,7 @@ class ContactHolder(evas.SmartObject):
                 c.on_mouse_down_add(cb_)
             else:
                 c.on_mouse_down_del()
-        
+
 
 class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, group, ccb = None):
@@ -237,12 +237,12 @@ class GroupItem(edje.Edje):
             return 0
         else:
             return self.contact_holder.num_contacts()
-    
+
 
     # Private methods
     def __update_parent(self):
         self._parent.update_widget(self._parent.size[0], self._parent.size[1])
-        
+
     def __expanded_cb(self, edje_obj, signal, source):
         self.expanded = True
         self.__update_parent()
@@ -275,7 +275,7 @@ class GroupHolder(evas.SmartObject):
         self.member_add(new_group)
         self.update_widget(self.size[0], self.size[1])
         return new_group
-    
+
     def setContactCallback(self, ccb):
         self._ccb = ccb
         for gi in self.group_items:
@@ -290,7 +290,7 @@ class GroupHolder(evas.SmartObject):
         self.clip_set(self._parent._edje.clip_get())
         for g in self.group_items:
             g.show()
-        
+
     def hide(self):
         for g in self.group_items:
             g.hide()
