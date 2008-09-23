@@ -5,7 +5,7 @@ from PyQt4.QtGui import *
 from ui_contactlist import Ui_ContactList
 from styledwidget import StyledWidget
 
-class aMSNContactList(StyledWidget, base.aMSNContactList):
+class aMSNContactListWindow(StyledWidget, base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
         """ Should we consider switching the contact view to a Model+View
         instead of a QTreeWidget? This can surely give us some advantages... """

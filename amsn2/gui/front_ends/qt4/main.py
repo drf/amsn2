@@ -3,6 +3,7 @@ from amsn2.gui import base
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from fadingwidget import FadingWidget
+from amsn2.core.views import MenuView, MenuItemView
 
 class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
     def __init__(self, amsn_core, parent=None):
@@ -18,6 +19,9 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
         QObject.connect(self.opaqLayer, SIGNAL("fadeInCompleted()"), self.__activateNewWidget)
         QObject.connect(self.opaqLayer, SIGNAL("fadeOutCompleted()"), self.__fadeIn)
         self.resize(230, 550)
+        
+    def closeEvent(self, event):
+        self._amsn_core.quit()
 
     def fadeIn(self, widget):
         widget.setAutoFillBackground(True)
@@ -52,3 +56,6 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
 
     def set_view(self, view):
         print "set_view request"
+        
+    def setMenu(self, menu):
+        print "menu here ^^"
