@@ -49,6 +49,33 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def hide(self):
         pass
     
+    def contactUpdated(self, contact):
+        pass
+
+    def groupUpdated(self, group):
+        raise NotImplementedError
+    
+
+    def groupRemoved(self, group):
+        pass
+
+    def configure(self, option, value):
+        pass
+
+    def cget(self, option, value):
+        pass
+
+    def size_request_set(self, w,h):
+        pass
+
+    def setContactCallback(self, cb):
+        #cb is func(contactview)
+        pass
+
+    def setContactContextMenu(self, cb):
+        #TODO:
+        pass
+    
     def groupAdded(self, group):
         groupItem = QTreeWidgetItem(self.ui.cList)
         groupItem.setText(0, group.name.toString())
