@@ -11,6 +11,9 @@ class aMSNMainWindow(base.aMSNMainWindow):
         # Load our window.
         self.cocoaWin = CocoaMainWindow.getMainWindow()
     
+    def setMenu(self, menu_view):
+        pass
+    
     def setTitle(self, title):
         self.cocoaWin.setTitle_(title)
     

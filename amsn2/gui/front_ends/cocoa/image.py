@@ -2,18 +2,32 @@
 from AppKit import *
 from amsn2.gui import base
 
-class Image(base.Image):
-    def __init__(self, amsn_core, window):
-        self._amsn_core = amsn_core
-        self._amsn_gui = self._amsn_core.getMainWindow()
-        #self._img = NSImage.alloc().init()
+class Image(object):
+    """ This interface will represent an image to be used by the UI"""
+    def __init__(self, amsn_core, parent):
+		"""Initialize the interface. You should store the reference to the core in here """
+		self._img = NSImage.alloc().initWithSize_((1,1))
 
-    def loadFromFile(self, filename):
-        #self._img.release()
-        #self._img = NSImage.alloc().initWithContentsOfFile_(filename)
-        pass
+    def load(self, resource_name, value):
+        """ This method is used to load an image using the name of a resource and a value for that resource
+            resource_name can be :
+                - 'File', value is the filename
+                - 'Skin', value is the skin key
+                - some more :)
+        """
+        self._img.release()
+        
+        if (resource_name == 'File'):
+            self._img = NSImage.alloc().initWithContentsOfFile_(str(value))
 
-    def loadFromResource(self, resource_name):
+    def append(self, resource_name, value):
+        """ This method is used to overlap an image on the current image
+            Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
+        """
         raise NotImplementedError
 
-
+    def prepend(self, resource_name, value):
+        """ This method is used to underlap an image under the current image
+            Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
+        """
+        raise NotImplementedError
