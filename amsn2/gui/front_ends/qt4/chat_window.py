@@ -1,10 +1,20 @@
-#from amsn2.gui import base
+from amsn2.gui import base
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from ui_chatWindow import Ui_ChatWindow
     
-class aMSNChatWindow(QWidget):
+class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
+    def __init__(self, amsn_core, Parent=None):
+        QTabWidget.__init__(self, Parent)
+        
+        self._core(amsn_core)
+        
+    def addChatWidget(self, chat_widget):
+        self.addTab(chat_widget, "test")
+        
+    
+class aMSNChatWidget(QWidget, base.aMSNChatWidget):
     def __init__(self, Parent=None):
         QWidget.__init__(self, Parent)
         # TODO: Init chat window code from amsn core here
@@ -69,4 +79,19 @@ class aMSNChatWindow(QWidget):
         
     def appendImageAtCursor(self, image):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
+        
+    def onUserJoined(self, contact):
+        pass
+
+    def onUserLeft(self, contact):
+        pass
+
+    def onUserTyping(self, contact):
+        self.ui.statusText.setText(QString(contact.name + " is typing"))
+
+    def onMessageReceived(self, sender, message):
+        pass
+
+    def onNudgeReceived(self, sender):
+        pass
         
