@@ -5,3 +5,5 @@ from login import *
 from image import *
 from splash import *
 from skins import *
+from contact_model import *
+from contact_item import *

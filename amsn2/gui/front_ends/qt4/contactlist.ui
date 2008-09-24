@@ -112,7 +112,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QTreeWidget" name="cList" >
+    <widget class="QTreeView" name="cList" >
      <property name="styleSheet" >
       <string notr="true" >         QTreeView {
              show-decoration-selected: 1;
@@ -148,76 +148,6 @@ p, li { white-space: pre-wrap; }
      <property name="headerHidden" >
       <bool>true</bool>
      </property>
-     <column>
-      <property name="text" >
-       <string>1</string>
-      </property>
-     </column>
-     <item>
-      <property name="text" >
-       <string>Group 4</string>
-      </property>
-      <item>
-       <property name="text" >
-        <string>User 5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>User 4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>User 3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>User 2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>User 1</string>
-       </property>
-      </item>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Group 3</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Group 2</string>
-      </property>
-      <item>
-       <property name="text" >
-        <string>User 2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>User 1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Some user with a really long name, lol</string>
-       </property>
-      </item>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Group 1</string>
-      </property>
-      <item>
-       <property name="text" >
-        <string>User 1</string>
-       </property>
-      </item>
-     </item>
     </widget>
    </item>
   </layout>

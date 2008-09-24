@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'contactlist.ui'
 #
-# Created: Sun Jun 15 00:10:34 2008
-#      by: PyQt4 UI code generator 4.4.2
+# Created: Wed Sep 24 12:42:52 2008
+#      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,23 +12,23 @@ from PyQt4 import QtCore, QtGui
 class Ui_ContactList(object):
     def setupUi(self, ContactList):
         ContactList.setObjectName("ContactList")
-        ContactList.resize(206,429)
+        ContactList.resize(206, 429)
         ContactList.setStyleSheet("#ContactList { background-color: white; }")
         self.verticalLayout = QtGui.QVBoxLayout(ContactList)
         self.verticalLayout.setSpacing(2)
-        self.verticalLayout.setContentsMargins(0,3,0,3)
+        self.verticalLayout.setContentsMargins(0, 3, 0, 3)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.pixUser = QtGui.QLabel(ContactList)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed,QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pixUser.sizePolicy().hasHeightForWidth())
         self.pixUser.setSizePolicy(sizePolicy)
-        self.pixUser.setMinimumSize(QtCore.QSize(100,100))
+        self.pixUser.setMinimumSize(QtCore.QSize(100, 100))
         self.pixUser.setStyleSheet("""#pixUser {
 color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 255), stop:1 rgba(175, 175, 175, 255));
 font-weight: bold;
@@ -43,14 +43,14 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
         self.pixUser.setAlignment(QtCore.Qt.AlignCenter)
         self.pixUser.setObjectName("pixUser")
         self.horizontalLayout.addWidget(self.pixUser)
-        spacerItem1 = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.label = QtGui.QLabel(ContactList)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.cList = QtGui.QTreeWidget(ContactList)
+        self.cList = QtGui.QTreeView(ContactList)
         self.cList.setStyleSheet("""         QTreeView {
              show-decoration-selected: 1;
              background-color: white;
@@ -75,7 +75,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
         self.cList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.cList.setSortingEnabled(True)
         self.cList.setAnimated(True)
-        #self.cList.setHeaderHidden(True)
+        self.cList.setHeaderHidden(True)
         self.cList.setObjectName("cList")
         self.verticalLayout.addWidget(self.cList)
 
@@ -91,32 +91,4 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
 "</style></head><body style=\" font-family:\'DejaVu Sans\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Welcome!</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This is just a test!</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.cList.headerItem().setText(0,QtGui.QApplication.translate("ContactList", "1", None, QtGui.QApplication.UnicodeUTF8))
-        self.cList.clear()
-        item = QtGui.QTreeWidgetItem(self.cList)
-        item.setText(0,QtGui.QApplication.translate("ContactList", "Group 4", None, QtGui.QApplication.UnicodeUTF8))
-        item1 = QtGui.QTreeWidgetItem(item)
-        item1.setText(0,QtGui.QApplication.translate("ContactList", "User 5", None, QtGui.QApplication.UnicodeUTF8))
-        item2 = QtGui.QTreeWidgetItem(item)
-        item2.setText(0,QtGui.QApplication.translate("ContactList", "User 4", None, QtGui.QApplication.UnicodeUTF8))
-        item3 = QtGui.QTreeWidgetItem(item)
-        item3.setText(0,QtGui.QApplication.translate("ContactList", "User 3", None, QtGui.QApplication.UnicodeUTF8))
-        item4 = QtGui.QTreeWidgetItem(item)
-        item4.setText(0,QtGui.QApplication.translate("ContactList", "User 2", None, QtGui.QApplication.UnicodeUTF8))
-        item5 = QtGui.QTreeWidgetItem(item)
-        item5.setText(0,QtGui.QApplication.translate("ContactList", "User 1", None, QtGui.QApplication.UnicodeUTF8))
-        item6 = QtGui.QTreeWidgetItem(self.cList)
-        item6.setText(0,QtGui.QApplication.translate("ContactList", "Group 3", None, QtGui.QApplication.UnicodeUTF8))
-        item7 = QtGui.QTreeWidgetItem(self.cList)
-        item7.setText(0,QtGui.QApplication.translate("ContactList", "Group 2", None, QtGui.QApplication.UnicodeUTF8))
-        item8 = QtGui.QTreeWidgetItem(item7)
-        item8.setText(0,QtGui.QApplication.translate("ContactList", "User 2", None, QtGui.QApplication.UnicodeUTF8))
-        item9 = QtGui.QTreeWidgetItem(item7)
-        item9.setText(0,QtGui.QApplication.translate("ContactList", "User 1", None, QtGui.QApplication.UnicodeUTF8))
-        item10 = QtGui.QTreeWidgetItem(item7)
-        item10.setText(0,QtGui.QApplication.translate("ContactList", "Some user with a really long name, lol", None, QtGui.QApplication.UnicodeUTF8))
-        item11 = QtGui.QTreeWidgetItem(self.cList)
-        item11.setText(0,QtGui.QApplication.translate("ContactList", "Group 1", None, QtGui.QApplication.UnicodeUTF8))
-        item12 = QtGui.QTreeWidgetItem(item11)
-        item12.setText(0,QtGui.QApplication.translate("ContactList", "User 1", None, QtGui.QApplication.UnicodeUTF8))
 
