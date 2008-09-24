@@ -51,19 +51,21 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
     
     def contactUpdated(self, contact):
-        l = self._model.findItems("", Qt.MatchWildcard)
+        print "Contact Updated: " + QString.fromUtf8(contact.name.toString())
+        l = self._model.findItems("*", Qt.MatchWildcard | Qt.MatchRecursive)
         
         for itm in l:
-            if itm.data(40) == contact.uid:
-                itm.setContactName(QString.fromUtf8(contact.name.toString()))
+            if itm.data(40).toString() == contact.uid:
+                itm.setText(QString.fromUtf8(contact.name.toString()))
                 break
 
     def groupUpdated(self, group):
-        l = self._model.findItems("", Qt.MatchWildcard)
+        print "GroupUpdated"
+        l = self._model.findItems("*", Qt.MatchWildcard)
         
         for itm in l:
             
-            if itm.data(40) == group.uid:
+            if itm.data(40).toString() == group.uid:
                 
                 itm.setText(QString.fromUtf8(group.name.toString()))
             
@@ -71,18 +73,18 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
                     
                     for ent in l:
                         
-                        if ent.data(40) == contact.uid:
-                            itm.setContactName(QString.fromUtf8(contact.name.toString()))
+                        if ent.data(40).toString() == contact.uid:
+                            itm.setText(QString.fromUtf8(contact.name.toString()))
                             continue
                         
                     print "  * " + contact.name.toString()
             
                     contactItem = ContactItem()
                     contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
-                    contactItem.setData(contact.uid, 40)
+                    contactItem.setData(QVariant(contact.uid), 40)
             
                     itm.appendRow(contactItem)
-                    
+
                 break
 
     def groupRemoved(self, group):
