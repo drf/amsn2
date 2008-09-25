@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'contactlist.ui'
 #
-# Created: Wed Sep 24 12:42:52 2008
+# Created: Thu Sep 25 00:58:27 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,6 +50,9 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
+        self.searchLine = QtGui.QLineEdit(ContactList)
+        self.searchLine.setObjectName("searchLine")
+        self.verticalLayout.addWidget(self.searchLine)
         self.cList = QtGui.QTreeView(ContactList)
         self.cList.setStyleSheet("""         QTreeView {
              show-decoration-selected: 1;

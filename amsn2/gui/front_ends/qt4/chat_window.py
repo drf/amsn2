@@ -81,17 +81,23 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
         
     def onUserJoined(self, contact):
+        textEdit.append("<b>"+sender.name+" "+this.tr("has joined the conversation")+("</b><br>"))
         pass
 
     def onUserLeft(self, contact):
+        textEdit.append("<b>"+contact.name+" "+this.tr("has left the conversation")+("</b><br>"))
         pass
 
     def onUserTyping(self, contact):
         self.ui.statusText.setText(QString(contact.name + " is typing"))
 
     def onMessageReceived(self, sender, message):
+        print "Ding!"
+        textEdit.append("<b>"+sender.name+" "+this.tr("writes:")+("</b><br>"))
+        textEdit.append(message.toString())
         pass
 
     def onNudgeReceived(self, sender):
+        textEdit.append("<b>"+sender.name+" "+this.tr("sent you a nudge!")+("</b><br>"))
         pass
         

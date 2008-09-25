@@ -42,7 +42,15 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         self._parent = parent
         self._mainWindow = parent._parent
         self._model = QStandardItemModel(self)
-        self.ui.cList.setModel(self._model)
+        self._proxyModel = QSortFilterProxyModel(self)
+        self._proxyModel.setSourceModel(self._model)
+        self.ui.cList.setModel(self._proxyModel)
+        
+        self._proxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self._proxyModel.setFilterKeyColumn(-1)
+        
+        self.connect(self.ui.searchLine, SIGNAL('textChanged(QString)'),
+                     self._proxyModel, SLOT('setFilterFixedString(QString)'))
 
     def show(self):
         self._mainWindow.fadeIn(self)
