@@ -7,7 +7,7 @@ class aMSNContactManager:
     def __init__(self, core):
         self._core = core
 
-        #TODO: cl_listeners should be a weakref list
+        #TODO: listeners should be a priority weakref list or smthg like that
         """
             Listeners are objects with the following methods:
                 - groupAdded(groupView)
@@ -15,13 +15,13 @@ class aMSNContactManager:
             TODO: listeners should return the views they were given (so they
             change it, useful for plugins...)
         """
-        self._cl_listeners = []
+        self._listeners = []
 
     #Events
 
     def onContactPresenceChanged(self, contact):
         c = self.buildContactView(contact)
-        for l in self._cl_listeners:
+        for l in self._listeners:
             l.contactUpdated(c)
 
     def onCLDownloaded(self, address_book):
@@ -34,7 +34,7 @@ class aMSNContactManager:
                 contactV = self.buildContactView(contact)
                 groupV.contacts.append(contactV)
 
-            for l in self._cl_listeners:
+            for l in self._listeners:
                 l.groupAdded(groupV)
 
         groupV = self.buildGroupView(None, 0, 0)
@@ -49,8 +49,16 @@ class aMSNContactManager:
         if len(groupV.contacts) > 0:
             groupV = self.buildGroupView(None, 0, len(groupV.contacts))
 
-            for l in self._cl_listeners:
+            for l in self._listeners:
                 l.groupAdded(groupV)
+
+    def register(self, obj, priority = 0):
+        #TODO: priority
+        self._listeners.append(obj)
+
+    def unregister(self, obj):
+        if obj in self._listeners:
+            self._listeners.remove(obj)
 
 
     def buildGroupView(self, group, active, total):
