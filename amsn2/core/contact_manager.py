@@ -78,29 +78,3 @@ class aMSNContactManager:
 
         return groupV
 
-    """
-    def buildContactView(self, contact):
-        contactV = ContactView.getContact(contact.id)
-        contactV.icon = self._core._gui.gui.Image(self._core, self._core._main)
-        contactV.icon.load("Skin","buddy_" + self._core.p2s[contact.presence])
-        contactV.dp = self._core._gui.gui.Image(self._core, self._core._main)
-        contactV.dp.load("Skin","default_dp")
-        contactV.name = StringView() # TODO : default colors
-        contactV.name.openTag("nickname")
-        contactV.name.appendText(contact.display_name) # TODO parse
-        contactV.name.closeTag("nickname")
-        contactV.name.appendText(" ")
-        contactV.name.openTag("status")
-        contactV.name.appendText("(")
-        contactV.name.appendText(self._core.p2s[contact.presence])
-        contactV.name.appendText(")")
-        contactV.name.closeTag("status")
-        contactV.name.appendText(" ")
-        contactV.name.openTag("psm")
-        contactV.name.setItalic()
-        contactV.name.appendText(contact.personal_message)
-        contactV.name.unsetItalic()
-        contactV.name.closeTag("psm")
-        contactV.pymsn_contact = contact
-        return contactV
-    """

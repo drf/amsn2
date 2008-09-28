@@ -1,5 +1,6 @@
 from base import BaseUIView
 from stringview import StringView
+from imageview import ImageView
 
 class ContactView (BaseUIView):
     class Updated:
@@ -19,9 +20,9 @@ class ContactView (BaseUIView):
 
     def __init__(self, core, uid):
         BaseUIView.__init__(self, uid)
-        self.icon = core._gui.gui.Image(core, core._main)
-        self.dp = core._gui.gui.Image(core, core._main)
-        self.emblem = core._gui.gui.Image(core, core._main)
+        self.icon = ImageView()
+        self.dp = ImageView(ImageView.ResourceType.SKIN,"default_dp")
+        self.emblem = ImageView()
         self.status = None
         self.account = None
         self.nickname = StringView()
@@ -59,8 +60,7 @@ class ContactView (BaseUIView):
             self.updated |= ContactView.Updated.EMBLEM
 
         if self.updated & ContactView.Updated.DP:
-            #TODO
-            self.dp.load("Skin","default_dp")
+            pass
 
         if self.updated & ContactView.Updated.ACCOUNT:
             self.account = pymsn_contact.account

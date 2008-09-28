@@ -55,8 +55,8 @@ class aMSNCore(object):
         self._main.setTitle("aMSN 2 - Loading")
 
         splash = self._gui.gui.aMSNSplashScreen(self, self._main)
-        image = self._gui.gui.Image(self, self._main)
-        image.load("File","/path/to/image/here")
+        image = ImageView()
+        image.load(ImageView.ResourceType.FILE,"/path/to/image/here")
 
         splash.setImage(image)
         splash.setText("Loading...")
