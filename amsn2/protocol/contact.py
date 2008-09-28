@@ -11,6 +11,7 @@ class ContactEvents(pymsn.event.ContactEventInterface):
         pymsn.event.ContactEventInterface.__init__(self, client)
 
     def on_contact_presence_changed(self, contact):
-        c = ContactView.getContact(self._contact_manager._core, contact.id, contact)
+        c = ContactView.getContact(self._contact_manager._core, contact.id,
+                                   contact, ContactView.Updated.STATUS)
         self._contact_manager.onContactPresenceChanged(c)
 

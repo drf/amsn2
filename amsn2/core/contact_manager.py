@@ -25,13 +25,20 @@ class aMSNContactManager:
             l.contactUpdated(c)
 
     def onCLDownloaded(self, address_book):
+        #contacts are new. Need to fill the ContactView
+        contact_updated = (ContactView.Updated.ACCOUNT
+                           | ContactView.Updated.STATUS
+                           | ContactView.Updated.NICKNAME
+                           | ContactView.Updated.PSM
+                           | ContactView.Updated.CURRENT_MEDIA)
         for group in address_book.groups:
             contacts = address_book.contacts.search_by_groups(group)
             groupV = self.buildGroupView(group, 0, len(contacts))
             groupV.contacts = []
 
             for contact in contacts:
-                contactV = ContactView.getContact(self._core, contact.id, contact)
+                contactV = ContactView.getContact(self._core, contact.id,
+                                                  contact, contact_updated)
                 groupV.contacts.append(contactV)
 
             for l in self._listeners:
@@ -43,7 +50,8 @@ class aMSNContactManager:
         contacts = address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
         for contact in contacts:
             if len(contact.groups) == 0:
-                contactV = ContactView.getContact(self._core, contact.id, contact)
+                contactV = ContactView.getContact(self._core, contact.id,
+                                                  contact, contact_updated)
                 groupV.contacts.append(contactV)
 
         if len(groupV.contacts) > 0:

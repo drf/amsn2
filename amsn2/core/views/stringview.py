@@ -54,14 +54,14 @@ class StringView (object):
     class UnderlineElement(StringElement):
         def __init__(self, underline):
             StringView.StringElement.__init__(self, StringView.UNDERLINE_ELEMENT, underline)
-            
+
     def __init__(self, default_background_color = None, default_color = None, default_font = None):
         self._elements = []
 
         self._default_background_color = default_background_color
         self._default_color = default_color
         self._default_font = default_font
-        
+
         if default_color is not None:
             self.resetColor()
         if default_background_color is not None:
@@ -86,7 +86,7 @@ class StringView (object):
         self._elements.append(StringView.OpenTagElement(tag))
     def closeTag(self, tag):
         self._elements.append(StringView.CloseTagElement(tag))
-        
+
     def setBold(self):
         self._elements.append(StringView.BoldElement(True))
     def unsetBold(self):
@@ -99,7 +99,9 @@ class StringView (object):
         self._elements.append(StringView.UnderlineElement(True))
     def unsetUnderline(self):
         self._elements.append(StringView.UnderlineElement(False))
-        
+
+    def reset(self):
+        self._elements = []
     def resetColor(self):
         self.setColor(self._default_color)
     def resetBackgroundColor(self):
@@ -107,12 +109,16 @@ class StringView (object):
     def resetFont(self):
         self.setFont(self._default_font)
 
+    def appendStringView(self, strv):
+        #TODO: default (bg)color
+        self._elements.extend(strv._elements)
+
     def toString(self):
         out = ""
         for x in self._elements:
             if x.getType() == StringView.TEXT_ELEMENT:
                 out += x.getValue()
-                
+
         return out
 
     def __str__(self):
@@ -122,7 +128,7 @@ class StringView (object):
         out = "{"
         for x in self._elements:
             out += "[" + x.getType() + "=" + str(x.getValue()) + "]"
-            
+
         out += "}"
         return out
-        
+
