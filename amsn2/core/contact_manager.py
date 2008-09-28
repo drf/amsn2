@@ -19,8 +19,8 @@ class aMSNContactManager:
 
     #Events
 
-    def onContactPresenceChanged(self, contact):
-        c = self.buildContactView(contact)
+    def onContactPresenceChanged(self, c):
+        #Maybe we need to change the name of the groupView
         for l in self._listeners:
             l.contactUpdated(c)
 
@@ -31,7 +31,7 @@ class aMSNContactManager:
             groupV.contacts = []
 
             for contact in contacts:
-                contactV = self.buildContactView(contact)
+                contactV = ContactView.getContact(self._core, contact.id, contact)
                 groupV.contacts.append(contactV)
 
             for l in self._listeners:
@@ -43,7 +43,7 @@ class aMSNContactManager:
         contacts = address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
         for contact in contacts:
             if len(contact.groups) == 0:
-                contactV = self.buildContactView(contact)
+                contactV = ContactView.getContact(self._core, contact.id, contact)
                 groupV.contacts.append(contactV)
 
         if len(groupV.contacts) > 0:
@@ -70,6 +70,7 @@ class aMSNContactManager:
 
         return groupV
 
+    """
     def buildContactView(self, contact):
         contactV = ContactView.getContact(contact.id)
         contactV.icon = self._core._gui.gui.Image(self._core, self._core._main)
@@ -94,4 +95,4 @@ class aMSNContactManager:
         contactV.name.closeTag("psm")
         contactV.pymsn_contact = contact
         return contactV
-
+    """

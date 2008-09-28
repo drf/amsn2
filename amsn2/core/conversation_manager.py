@@ -9,8 +9,8 @@ class aMSNConversationManager:
 
     def onInviteConversation(self, conversation):
         print "new conv"
-        contacts_id = [c.id for c in conversation.participants]
-        contacts = [ContactView.getContact(cid) for cid in contacts_id]
+        contacts = [ContactView.getContact(self._core, c.id, c) for c in
+                    conversation.participants]
         #TODO: What if the contact_manager has not build a view for that contact?
         c = aMSNConversation(self._core, self, conversation, contacts)
         self._convs.append(c)
