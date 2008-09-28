@@ -23,13 +23,13 @@ class Skin(object):
 
         self.setKey("emblem_busy", ("File", "amsn2/themes/default/images/contact_list/busy_emblem.png"))
 
-         
+
     def getKey(self, key, default = None):
         try:
             return self._dict[key]
         except KeyError:
             return default
-        
+
     def setKey(self, key, value):
         self._dict[key] = value
 

@@ -1,5 +1,6 @@
 
 from constants import *
+from image import *
 import evas
 import edje
 import ecore
@@ -12,9 +13,10 @@ import pymsn
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
-        self._amsn_core = amsn_core
+        self._core = amsn_core
         self._evas = parent._evas
         self._parent = parent
+        self._skin = amsn_core._skin_manager.skin
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         parent.setChild(self._clwidget)
         self._clwidget.show()
@@ -37,8 +39,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
 class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
-        self._amsn_core = amsn_core
+        self._core = amsn_core
         self._evas = parent._evas
+        self._skin = parent._skin
 
         self._etk_evas_object = etk.EvasObject()
         etk.ScrolledView.__init__(self)
@@ -109,6 +112,7 @@ class ContactHolder(evas.SmartObject):
         self.evas_obj = ecanvas
         self.contacts = {}
         self._parent = parent
+        self._skin = parent._skin
         self._callback = cb
 
     def contact_updated(self, contact):
@@ -124,12 +128,11 @@ class ContactHolder(evas.SmartObject):
             if obj_swallowed is not None:
                 # Delete ?
                 obj_swallowed.hide()
+            dp = Image(self._skin, self.evas_obj, contact.dp)
             #add emblem on dp
-            #shouldn't be done there, but in the core...
-            contact.dp.append("Skin","emblem_busy") #yeah, everyone is busy!!
-            contact.dp.repeat_events = True
+            dp.appendView(contact.emblem)
             self.contacts[contact.uid].\
-                part_swallow("buddy_icon", contact.dp)
+                part_swallow("buddy_icon", dp)
         else:
             # add the buddy icon
             # Remove the current icon
@@ -138,8 +141,9 @@ class ContactHolder(evas.SmartObject):
             if obj_swallowed is not None:
                 # Delete ?
                 obj_swallowed.hide()
+            icon = Image(self._skin, self.evas_obj, contact.icon)
             self.contacts[contact.uid].\
-                part_swallow("buddy_icon", contact.icon)
+                part_swallow("buddy_icon", icon)
 
 
     def add_contact(self, contact):
@@ -211,6 +215,7 @@ class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, group, ccb = None):
         self.evas_obj = evas_obj
         self._parent = parent
+        self._skin = parent._skin
         self.expanded = True
         self.group = group
         self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
@@ -266,6 +271,7 @@ class GroupHolder(evas.SmartObject):
         self.evas_obj = ecanvas
         self.group_items = []
         self._parent = parent
+        self._skin = parent._skin
         self._ccb = ccb
 
     def add_group(self, group):
