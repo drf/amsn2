@@ -23,7 +23,7 @@ try:
     imp.find_module("etk")
 
     gui.GUIManager.registerFrontEnd("efl", sys.modules[__name__])
-
+    
 except ImportError:
     pass
-
+        

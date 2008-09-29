@@ -16,24 +16,24 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
         self._amsn_conversation.onError(type, error)
 
     def on_conversation_user_joined(self, contact):
-        c = ContactView.getContact(self._amsn_conversation._core, contact.id, contact)
+        c = ContactView.getContact(contact.id)
         self._amsn_conversation.onUserJoined(c)
 
     def on_conversation_user_left(self, contact):
-        c = ContactView.getContact(self._amsn_conversation._core, contact.id, contact)
+        c = ContactView.getContact(contact.id)
         self._amsn_conversation.onUserLeft(c)
 
     def on_conversation_user_typing(self, contact):
-        c = ContactView.getContact(self._amsn_conversation._core, contact.id, contact)
+        c = ContactView.getContact(contact.id)
         self._amsn_conversation.onUserTyping(c)
 
     def on_conversation_message_received(self, sender, message):
-        c = ContactView.getContact(self._amsn_conversation._core, sender.id, sender)
+        c = ContactView.getContact(sender.id)
         str = StringView()
         str.appendText(message.content)
         self._amsn_conversation.onMessageReceived(c, str)
 
     def on_conversation_nudge_received(self, sender):
-        c = ContactView.getContact(self._amsn_conversation._core, sender.id, sender)
+        c = ContactView.getContact(sender.id)
         self._amsn_conversation.onNudgeReceived(c)
 

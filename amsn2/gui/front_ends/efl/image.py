@@ -1,74 +1,62 @@
+
 import evas
 import ecore
 import ecore.evas
 
-from amsn2.core.views import imageview
+from amsn2.gui import base
 
-class Image(evas.SmartObject):
-    def __init__(self, skin, canvas, view=None):
-        self._evas = canvas
+class Image(evas.SmartObject, base.Image):
+    def __init__(self, amsn_core, window):
+        self._amsn_core = amsn_core
+        self._amsn_gui = self._amsn_core.getMainWindow()
+        self._evas = self._amsn_gui._evas
         evas.SmartObject.__init__(self, self._evas)
 
-        self._skin = skin
+        
+        self._skin = self._amsn_core._skin_manager.skin
         self._imgs = []
         self.propagate_events = True
-
-        if view is not None:
-            self.load(view)
 
 
 
     #######################################################
     #Public methods
-    def load(self, view):
+    def load(self, resource_type, value):
         for img in self._imgs:
             self.member_del(img)
 
-        self._imgs = []
+        self._imgs = [ self._evas.Image() ]
+        self.member_add(self._imgs[0])
+        try:
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From load in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value)
+        
+    def append(self, resource_type, value):
+        img = self._evas.Image()
+        self.member_add(img)
+        self._imgs.append(img)
+        try:
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From append in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value, pos=-1)
 
-        for (resource_type, value) in view.imgs:
-            self._imgs.append(self._evas.Image())
-            self.member_add(self._imgs[-1])
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From load in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, -1)
+    def prepend(self, resource_type, value):
+        img = self._evas.Image()
+        self.member_add(img)
+        self._imgs.insert(0, img) 
+        try:
+            loadMethod = getattr(self, "_loadFrom%s" % resource_type)
+        except AttributeError, e:
+            print "From prepend in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+        else:
+            loadMethod(value, pos=0)
 
-    def appendView(self, view):
-        for (resource_type, value) in view.imgs:
-            img = self._evas.Image()
-            self.member_add(img)
-            self._imgs.append(img)
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From append in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, pos=-1)
 
-    def appendImage(self, image):
-        for i in image._imgs:
-            self._imgs.append(i)
-            self.member_add(i)
-
-    def prependView(self, resource_type, value):
-        for (resource_type, value) in view.imgs.reverse():
-            img = self._evas.Image()
-            self.member_add(img)
-            self._imgs.insert(0, img)
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From prepend in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, pos=0)
-
-    def prependImage(self, image):
-        for i in image._imgs.reverse():
-            self._imgs.insert(0,i)
-            self.member_add(i)
 
     def _loadFromFile(self, filename, pos=0):
         try:
@@ -92,8 +80,8 @@ class Image(evas.SmartObject):
                 print "From _loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
             else:
                 loadMethod(value, pos)
+    
 
-    #TODO: append, prepend :s
 
     #######################################################
     # Need to overwritre some evas.SmartObject methods:

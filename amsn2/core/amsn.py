@@ -6,7 +6,7 @@ import pymsn
 from views import *
 from contact_manager import *
 from conversation_manager import *
-
+    
 class aMSNCore(object):
     def __init__(self, options):
         """
@@ -46,24 +46,24 @@ class aMSNCore(object):
     def run(self):
         self._main.show();
         self._loop.run();
-
+        
 
     def mainWindowShown(self):
         # TODO : load the profiles from disk and all settings
         # then show the login window if autoconnect is disabled
-
+        
         self._main.setTitle("aMSN 2 - Loading")
-
+        
         splash = self._gui.gui.aMSNSplashScreen(self, self._main)
-        image = ImageView()
-        image.load(ImageView.ResourceType.FILE,"/path/to/image/here")
-
+        image = self._gui.gui.Image(self, self._main)
+        image.load("File","/path/to/image/here")
+        
         splash.setImage(image)
         splash.setText("Loading...")
         splash.show()
-
+        
         login = self._gui.gui.aMSNLoginWindow(self, self._main)
-
+        
         profile = None
         if self._options.account is not None:
             if self._profile_manager.profileExists(self._options.account):
@@ -83,19 +83,19 @@ class aMSNCore(object):
         if profile is None:
             profile = self._profile_manager.addProfile("")
             profile.password = ""
-
+            
         login.switch_to_profile(profile)
-
+        
         splash.hide()
         self._main.setTitle("aMSN 2 - Login")
         login.show()
-
+        
         menu = self.createMainMenuView()
         self._main.setMenu(menu)
 
     def getMainWindow(self):
         return self._main
-
+            
 
     def addProfile(self, account):
         return self._profile_manager.addProfile(account)
@@ -136,7 +136,8 @@ class aMSNCore(object):
                 self._conversation_manager.newConversation([contact])
             clwin._clwidget.setContactCallback(startConversation_cb)
 
-            self._contact_manager.register(clwin._clwidget)
+            #TODO: use a method for that in aMSNContactManager
+            self._contact_manager._cl_listeners.append(clwin._clwidget)
 
             self._contact_manager.onCLDownloaded(profile.client.address_book)
 
@@ -157,7 +158,7 @@ class aMSNCore(object):
                                     = self.quit)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
         mainMenu.addItem(quitMenuItem)
-
+        
         menu.addItem(mainMenu)
 
         return menu
