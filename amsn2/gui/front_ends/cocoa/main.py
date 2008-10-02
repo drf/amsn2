@@ -9,7 +9,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._amsn_core = amsn_core
         
         # Load our window.
-        self.cocoaWin = CocoaMainWindow.getMainWindow()
+        self.cocoaWin = CocoaMainWindow.aMSNCocoaMainWindow.alloc().init()
     
     def setMenu(self, menu_view):
         pass
