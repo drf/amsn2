@@ -45,8 +45,10 @@ class aMSNMainLoop(base.aMSNMainLoop):
         sys.exit()
         
 class aMSNCocoaNSApplication(NSApplication):
-    def __init__(self):
-        self.setDelegate(self)
+    def init(self):
+        super(aMSNCocoaNSApplication, self).init()
+        self.setDelegate_(self)
+        return self
     
     # Override run so that it doesn't hang. We'll process events ourself thanks! 
     def run(self):
