@@ -75,9 +75,9 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         msg = self.ui.inputWidget.toPlainText()
         self.ui.inputWidget.clear()
         strv = StringView()
-        strv.appendText(str(msg))
+        strv.appendText(unicode(msg))
         self._amsn_conversation.sendMessage(strv)
-        self.ui.textEdit.append("<b>/me says:</b><br>"+msg+"")
+        self.ui.textEdit.append("<b>/me says:</b><br>"+unicode(msg)+"")
         
     def __sendNudge(self):
         self._amsn_conversation.sendNudge()
@@ -87,7 +87,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self._amsn_conversation.sendTypingNotification()
         
     def appendTextAtCursor(self, text):
-        self.ui.inputWidget.textCursor().insertHtml(str(text))
+        self.ui.inputWidget.textCursor().insertHtml(unicode(text))
         
     def appendImageAtCursor(self, image):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
@@ -106,8 +106,8 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b>"))
-        self.ui.textEdit.append(message.toString())
+        self.ui.textEdit.append("<b>"+unicode(sender.name.toString())+" "+self.tr("writes:")+("</b>"))
+        self.ui.textEdit.append(unicode(message.toString()))
         pass
 
     def onNudgeReceived(self, sender):
