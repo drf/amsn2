@@ -56,6 +56,6 @@ class aMSNConversation:
         self._conv.send_text_message(message)
 
     def sendNudge(self):
-        print "Wants to nudge"
+        self._conv.send_nudge()
 
     #TODO: ...
