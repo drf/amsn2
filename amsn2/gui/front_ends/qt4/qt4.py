@@ -7,3 +7,4 @@ from splash import *
 from skins import *
 from contact_model import *
 from contact_item import *
+from chat_window import *

@@ -8,17 +8,18 @@ class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
     def __init__(self, amsn_core, Parent=None):
         QTabWidget.__init__(self, Parent)
         
-        self._core(amsn_core)
+        self._core = amsn_core
         
     def addChatWidget(self, chat_widget):
         self.addTab(chat_widget, "test")
         
     
 class aMSNChatWidget(QWidget, base.aMSNChatWidget):
-    def __init__(self, Parent=None):
+    def __init__(self, amsn_conversation, Parent=None):
         QWidget.__init__(self, Parent)
         # TODO: Init chat window code from amsn core here
         
+        self._amsn_conversation = amsn_conversation
         self.ui = Ui_ChatWindow()
         self.ui.setupUi(self)
         
@@ -81,23 +82,23 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
         
     def onUserJoined(self, contact):
-        textEdit.append("<b>"+sender.name+" "+this.tr("has joined the conversation")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has joined the conversation")+("</b><br>"))
         pass
 
     def onUserLeft(self, contact):
-        textEdit.append("<b>"+contact.name+" "+this.tr("has left the conversation")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has left the conversation")+("</b><br>"))
         pass
 
     def onUserTyping(self, contact):
-        self.ui.statusText.setText(QString(contact.name + " is typing"))
+        self.ui.statusText.setText(QString(contact.name.toString() + " is typing"))
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        textEdit.append("<b>"+sender.name+" "+this.tr("writes:")+("</b><br>"))
-        textEdit.append(message.toString())
+        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b><br>"))
+        self.ui.textEdit.append(message.toString())
         pass
 
     def onNudgeReceived(self, sender):
-        textEdit.append("<b>"+sender.name+" "+this.tr("sent you a nudge!")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b><br>"))
         pass
         
