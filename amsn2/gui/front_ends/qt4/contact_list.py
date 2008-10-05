@@ -60,7 +60,7 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
     
     def contactUpdated(self, contact):
-        print "Contact Updated: " + QString.fromUtf8(contact.name.toString())
+        print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))
         l = self._model.findItems("*", Qt.MatchWildcard | Qt.MatchRecursive)
         
         for itm in l:

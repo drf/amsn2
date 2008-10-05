@@ -29,9 +29,10 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
         QObject.connect(self.ui.sendButton, SIGNAL("clicked()"), self.__sendMessage)
         QObject.connect(self.ui.actionInsert_Emoticon, SIGNAL("triggered()"), self.showEmoticonList)
-        self.enterShortcut = QShortcut("Enter", self.ui.inputWidget)
+        self.enterShortcut = QShortcut(QKeySequence("Enter"), self.ui.inputWidget)
+        self.nudgeShortcut = QShortcut(QKeySequence("Ctrl+G"), self)
         QObject.connect(self.enterShortcut, SIGNAL("activated()"), self.__sendMessage)
-        
+        QObject.connect(self.nudgeShortcut, SIGNAL("activated()"), self.__sendNudge)        
         QObject.connect(self.ui.actionNudge, SIGNAL("triggered()"), self.__sendNudge)
         
 
@@ -101,6 +102,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
 
     def onUserTyping(self, contact):
         self.ui.statusText.setText(QString(contact.name.toString() + " is typing"))
+        print "user typing"
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
