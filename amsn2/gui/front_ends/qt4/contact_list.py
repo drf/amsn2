@@ -6,7 +6,7 @@ from contact_model import ContactModel
 from contact_item import ContactItem
 from ui_contactlist import Ui_ContactList
 from styledwidget import StyledWidget
-from amsn2.core.views import StringView
+from amsn2.core.views import StringView, ContactView
 from amsn2.gui import base
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
@@ -45,6 +45,7 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         self._proxyModel = QSortFilterProxyModel(self)
         self._proxyModel.setSourceModel(self._model)
         self.ui.cList.setModel(self._proxyModel)
+        self._contactDict = dict()
         
         self._proxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self._proxyModel.setFilterKeyColumn(-1)
@@ -114,8 +115,15 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
 
     def setContactCallback(self, cb):
-        #cb is func(contactview)
-        pass
+        self._callback = cb
+        if cb is not None:
+            self.connect(self.ui.cList, SIGNAL('doubleClicked(QModelIndex)'),
+                         self.__slotContactCallback)
+
+    def __slotContactCallback(self, index):
+        data = str(index.data(40).toString())
+        if self._callback is not None:
+            self._callback(self._contactDict[data])
 
     def setContactContextMenu(self, cb):
         #TODO:
@@ -139,5 +147,8 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
             contactItem = ContactItem()
             contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
             contactItem.setData(QVariant(contact.uid), 40)
+            contactItem.setData(QVariant(contact), 41)
             
             groupItem.appendRow(contactItem)
+            
+            self._contactDict[contact.uid] = contact
