@@ -142,6 +142,9 @@ p, li { white-space: pre-wrap; }
      <property name="horizontalScrollBarPolicy" >
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
+     <property name="editTriggers" >
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
      <property name="sortingEnabled" >
       <bool>true</bool>
      </property>

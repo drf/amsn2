@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chatWindow.ui'
 #
-# Created: Sun Oct  5 22:42:26 2008
+# Created: Mon Oct  6 00:23:31 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,6 +22,8 @@ class Ui_ChatWindow(object):
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.textEdit = QtGui.QTextEdit(self.splitter)
+        self.textEdit.setUndoRedoEnabled(False)
+        self.textEdit.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
         self.textEdit.setObjectName("textEdit")
         self.layoutWidget = QtGui.QWidget(self.splitter)
         self.layoutWidget.setObjectName("layoutWidget")

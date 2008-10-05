@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'contactlist.ui'
 #
-# Created: Thu Sep 25 00:58:27 2008
+# Created: Mon Oct  6 00:23:49 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -76,6 +76,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
          }
 """)
         self.cList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.cList.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.cList.setSortingEnabled(True)
         self.cList.setAnimated(True)
         self.cList.setHeaderHidden(True)
