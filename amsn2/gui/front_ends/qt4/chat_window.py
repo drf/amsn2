@@ -75,14 +75,11 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         strv = StringView()
         strv.appendText(str(msg))
         self._amsn_conversation.sendMessage(strv)
-        self.ui.textEdit.append("/me says:\n"+msg+"\n")
+        self.ui.textEdit.append("<b>/me says:</b><br>"+msg+"")
         
     def __sendNudge(self):
         self._amsn_conversation.sendNudge()
-        self.ui.textEdit.append("/me sent a nudge")
-        
-    def nudge(self):
-        print "Driiiiin!!!"
+        self.ui.textEdit.append("<b>/me sent a nudge</b>")
         
     def appendTextAtCursor(self, text):
         self.ui.inputWidget.textCursor().insertHtml(str(text))
@@ -91,11 +88,11 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
         
     def onUserJoined(self, contact):
-        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has joined the conversation")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has joined the conversation")+("</b>"))
         pass
 
     def onUserLeft(self, contact):
-        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has left the conversation")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has left the conversation")+("</b>"))
         pass
 
     def onUserTyping(self, contact):
@@ -103,11 +100,11 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b>"))
         self.ui.textEdit.append(message.toString())
         pass
 
     def onNudgeReceived(self, sender):
-        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b><br>"))
+        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b>"))
         pass
         
