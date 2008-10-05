@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chatWindow.ui'
 #
-# Created: Wed Sep 24 13:45:23 2008
+# Created: Sun Oct  5 22:42:26 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,6 +32,9 @@ class Ui_ChatWindow(object):
         self.verticalLayout.addWidget(self.label)
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
+        self.label_2 = QtGui.QLabel(self.layoutWidget)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout.addWidget(self.label_2)
         self.layoutWidget1 = QtGui.QWidget(self.splitter_2)
         self.layoutWidget1.setObjectName("layoutWidget1")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget1)
@@ -53,9 +56,9 @@ class Ui_ChatWindow(object):
         self.inputWidget.setBaseSize(QtCore.QSize(0, 40))
         self.inputWidget.setObjectName("inputWidget")
         self.horizontalLayout.addWidget(self.inputWidget)
-        self.label_2 = QtGui.QLabel(self.layoutWidget1)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
+        self.sendButton = QtGui.QPushButton(self.layoutWidget1)
+        self.sendButton.setObjectName("sendButton")
+        self.horizontalLayout.addWidget(self.sendButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.verticalLayout_3.addWidget(self.splitter_2)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
@@ -82,8 +85,9 @@ class Ui_ChatWindow(object):
     def retranslateUi(self, ChatWindow):
         ChatWindow.setWindowTitle(QtGui.QApplication.translate("ChatWindow", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("ChatWindow", "Something here...", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBar.setWindowTitle(QtGui.QApplication.translate("ChatWindow", "Quick Actions", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ChatWindow", "Contact image", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("ChatWindow", "Quick Actions", None, QtGui.QApplication.UnicodeUTF8))
+        self.sendButton.setText(QtGui.QApplication.translate("ChatWindow", "Send Message", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsert_Emoticon.setText(QtGui.QApplication.translate("ChatWindow", "Insert Emoticon", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNudge.setText(QtGui.QApplication.translate("ChatWindow", "Nudge", None, QtGui.QApplication.UnicodeUTF8))
 

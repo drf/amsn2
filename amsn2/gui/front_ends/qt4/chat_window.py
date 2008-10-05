@@ -3,6 +3,7 @@ from amsn2.gui import base
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from ui_chatWindow import Ui_ChatWindow
+from amsn2.core.views import ContactView, StringView
     
 class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
     def __init__(self, amsn_core, Parent=None):
@@ -26,13 +27,12 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.loadEmoticonList()
         
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
+        QObject.connect(self.ui.sendButton, SIGNAL("clicked()"), self.__sendMessage)
         QObject.connect(self.ui.actionInsert_Emoticon, SIGNAL("triggered()"), self.showEmoticonList)
-        """ These connections needs to be revisited, since they should probably point
-        to an interface method """
         self.enterShortcut = QShortcut("Enter", self.ui.inputWidget)
-        QObject.connect(self.enterShortcut, SIGNAL("activated()"), self.sendMessage)
+        QObject.connect(self.enterShortcut, SIGNAL("activated()"), self.__sendMessage)
         
-        QObject.connect(self.ui.actionNudge, SIGNAL("triggered()"), self.nudge)
+        QObject.connect(self.ui.actionNudge, SIGNAL("triggered()"), self.__sendNudge)
         
 
     def processInput(self):
@@ -53,9 +53,6 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
         
-    def sendMessage(self):
-        print "To Implement"
-        
     def loadEmoticonList(self):
         self.emoticonList = QStringList()
         
@@ -71,6 +68,18 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         """ Let's popup emoticon selection here """
         print "Guess what? No emoticons. But I'll put in a random one for you"
         self.appendImageAtCursor("throbber.gif")
+        
+    def __sendMessage(self):
+        msg = self.ui.inputWidget.toPlainText()
+        self.ui.inputWidget.clear()
+        strv = StringView()
+        strv.appendText(str(msg))
+        self._amsn_conversation.sendMessage(strv)
+        self.ui.textEdit.append("/me says:\n"+msg+"\n")
+        
+    def __sendNudge(self):
+        self._amsn_conversation.sendNudge()
+        self.ui.textEdit.append("/me sent a nudge")
         
     def nudge(self):
         print "Driiiiin!!!"

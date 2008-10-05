@@ -45,6 +45,13 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Contact image</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -111,9 +118,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_2" >
+          <widget class="QPushButton" name="sendButton" >
            <property name="text" >
-            <string>Contact image</string>
+            <string>Send Message</string>
            </property>
           </widget>
          </item>
