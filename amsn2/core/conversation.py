@@ -57,5 +57,8 @@ class aMSNConversation:
 
     def sendNudge(self):
         self._conv.send_nudge()
+        
+    def sendTypingNotification(self):
+        self._conv.send_typing_notification()
 
     #TODO: ...

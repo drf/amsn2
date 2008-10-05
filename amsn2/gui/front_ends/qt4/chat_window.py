@@ -50,6 +50,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
                 
         self.ui.inputWidget.setHtml(self.text)
         self.ui.inputWidget.moveCursor(QTextCursor.End)
+        self.__typingNotification()
         
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
         
@@ -80,6 +81,9 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
     def __sendNudge(self):
         self._amsn_conversation.sendNudge()
         self.ui.textEdit.append("<b>/me sent a nudge</b>")
+        
+    def __typingNotification(self):
+        self._amsn_conversation.sendTypingNotification()
         
     def appendTextAtCursor(self, text):
         self.ui.inputWidget.textCursor().insertHtml(str(text))
