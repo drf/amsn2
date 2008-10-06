@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'contactlist.ui'
 #
-# Created: Mon Oct  6 00:23:49 2008
+# Created: Mon Oct  6 02:07:09 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,14 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.nickName = QtGui.QLabel(ContactList)
+        self.nickName.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextEditable|QtCore.Qt.TextEditorInteraction|QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
+        self.nickName.setObjectName("nickName")
+        self.verticalLayout.addWidget(self.nickName)
+        self.statusMessage = QtGui.QLabel(ContactList)
+        self.statusMessage.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse|QtCore.Qt.TextEditable|QtCore.Qt.TextEditorInteraction|QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
+        self.statusMessage.setObjectName("statusMessage")
+        self.verticalLayout.addWidget(self.statusMessage)
         self.label = QtGui.QLabel(ContactList)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -89,6 +97,8 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
     def retranslateUi(self, ContactList):
         ContactList.setWindowTitle(QtGui.QApplication.translate("ContactList", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.pixUser.setText(QtGui.QApplication.translate("ContactList", "aMSN", None, QtGui.QApplication.UnicodeUTF8))
+        self.nickName.setText(QtGui.QApplication.translate("ContactList", "Nick here", None, QtGui.QApplication.UnicodeUTF8))
+        self.statusMessage.setText(QtGui.QApplication.translate("ContactList", "Status message here", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("ContactList", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"

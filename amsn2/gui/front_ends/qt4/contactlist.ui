@@ -97,6 +97,26 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="nickName" >
+     <property name="text" >
+      <string>Nick here</string>
+     </property>
+     <property name="textInteractionFlags" >
+      <set>Qt::LinksAccessibleByMouse|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusMessage" >
+     <property name="text" >
+      <string>Status message here</string>
+     </property>
+     <property name="textInteractionFlags" >
+      <set>Qt::LinksAccessibleByMouse|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">

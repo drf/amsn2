@@ -108,11 +108,11 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        self.ui.textEdit.append("<b>"+unicode(sender.name.toString())+" "+self.tr("writes:")+("</b>"))
+        self.ui.textEdit.append(unicode("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b>")))
         self.ui.textEdit.append(unicode(message.toString()))
         pass
 
     def onNudgeReceived(self, sender):
-        self.ui.textEdit.append("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b>"))
+        self.ui.textEdit.append(unicode("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b>")))
         pass
         
