@@ -103,7 +103,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         pass
 
     def onUserTyping(self, contact):
-        self.ui.statusText.setText(unicode(QString.fromUtf8)contact.name.toString()) + " is typing"))
+        self.ui.statusText.setText(unicode(QString.fromUtf8(contact.name.toString()) + " is typing"))
         print "user typing"
 
     def onMessageReceived(self, sender, message):
