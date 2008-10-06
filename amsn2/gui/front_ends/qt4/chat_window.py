@@ -95,15 +95,15 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
         
     def onUserJoined(self, contact):
-        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has joined the conversation")+("</b>"))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.name.toString())+" "+self.tr("has joined the conversation")+("</b>")))
         pass
 
     def onUserLeft(self, contact):
-        self.ui.textEdit.append("<b>"+contact.name.toString()+" "+self.tr("has left the conversation")+("</b>"))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.name.toString())+" "+self.tr("has left the conversation")+("</b>")))
         pass
 
     def onUserTyping(self, contact):
-        self.ui.statusText.setText(QString(contact.name.toString() + " is typing"))
+        self.ui.statusText.setText(unicode(QString.fromUtf8)contact.name.toString()) + " is typing"))
         print "user typing"
 
     def onMessageReceived(self, sender, message):
