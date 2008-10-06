@@ -52,12 +52,19 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         
         self.connect(self.ui.searchLine, SIGNAL('textChanged(QString)'),
                      self._proxyModel, SLOT('setFilterFixedString(QString)'))
+        QObject.connect(self.ui.nickName, SIGNAL('textChanged(QString)'),
+                        self.__slotChangeNick)
 
     def show(self):
         self._mainWindow.fadeIn(self)
 
     def hide(self):
         pass
+    
+    def __slotChangeNick(self):
+        sv = StringView()
+        sv.appendText(str(self.ui.nickName.text()))
+        self._amsn_core._profile.client.changeNick(sv)
     
     def contactUpdated(self, contact):
         print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))

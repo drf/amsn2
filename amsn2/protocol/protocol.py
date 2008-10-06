@@ -19,4 +19,10 @@ class Client(pymsn.Client):
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)
+        
+    def changeNick(self, nick):
+        self.profile.display_name = nick.toString()
+        
+    def changeMessage(self, message):
+        self.profile.personal_message = message.toString()
 
