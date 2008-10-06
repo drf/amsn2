@@ -64,7 +64,9 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         to change the default icon theme, this includes standard emoticons too.
         Maybe qrc? """
         
-        self.emoticonList << ";)" << ":)" << "EmOtIcOn"
+        #self.emoticonList << ";)" << ":)" << "EmOtIcOn"
+	#We want :) and ;) to work for now :p
+	self.emoticonList << "EmOtIcOn"
         
     def showEmoticonList(self):
         """ Let's popup emoticon selection here """
