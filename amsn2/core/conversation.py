@@ -36,11 +36,11 @@ class aMSNConversation:
         self._convWidget.onUserJoined(contact)
 
     def onUserLeft(self, contact):
-        self._convWidget.onUserJoined(contact)
+        self._convWidget.onUserLeft(contact)
         pass
 
     def onUserTyping(self, contact):
-        self._convWidget.onUserJoined(contact)
+        self._convWidget.onUserTyping(contact)
 
     def onMessageReceived(self, sender, message):
         self._convWidget.onMessageReceived(sender, message)

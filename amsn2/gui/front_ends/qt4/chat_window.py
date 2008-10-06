@@ -108,7 +108,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        self.ui.textEdit.append(unicode("<b>"+sender.name.toString()+" "+self.tr("writes:")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(sender.name.toString())+" "+self.tr("writes:")+("</b>")))
         self.ui.textEdit.append(unicode(message.toString()))
         pass
 
