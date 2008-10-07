@@ -174,7 +174,6 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
             contactItem = ContactItem()
             contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
             contactItem.setData(QVariant(contact.uid), 40)
-            contactItem.setData(QVariant(contact), 41)
             
             groupItem.appendRow(contactItem)
             
