@@ -56,6 +56,12 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
         
         strv = StringView()
         
+        if message.msn_objects.keys().__contains__(message.content) == True:
+            print "single emoticon"
+            strv.appendImage(message.msn_objects[message.content]._location)
+            self._amsn_conversation.onMessageReceived(c, strv)
+            return
+        
         strlist = [message.content]
         
         for smile in message.msn_objects.keys():

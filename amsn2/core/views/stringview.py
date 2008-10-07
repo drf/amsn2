@@ -148,25 +148,30 @@ class StringView (object):
         out = ""
         for x in self._elements:
             if x.getType() == StringView.TEXT_ELEMENT:
+                print "Plain text found"
                 out += x.getValue()
             elif x.getType() == StringView.ITALIC_ELEMENT:
+                print "Italic text found"
                 if x.getValue() == True:
                     out += "<i>"
                 else:
                     out += "</i>"
             elif x.getType() == StringView.BOLD_ELEMENT:
+                print "Bold text found"
                 if x.getValue() == True:
                     out += "<b>"
                 else:
                     out += "</b>"
             elif x.getType() == StringView.IMAGE_ELEMENT:
-                out += "<img src=\"x.getValue()\" />"
+                print "Image found"
+                out += "<img src=\""+x.getValue()+"\" />"
             elif x.getType() == StringView.UNDERLINE_ELEMENT:
                 if x.getValue() == True:
                     out += "<u>"
                 else:
                     out += "</u>"
                 
+        print out
         return out
 
     def __str__(self):
