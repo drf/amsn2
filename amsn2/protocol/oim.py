@@ -18,12 +18,25 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+import pymsn
+import pymsn.event
 
-class ContactModel(QStandardItemModel):
-    def __init__(self, parent):
-        QStandardItemModel.__init__(self, parent)
+class OIMEvents(pymsn.event.OfflineMessagesEventInterface):
+    def __init__(self, client, oim_manager):
+        self._oim_manager = oim_manager
+        pymsn.event.OfflineMessagesEventInterface.__init__(self, client)
         
-    def test(self):
-        self.test = "test"        
+    def on_oim_state_changed(self, state):
+        pass
+
+    def on_oim_messages_received(self, messages):
+        pass
+
+    def on_oim_messages_fetched(self, messages):
+        pass
+
+    def on_oim_messages_deleted(self):
+        pass
+
+    def on_oim_message_sent(self, recipient, message):
+        pass

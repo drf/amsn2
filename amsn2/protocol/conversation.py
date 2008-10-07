@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+#
+# amsn - a python client for the WLM Network
+#
+# Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 from amsn2.core.views import *
 import pymsn
 import pymsn.event
@@ -29,9 +49,33 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
 
     def on_conversation_message_received(self, sender, message):
         c = ContactView.getContact(sender.id)
-        str = StringView()
-        str.appendText(message.content)
-        self._amsn_conversation.onMessageReceived(c, str)
+        
+        """ Powers of the stringview, here we come! We need to parse the message,
+        that could actually contain some emoticons. In that case, we simply replace 
+        them into the stringview """
+        
+        strv = StringView()
+        
+        strlist = [message.content]
+        
+        for smile in message.msn_objects.keys():
+            newlist = []
+            for str in strlist:
+                li = str.split(smile)
+                for part in li:
+                    newlist.append(part)
+                    newlist.append(message.msn_objects[smile]._location)
+                newlist.pop()
+                
+            strlist = newlist
+            
+        for str in strlist:
+            if message.msn_objects.keys().__contains__(str) == True:
+                strv.appendImage(str)
+            else:
+                strv.appendText(str)
+            
+        self._amsn_conversation.onMessageReceived(c, strv)
 
     def on_conversation_nudge_received(self, sender):
         c = ContactView.getContact(sender.id)

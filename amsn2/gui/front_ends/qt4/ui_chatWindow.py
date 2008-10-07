@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chatWindow.ui'
 #
-# Created: Mon Oct  6 00:23:31 2008
+# Created: Tue Oct  7 00:36:00 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,17 +63,6 @@ class Ui_ChatWindow(object):
         self.horizontalLayout.addWidget(self.sendButton)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.verticalLayout_3.addWidget(self.splitter_2)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.statusIcon = QtGui.QLabel(ChatWindow)
-        self.statusIcon.setMinimumSize(QtCore.QSize(24, 24))
-        self.statusIcon.setMaximumSize(QtCore.QSize(24, 24))
-        self.statusIcon.setObjectName("statusIcon")
-        self.horizontalLayout_2.addWidget(self.statusIcon)
-        self.statusText = QtGui.QLabel(ChatWindow)
-        self.statusText.setObjectName("statusText")
-        self.horizontalLayout_2.addWidget(self.statusText)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
         self.actionInsert_Emoticon = QtGui.QAction(ChatWindow)
         self.actionInsert_Emoticon.setObjectName("actionInsert_Emoticon")
         self.actionNudge = QtGui.QAction(ChatWindow)

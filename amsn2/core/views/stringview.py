@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+#
+# amsn - a python client for the WLM Network
+#
+# Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 
 class StringView (object):
     TEXT_ELEMENT = "text"
@@ -106,12 +126,46 @@ class StringView (object):
         self.setBackgroundColor(self._default_background_color)
     def resetFont(self):
         self.setFont(self._default_font)
+        
+    def appendElementsFromHtml(self, string):
+        """ This method should parse an HTML string and convert it to a
+        StringView. It will be extremely comfortable, since most of the
+        times our frontends will work with HTML stuff. """
+        # TODO: Not so easy... maybe there is a python HTML parser we can use?
+        pass
 
     def toString(self):
         out = ""
         for x in self._elements:
             if x.getType() == StringView.TEXT_ELEMENT:
                 out += x.getValue()
+                
+        return out
+    
+    def toHtmlString(self):
+        """ This method returns a formatted html string with all
+        the data in the stringview """
+        out = ""
+        for x in self._elements:
+            if x.getType() == StringView.TEXT_ELEMENT:
+                out += x.getValue()
+            elif x.getType() == StringView.ITALIC_ELEMENT:
+                if x.getValue() == True:
+                    out += "<i>"
+                else:
+                    out += "</i>"
+            elif x.getType() == StringView.BOLD_ELEMENT:
+                if x.getValue() == True:
+                    out += "<b>"
+                else:
+                    out += "</b>"
+            elif x.getType() == StringView.IMAGE_ELEMENT:
+                out += "<img src=\"x.getValue()\" />"
+            elif x.getType() == StringView.UNDERLINE_ELEMENT:
+                if x.getValue() == True:
+                    out += "<u>"
+                else:
+                    out += "</u>"
                 
         return out
 

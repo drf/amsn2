@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+#
+# amsn - a python client for the WLM Network
+#
+# Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 from amsn2.gui import base
 
 from PyQt4.QtCore import *
@@ -18,11 +38,12 @@ class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
 class aMSNChatWidget(QWidget, base.aMSNChatWidget):
     def __init__(self, amsn_conversation, Parent=None):
         QWidget.__init__(self, Parent)
-        # TODO: Init chat window code from amsn core here
         
         self._amsn_conversation = amsn_conversation
         self.ui = Ui_ChatWindow()
         self.ui.setupUi(self)
+        self._statusBar = QStatusBar(self)
+        self.layout().addWidget(self._statusBar)
         
         self.loadEmoticonList()
         
@@ -74,6 +95,12 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.appendImageAtCursor("throbber.gif")
         
     def __sendMessage(self):
+        # TODO: Switch to this when implemented
+        """ msg = self.ui.inputWidget.toHtml()
+        self.ui.inputWidget.clear()
+        strv = StringView()
+        strv.appendElementsFromHtml(msg) """
+        
         msg = self.ui.inputWidget.toPlainText()
         self.ui.inputWidget.clear()
         strv = StringView()
@@ -103,13 +130,12 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         pass
 
     def onUserTyping(self, contact):
-        self.ui.statusText.setText(unicode(QString.fromUtf8(contact.name.toString()) + " is typing"))
-        print "user typing"
+        self._statusBar.showMessage(unicode(QString.fromUtf8(contact.name.toString()) + " is typing"), 7000)
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
         self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(sender.name.toString())+" "+self.tr("writes:")+("</b>")))
-        self.ui.textEdit.append(unicode(message.toString()))
+        self.ui.textEdit.append(unicode(message.toHtmlString()))
         pass
 
     def onNudgeReceived(self, sender):
