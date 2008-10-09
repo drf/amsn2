@@ -5,3 +5,4 @@ build/
 .pydevproject
 .ropeproject
 Debug/
+ui_*
