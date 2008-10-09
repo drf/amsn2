@@ -1,0 +1,7 @@
+*.pyc
+build/
+*~
+.project
+.pydevproject
+.ropeproject
+Debug/
