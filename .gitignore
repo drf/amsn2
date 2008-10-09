@@ -2,7 +2,7 @@
 build/
 *~
 .project
-.cproj
+.cproject
 .pydevproject
 .ropeproject
 Debug/
