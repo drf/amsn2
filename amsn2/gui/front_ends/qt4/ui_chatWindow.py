@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chatWindow.ui'
 #
-# Created: Tue Oct  7 00:36:00 2008
+# Created: Thu Oct  9 22:21:07 2008
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,8 +39,8 @@ class Ui_ChatWindow(object):
         self.verticalLayout.addWidget(self.label_2)
         self.layoutWidget1 = QtGui.QWidget(self.splitter_2)
         self.layoutWidget1.setObjectName("layoutWidget1")
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.inputLayout = QtGui.QVBoxLayout(self.layoutWidget1)
+        self.inputLayout.setObjectName("inputLayout")
         self.toolBar = QtGui.QToolBar(self.layoutWidget1)
         self.toolBar.setMinimumSize(QtCore.QSize(0, 32))
         self.toolBar.setMaximumSize(QtCore.QSize(16777215, 32))
@@ -49,19 +49,7 @@ class Ui_ChatWindow(object):
         self.toolBar.setAcceptDrops(True)
         self.toolBar.setMovable(False)
         self.toolBar.setObjectName("toolBar")
-        self.verticalLayout_2.addWidget(self.toolBar)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.inputWidget = QtGui.QTextEdit(self.layoutWidget1)
-        self.inputWidget.setEnabled(True)
-        self.inputWidget.setMinimumSize(QtCore.QSize(0, 0))
-        self.inputWidget.setBaseSize(QtCore.QSize(0, 40))
-        self.inputWidget.setObjectName("inputWidget")
-        self.horizontalLayout.addWidget(self.inputWidget)
-        self.sendButton = QtGui.QPushButton(self.layoutWidget1)
-        self.sendButton.setObjectName("sendButton")
-        self.horizontalLayout.addWidget(self.sendButton)
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.inputLayout.addWidget(self.toolBar)
         self.verticalLayout_3.addWidget(self.splitter_2)
         self.actionInsert_Emoticon = QtGui.QAction(ChatWindow)
         self.actionInsert_Emoticon.setObjectName("actionInsert_Emoticon")
@@ -78,7 +66,6 @@ class Ui_ChatWindow(object):
         self.label.setText(QtGui.QApplication.translate("ChatWindow", "Something here...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ChatWindow", "Contact image", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("ChatWindow", "Quick Actions", None, QtGui.QApplication.UnicodeUTF8))
-        self.sendButton.setText(QtGui.QApplication.translate("ChatWindow", "Send Message", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsert_Emoticon.setText(QtGui.QApplication.translate("ChatWindow", "Insert Emoticon", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNudge.setText(QtGui.QApplication.translate("ChatWindow", "Nudge", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -22,8 +22,22 @@ from amsn2.gui import base
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4 import *
 from ui_chatWindow import Ui_ChatWindow
 from amsn2.core.views import ContactView, StringView
+
+class InputWidget(QTextEdit):
+    def __init__(self, Parent = None):
+        QTextEdit.__init__(self, Parent)
+        self.setTextInteractionFlags(Qt.TextEditorInteraction)
+    
+    def keyPressEvent(self, event):
+        print "key pressed:" + str(event.key())
+        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+            print "handle!!"
+            self.emit(SIGNAL("enterKeyTriggered()"))
+        else:
+            QTextEdit.keyPressEvent(self, event)
     
 class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
     def __init__(self, amsn_core, Parent=None):
@@ -42,13 +56,15 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self._amsn_conversation = amsn_conversation
         self.ui = Ui_ChatWindow()
         self.ui.setupUi(self)
+        self.ui.inputWidget = InputWidget(self)
+        self.ui.inputLayout.addWidget(self.ui.inputWidget)
         self._statusBar = QStatusBar(self)
         self.layout().addWidget(self._statusBar)
         
         self.loadEmoticonList()
         
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
-        QObject.connect(self.ui.sendButton, SIGNAL("clicked()"), self.__sendMessage)
+        QObject.connect(self.ui.inputWidget, SIGNAL("enterKeyTriggered()"), self.__sendMessage)
         QObject.connect(self.ui.actionInsert_Emoticon, SIGNAL("triggered()"), self.showEmoticonList)
         self.enterShortcut = QShortcut(QKeySequence("Enter"), self.ui.inputWidget)
         self.nudgeShortcut = QShortcut(QKeySequence("Ctrl+G"), self)
@@ -141,4 +157,5 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
     def onNudgeReceived(self, sender):
         self.ui.textEdit.append(unicode("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b>")))
         pass
+    
         
