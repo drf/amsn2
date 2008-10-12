@@ -45,6 +45,7 @@ class aMSNContactListManager:
     def onContactPresenceChanged(self, pymsn_contact):
         #1st/ update the aMSNContact object
         c = self.getContact(pymsn_contact.id, pymsn_contact)
+        c.fill(self._core, pymsn_contact)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
         self.emit(self.CONTACTVIEW_UPDATED, cv)
@@ -91,7 +92,6 @@ class aMSNContactListManager:
         for c in cviews:
             self.emit(self.CONTACTVIEW_UPDATED, c)
 
-    #TODO: getContactView, getGroupView
 
     def getContact(self, cid, pymsn_contact=None):
         #TODO: should raise UnknownContact or sthg like that
@@ -132,7 +132,7 @@ class aMSNContact():
         self.status = StringView()
         self.status.appendText(core.p2s[pymsn_contact.presence])
         #for the moment, we store the pymsn_contact object, but we shouldn't have to
-        #TODO: getPymsnContact(self, core...) or _pymsncontact?
+        #TODO: getPymsnContact(self, core...) or _pymsn_contact?
         self._pymsn_contact = pymsn_contact
 
 

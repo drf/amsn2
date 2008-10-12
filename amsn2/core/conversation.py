@@ -19,19 +19,23 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from amsn2.protocol import conversation
+from amsn2.core.contactlist_manager import *
+from amsn2.core.views import *
 import pymsn
 
 class aMSNConversation:
-    def __init__(self, core, conv_manager, conv = None, contacts = None):
-        if (contacts is None):
+    def __init__(self, core, conv_manager, conv = None, contacts_uid = None):
+        if (contacts_uid is None):
             raise ValueError, InvalidArgument
 
         self._core = core
         self._conversation_manager = conv_manager
-        self._contacts = contacts
+        self._contacts_uid = contacts_uid
         if conv is None:
             #New conversation
-            pymsn_contacts = [c.pymsn_contact for c in contacts]
+            pymsn_contacts = [core._contactlist_manager.getContact(uid) for uid in contacts_uid]
+            pymsn_contacts = [c._pymsn_contact for c in pymsn_contacts if c is not None]
+            #if c was None.... wtf?
             self._conv = pymsn.Conversation(self._core._profile.client, pymsn_contacts)
         else:
             #From an existing conversation
@@ -51,40 +55,55 @@ class aMSNConversation:
     def onError(self, type, error):
         print error
 
-    def onUserJoined(self, contact):
-        self._convWidget.onUserJoined(contact)
-
-    def onUserLeft(self, contact):
-        self._convWidget.onUserLeft(contact)
+    def onUserJoined(self, contact_uid):
+        #TODO
         pass
 
-    def onUserTyping(self, contact):
-        self._convWidget.onUserTyping(contact)
+    def onUserLeft(self, contact_uid):
+        #TODO
+        pass
 
-    def onMessageReceived(self, sender, message):
-        self._convWidget.onMessageReceived(sender, message)
+    def onUserTyping(self, contact_uid):
+        #TODO
+        pass
 
-    def onNudgeReceived(self, sender):
-        self._convWidget.onNudgeReceived(sender)
+    def onMessageReceived(self, message, sender_uid=None):
+        #TODO: messageView
+        mv = MessageView()
+        if sender_uid is None:
+            #TODO
+            mv.sender.appendText("/me")
+        else:
+            c = self._core._contactlist_manager.getContact(sender_uid)
+            mv.sender_icon = c.icon
+            mv.message_type = MessageView.MESSAGE_OUTGOING
+            mv.sender.appendStringView(c.nickname)
+        mv.msg = message
+        self._convWidget.onMessageReceived(mv)
+
+    def onNudgeReceived(self, sender_uid):
+        self._convWidget.nudge()
 
     """ Actions from ourselves """
     def sendMessage(self, msg):
         """ msg is a StringView """
-        # for the moment, no formatting
+        # for the moment, no formatting, no smiley substitution... (TODO)
+        self.onMessageReceived(msg)
         message = pymsn.ConversationMessage(msg.toString())
         self._conv.send_text_message(message)
 
     def sendNudge(self):
         self._conv.send_nudge()
-        
+
     def sendTypingNotification(self):
         self._conv.send_typing_notification()
-        
+
     def leave(self):
         self._conv.leave()
-        
-    def inviteContact(self, contact):
-        """ contact is a ContactView """
+
+    def inviteContact(self, contact_uid):
+        """ contact_uid is the Id of the contact to invite """
+        c = self._core._contactlist_manager.getContact(contact_uid)
         self._conv.invite_user(contact.pymsn_contact)
 
     #TODO: ...

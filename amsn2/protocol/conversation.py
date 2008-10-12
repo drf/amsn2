@@ -36,34 +36,28 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
         self._amsn_conversation.onError(type, error)
 
     def on_conversation_user_joined(self, contact):
-        c = ContactView.getContact(contact.id)
-        self._amsn_conversation.onUserJoined(c)
+        self._amsn_conversation.onUserJoined(contact.id)
 
     def on_conversation_user_left(self, contact):
-        c = ContactView.getContact(contact.id)
-        self._amsn_conversation.onUserLeft(c)
+        self._amsn_conversation.onUserLeft(contact.id)
 
     def on_conversation_user_typing(self, contact):
-        c = ContactView.getContact(contact.id)
-        self._amsn_conversation.onUserTyping(c)
+        self._amsn_conversation.onUserTyping(contact.id)
 
     def on_conversation_message_received(self, sender, message):
-        c = ContactView.getContact(sender.id)
-        
         """ Powers of the stringview, here we come! We need to parse the message,
-        that could actually contain some emoticons. In that case, we simply replace 
+        that could actually contain some emoticons. In that case, we simply replace
         them into the stringview """
-        
+        #TODO: have Smiley object in the stringView to keep image+trigger
         strv = StringView()
-        
         if message.msn_objects.keys().__contains__(message.content) == True:
             print "single emoticon"
             strv.appendImage(message.msn_objects[message.content]._location)
-            self._amsn_conversation.onMessageReceived(c, strv)
+            self._amsn_conversation.onMessageReceived(sender.id, strv)
             return
-        
+
         strlist = [message.content]
-        
+
         for smile in message.msn_objects.keys():
             newlist = []
             for str in strlist:
@@ -72,18 +66,17 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
                     newlist.append(part)
                     newlist.append(message.msn_objects[smile]._location)
                 newlist.pop()
-                
+
             strlist = newlist
-            
+
         for str in strlist:
             if message.msn_objects.keys().__contains__(str) == True:
                 strv.appendImage(str)
             else:
                 strv.appendText(str)
-            
-        self._amsn_conversation.onMessageReceived(c, strv)
+
+        self._amsn_conversation.onMessageReceived(strv, sender.id)
 
     def on_conversation_nudge_received(self, sender):
-        c = ContactView.getContact(sender.id)
-        self._amsn_conversation.onNudgeReceived(c)
+        self._amsn_conversation.onNudgeReceived(sender.id)
 
