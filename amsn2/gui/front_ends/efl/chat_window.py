@@ -56,58 +56,6 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         self.__iter_out.forward_end()
         self._output.pass_mouse_events_set(1) #not focusable
 
-   etk_signal_connect_by_code(ETK_WIDGET_KEY_DOWN_SIGNAL, ETK_OBJECT(editor_view), ETK_CALLBACK(_etk_test_im_editor_key_down_cb), message_view);
-
-   etk_widget_show_all(win);
-}
-
-/* Called when a key is pressed when the editor text view is focused */
-static Etk_Bool _etk_test_im_editor_key_down_cb(Etk_Object *object, Etk_Event_Key_Down *event, void *data)
-{
-   Etk_Textblock *message_tb, *editor_tb;
-   Etk_Textblock_Iter *iter, *cursor;
-   Etk_String *message;
-   int buddy_id;
-
-   if (!(message_tb = etk_text_view_textblock_get(ETK_TEXT_VIEW(data))))
-      return ETK_FALSE;
-   if (!(editor_tb = etk_text_view_textblock_get(ETK_TEXT_VIEW(object))))
-      return ETK_FALSE;
-
-   message = etk_textblock_text_get(editor_tb, ETK_TRUE);
-   if ((strcmp(event->keyname, "Return") == 0 || strcmp(event->keyname, "KP_Enter") == 0))
-   {
-      iter = etk_textblock_iter_new(message_tb);
-      etk_textblock_iter_forward_end(iter);
-
-      if (event->modifiers & ETK_MODIFIER_SHIFT)
-      {
-         cursor = etk_text_view_cursor_get(ETK_TEXT_VIEW(object));
-         etk_textblock_insert(editor_tb, cursor, "\n", -1);
-      }
-      else
-      {
-         if (etk_string_length_get(message) > 0)
-         {
-
-            buddy_id = _num_messages % _num_im_buddies;
-            etk_textblock_insert_markup(message_tb, iter, _im_buddies[buddy_id], -1);
-            etk_textblock_insert_markup(message_tb, iter, etk_string_get(message), -1);
-            etk_textblock_insert(message_tb, iter, "\n", -1);
-
-            etk_textblock_clear(editor_tb);
-            etk_object_destroy(ETK_OBJECT(message));
-            _num_messages++;
-         }
-      }
-
-      etk_textblock_iter_free(iter);
-      return ETK_TRUE;
-   }
-
-   return ETK_FALSE;
-}
-
 
     def __sendButton_cb(self, button):
         msg = self.__input_tb.text_get(0)
