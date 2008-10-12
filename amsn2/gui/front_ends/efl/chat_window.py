@@ -10,7 +10,7 @@ from amsn2.gui import base
 from amsn2.core.views import ContactView, StringView
 
 class aMSNChatWindow(window.aMSNWindow, base.aMSNChatWindow):
-    def __init__(self, conversation_manager):     
+    def __init__(self, conversation_manager):
         self._conversation_manager = conversation_manager
         window.aMSNWindow.__init__(self, conversation_manager._core)
         self._container = aMSNChatWidgetContainer()
@@ -54,7 +54,6 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         strv = StringView()
         strv.appendText(msg)
         self._amsn_conversation.sendMessage(strv)
-        self.__outputAppendMsg("/me says:\n"+msg+"\n")
 
     def __outputAppendMsg(self, msg):
         self.__output_tb.insert(self.__iter_out, msg)
@@ -69,9 +68,9 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
     def onUserTyping(self, contact):
         print "%s is typing" % (contact,)
 
-    def onMessageReceived(self, sender, message):
-        str = "%s says:\n%s\n" % (sender.name.toString(), message.toString())
-        self.__outputAppendMsg(str)
+    def onMessageReceived(self, messageview):
+        self.__outputAppendMsg(messageview.toStringView().toString())
 
-    def onNudgeReceived(self, sender):
-        print "Nudge received from: %s" %(sender,)
+    def nudge(self):
+        #TODO
+        print "Nudge received!!!"
