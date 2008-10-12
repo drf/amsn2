@@ -80,6 +80,9 @@ class Image(evas.SmartObject):
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
 
+    def _loadFromFileObject(self, fileobject, pos=0):
+        pass
+
     def _loadFromSkin(self, resource_name, pos=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
