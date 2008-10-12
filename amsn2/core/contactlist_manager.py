@@ -17,6 +17,7 @@ class aMSNContactListManager:
 
         self._contacts = {}
         self._groups = {}
+        self._pymsn_addressbook = None
 
     #TODO: sorting contacts & groups
 
@@ -54,6 +55,7 @@ class aMSNContactListManager:
 
 
     def onCLDownloaded(self, address_book):
+        self._pymsn_addressbook = address_book
         grpviews = []
         cviews = []
         clv = ContactListView()
