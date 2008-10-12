@@ -1,6 +1,4 @@
-from base import BaseUIView
 
-class ContactListView (BaseUIView):
-    def __init__(self, uid):
-        BaseUIView.__init__(self, uid)
-        self.groups = []
+class ContactListView:
+    def __init__(self):
+        self.group_ids = []

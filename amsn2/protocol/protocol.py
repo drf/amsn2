@@ -29,21 +29,21 @@ class Client(pymsn.Client):
     def __init__(self, amsn_core, profile):
         self._amsn_profile = profile
         self._amsn_core = amsn_core
-        server = (self._amsn_profile.getConfigKey("ns_server", "messenger.hotmail.com"), 
+        server = (self._amsn_profile.getConfigKey("ns_server", "messenger.hotmail.com"),
                   self._amsn_profile.getConfigKey("ns_port", 1863))
         pymsn.Client.__init__(self, server)
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
-        self._contact_events_handler = ContactEvents(self, self._amsn_core._contact_manager)
+        self._contact_events_handler = ContactEvents(self, self._amsn_core._contactlist_manager)
         self._invite_events_handles = InviteEvents(self, self._amsn_core)
         self._oim_events_handles = OIMEvents(self, self._amsn_core._oim_manager)
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)
-        
+
     def changeNick(self, nick):
         self.profile.display_name = nick.toString()
-        
+
     def changeMessage(self, message):
         self.profile.personal_message = message.toString()
 
