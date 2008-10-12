@@ -1,4 +1,5 @@
 from stringview import *
+from imageview import *
 
 class ContactListView:
     def __init__(self):
@@ -10,7 +11,7 @@ class GroupView:
     def __init__(self, uid, name, contact_ids=[], active=0):
         self.uid = uid
         self.contact_ids = contact_ids
-        self.icon = None # TODO: expanded/collapsed icon
+        self.icon = ImageView() # TODO: expanded/collapsed icon
         self.name = StringView() # TODO: default color from skin/settings
         self.name.appendText(name) #TODO: parse for smileys
         active = 0 #TODO
@@ -35,8 +36,8 @@ class ContactView:
 
         self.icon = amsn_contact.icon
         #TODO: apply emblem on dp
-        self.dp = amsn_contact.dp
-        #self.emblem = amsn_contact.emblem
+        self.dp = amsn_contact.dp.clone()
+        self.dp.appendImageView(amsn_contact.emblem)
         self.name = StringView
         self.name = StringView() # TODO : default colors
         self.name.openTag("nickname")

@@ -117,11 +117,13 @@ class aMSNContact():
         self.fill(core, pymsn_contact)
 
     def fill(self, core, pymsn_contact):
-        self.icon = core._gui.gui.Image(core, core._main)
+        self.icon = ImageView()
         self.icon.load("Skin","buddy_" + core.p2s[pymsn_contact.presence])
-        self.dp = core._gui.gui.Image(core, core._main)
+        self.dp = ImageView()
         #for the moment, use default_dp
         self.dp.load("Skin","default_dp")
+        self.emblem = ImageView()
+        self.emblem.load("Skin", "emblem_" + core.p2s[pymsn_contact.presence])
         #TODO: PARSE ONLY ONCE
         self.nickname = StringView()
         self.nickname.appendText(pymsn_contact.display_name)

@@ -10,17 +10,18 @@ class aMSNSplashScreen(object):
     def show(self):
         """ Draw the splashscreen """
         raise NotImplementedError
-    
+
     def hide(self):
         """ Hide the splashscreen """
         raise NotImplementedError
-    
+
     def setText(self, text):
         """ Shows a different text inside the splashscreen """
         raise NotImplementedError
-    
+
     def setImage(self, image):
-        """ Set the image to show in the splashscreen. This is a gui.Image object """
+        """ Set the image to show in the splashscreen. This is an ImageView object """
+
         raise NotImplementedError
 
 
