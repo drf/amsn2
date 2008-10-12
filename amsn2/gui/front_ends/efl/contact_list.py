@@ -100,7 +100,6 @@ class ContactHolder(evas.SmartObject):
         except KeyError:
             return
         c.part_text_set("contact_data", contactview.name.toString())
-        print contactview.name.toString()
 
         if DP_IN_CL:
             # add the dp
