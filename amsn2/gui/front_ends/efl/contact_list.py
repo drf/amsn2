@@ -6,15 +6,18 @@ import ecore
 import ecore.evas
 import etk
 
+from image import *
+
 from amsn2.core.views import StringView
 from amsn2.gui import base
 import pymsn
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
-        self._amsn_core = amsn_core
+        self._core = amsn_core
         self._evas = parent._evas
         self._parent = parent
+        self._skin = amsn_core._skin_manager.skin
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         parent.setChild(self._clwidget)
         self._clwidget.show()
@@ -38,8 +41,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
-        self._amsn_core = amsn_core
+        self._core = amsn_core
         self._evas = parent._evas
+        self._skin = parent._skin
 
         self._etk_evas_object = etk.EvasObject()
         etk.ScrolledView.__init__(self)
@@ -91,6 +95,7 @@ class ContactHolder(evas.SmartObject):
         self.evas_obj = ecanvas
         self.contacts_dict = {}
         self.contacts_list = []
+        self._skin = parent._skin
         self._parent = parent
 
     def contact_updated(self, contactview):
@@ -108,7 +113,8 @@ class ContactHolder(evas.SmartObject):
             if obj_swallowed is not None:
                 # Delete ?
                 obj_swallowed.hide()
-            c.part_swallow("buddy_icon", contactview.dp)
+            dp = Image(self._skin, self.evas_obj, contactview.dp)
+            c.part_swallow("buddy_icon", dp)
         else:
             # add the buddy icon
             # Remove the current icon
@@ -116,7 +122,8 @@ class ContactHolder(evas.SmartObject):
             if obj_swallowed is not None:
                 # Delete ?
                 obj_swallowed.hide()
-                c.part_swallow("buddy_icon", contactview.icon)
+            icon = Image(self._skin, self.evas_obj, contactview.icon)
+            c.part_swallow("buddy_icon", icon)
 
         if contactview.on_click is not None:
             def cb_(obj,event):
@@ -216,6 +223,7 @@ class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, uid):
         self.evas_obj = evas_obj
         self._parent = parent
+        self._skin = parent._skin
         self.expanded = True
         self.uid = uid
         self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
@@ -260,13 +268,13 @@ class GroupItem(edje.Edje):
 
 class GroupHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas, parent, ccb = None):
+    def __init__(self, ecanvas, parent):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.group_items_list = []
         self.group_items_dict = {}
         self._parent = parent
-        self._ccb = ccb
+        self._skin = parent._skin
 
     def add_group(self, uid):
         new_group = GroupItem(self, self.evas_obj, uid)
