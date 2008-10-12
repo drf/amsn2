@@ -23,7 +23,7 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
-from contact_manager import *
+from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
     
