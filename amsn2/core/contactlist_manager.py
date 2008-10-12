@@ -24,7 +24,6 @@ class aMSNContactListManager:
         """ emit the event """
         for cb in self._events_cbs[event]:
             #TODO: try except
-            print 'emiting signal %d on %s' %(event, cb)
             cb(*args)
 
     def register(self, event, callback, pos=None):
@@ -54,7 +53,6 @@ class aMSNContactListManager:
 
 
     def onCLDownloaded(self, address_book):
-        print 'onCLDownloaded'
         grpviews = []
         cviews = []
         clv = ContactListView()
