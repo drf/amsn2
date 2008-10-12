@@ -20,24 +20,11 @@ class aMSNChatWidget(object):
         it."""
         raise NotImplementedError
 
-    def onUserJoined(self, contact):
-        """ contact: a contactView of the contact who joined """
+    def onMessageReceived(self, messageview):
+        """ Called for incoming and outgoing messages
+            message: a MessageView of the message"""
         raise NotImplementedError
 
-    def onUserLeft(self, contact):
-        """ contact: a contactView of the contact who left """
-        raise NotImplementedError
-
-    def onUserTyping(self, contact):
-        """ contact: a contactView of the contact who is typing """
-        raise NotImplementedError
-
-    def onMessageReceived(self, sender, message):
-        """ sender: a contactView of the sender of the message 
-            message: a stringView of the message sent"""
-        raise NotImplementedError
-
-    def onNudgeReceived(self, sender):
-        """ sender: a contactView of the contact who sent the nudge """
+    def nudge(self):
         raise NotImplementedError
 

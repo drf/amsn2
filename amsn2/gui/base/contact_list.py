@@ -45,7 +45,10 @@ class aMSNContactListWindow(object):
 class aMSNContactListWidget(object):
     """ This interface implements the contact list of the UI """
     def __init__(self, amsn_core, parent):
-        raise NotImplementedError
+        clm = amsn_core._contactlist_manager
+        clm.register(clm.CLVIEW_UPDATED, self.contactListUpdated)
+        clm.register(clm.GROUPVIEW_UPDATED, self.groupUpdated)
+        clm.register(clm.CONTACTVIEW_UPDATED, self.contactUpdated)
 
     def show(self):
         """ Show the contact list widget """
@@ -89,42 +92,3 @@ class aMSNContactListWidget(object):
         """
         raise NotImplementedError
 
-    def setContactCallback(self, cb):
-        """ Set the callback when a contact is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        """
-        raise NotImplementedError
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a contact should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError
-
-    def setGroupCallback(self, cb):
-        """ Set the callback when a group is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        """
-        raise NotImplementedError
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a group should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError

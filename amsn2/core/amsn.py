@@ -23,7 +23,7 @@ from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
-from contact_manager import *
+from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
     
@@ -46,7 +46,7 @@ class aMSNCore(object):
         self._loop = self._gui.gui.aMSNMainLoop(self)
         self._main = self._gui.gui.aMSNMainWindow(self)
         self._skin_manager = self._gui.gui.SkinManager(self)
-        self._contact_manager = aMSNContactManager(self)
+        self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
 
@@ -150,17 +150,8 @@ class aMSNCore(object):
             profile.clwin.show()
             profile.login = None
 
-            def startConversation_cb(contact):
-                print "--->"
-                print "Contact is %s" % (contact,)
-                print "<---"
-                self._conversation_manager.newConversation([contact])
-            clwin._clwidget.setContactCallback(startConversation_cb)
 
-            #TODO: use a method for that in aMSNContactManager
-            self._contact_manager._cl_listeners.append(clwin._clwidget)
-
-            self._contact_manager.onCLDownloaded(profile.client.address_book)
+            self._contactlist_manager.onCLDownloaded(profile.client.address_book)
 
 
 
@@ -174,12 +165,12 @@ class aMSNCore(object):
         self._loop.quit()
 
     def createMainMenuView(self):
-        menu = MenuView() 
+        menu = MenuView()
         quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
                                     = self.quit)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
         mainMenu.addItem(quitMenuItem)
-        
+
         menu.addItem(mainMenu)
 
         return menu
