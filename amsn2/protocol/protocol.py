@@ -24,6 +24,7 @@ from client import *
 from contact import *
 from invite import *
 from oim import *
+from addressboox import *
 
 class Client(pymsn.Client):
     def __init__(self, amsn_core, profile):
@@ -35,8 +36,9 @@ class Client(pymsn.Client):
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
         self._contact_events_handler = ContactEvents(self, self._amsn_core._contactlist_manager)
-        self._invite_events_handles = InviteEvents(self, self._amsn_core)
-        self._oim_events_handles = OIMEvents(self, self._amsn_core._oim_manager)
+        self._invite_events_handler = InviteEvents(self, self._amsn_core)
+        self._oim_events_handler = OIMEvents(self, self._amsn_core._oim_manager)
+        self._addressbook_events_handler = AddressBookEvents(self, self._amsn_core)
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)
