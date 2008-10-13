@@ -23,6 +23,7 @@ from amsn2.gui import base
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from fadingwidget import FadingWidget
+from image import *
     
 class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
 
@@ -42,5 +43,7 @@ class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
         qApp.processEvents()
         
     def setImage(self, image):
-        self.setPixmap(image)
+        img = Image()
+        img.loadFromImageView(image)
+        self.setPixmap(img)
         qApp.processEvents()
