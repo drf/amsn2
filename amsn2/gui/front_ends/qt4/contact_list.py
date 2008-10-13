@@ -51,10 +51,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
     def topCLUpdated(self, contactView):
         pass #TODO
 
+    def myInfoUpdated(self, view):
+        pass #TODO
     
             
 class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
+        base.aMSNContactListWidget.__init__(amsn_core, parent)
         StyledWidget.__init__(self, parent._parent)
         self._amsn_core = amsn_core
         self.ui = Ui_ContactList()
@@ -85,6 +88,9 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         sv = StringView()
         sv.appendText(str(self.ui.nickName.text()))
         self._amsn_core._profile.client.changeNick(sv)
+        
+    def contactListUpdated(self, view):
+        pass
     
     def contactUpdated(self, contact):
         print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))
