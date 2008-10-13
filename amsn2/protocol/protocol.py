@@ -24,7 +24,7 @@ from client import *
 from contact import *
 from invite import *
 from oim import *
-from addressboox import *
+from addressbook import *
 
 class Client(pymsn.Client):
     def __init__(self, amsn_core, profile):
