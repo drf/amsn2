@@ -1,6 +1,5 @@
 from views import *
 import pymsn
-import tempfile, os
 
 
 class aMSNContactListManager:
@@ -108,11 +107,7 @@ class aMSNContactListManager:
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
         c = self.getContact(uid)
-        (fno, tf) = tempfile.mkstemp()
-        f = os.fdopen(fno, 'w+b')
-        f.write(msn_object._data.read())
-        f.close()
-        c.dp.load("Filename", tf)
+        c.dp.load("FileObject", msn_object._data)
         self.emit(self.AMSNCONTACT_UPDATED, c)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
@@ -127,6 +122,7 @@ class aMSNContactListManager:
             if pymsn_contact is not None:
                 c = aMSNContact(self._core, pymsn_contact)
                 self._contacts[cid] = c
+                self.emit(self.AMSNCONTACT_UPDATED, c)
                 return c
             else:
                 raise ValueError
