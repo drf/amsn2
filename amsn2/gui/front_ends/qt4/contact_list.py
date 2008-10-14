@@ -57,7 +57,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
             
 class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
-        base.aMSNContactListWidget.__init__(amsn_core, parent)
+        base.aMSNContactListWidget.__init__(self, amsn_core, parent)
         StyledWidget.__init__(self, parent._parent)
         self._amsn_core = amsn_core
         self.ui = Ui_ContactList()
