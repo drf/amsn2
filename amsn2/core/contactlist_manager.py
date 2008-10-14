@@ -2,7 +2,6 @@ from views import *
 import pymsn
 
 
-
 class aMSNContactListManager:
     def __init__(self, core):
         self._core = core
@@ -94,6 +93,26 @@ class aMSNContactListManager:
         for c in cviews:
             self.emit(self.CONTACTVIEW_UPDATED, c)
 
+        self._core._loop.timer_add(3, self.request_all_display_picture)
+
+    def request_all_display_picture(self):
+        contacts = self._pymsn_addressbook.contacts.\
+                search_by_presence(pymsn.Presence.OFFLINE)
+        contacts = self._pymsn_addressbook.contacts - contacts
+        for c in contacts:
+            if c.msn_object:
+                self._core._profile.client._msn_object_store.request(c.msn_object,
+                                                                     (self.onDPdownloaded, c.id))
+
+    def onDPdownloaded(self, msn_object, uid):
+        #1st/ update the aMSNContact object
+        c = self.getContact(uid)
+        c.dp.load("FileObject", msn_object._data)
+        self.emit(self.AMSNCONTACT_UPDATED, c)
+        #2nd/ update the ContactView
+        cv = ContactView(self._core, c)
+        self.emit(self.CONTACTVIEW_UPDATED, cv)
+
 
     def getContact(self, cid, pymsn_contact=None):
         #TODO: should raise UnknownContact or sthg like that
@@ -122,7 +141,7 @@ class aMSNContact():
         self.icon = ImageView()
         self.icon.load("Skin","buddy_" + core.p2s[pymsn_contact.presence])
         self.dp = ImageView()
-        #for the moment, use default_dp
+        #TODO: for the moment, use default_dp
         self.dp.load("Skin","default_dp")
         self.emblem = ImageView()
         self.emblem.load("Skin", "emblem_" + core.p2s[pymsn_contact.presence])

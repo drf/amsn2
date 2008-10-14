@@ -3,10 +3,13 @@ import evas
 import ecore
 import ecore.evas
 
+import tempfile
+import os
+
 from amsn2.core.views import imageview
 
 class Image(evas.SmartObject):
-    def __init__(self, skin, canvas, view=None):
+    def __init__(self, skin, canvas, view):
         self._evas = canvas
         evas.SmartObject.__init__(self, self._evas)
 
@@ -14,15 +17,16 @@ class Image(evas.SmartObject):
         self._imgs = []
         self.propagate_events = True
 
-        if view is not None:
-            self.load(view)
+        self.load(view)
+
     #######################################################
-    #Public methods
+    #Public method
     def load(self, view):
         for img in self._imgs:
             self.member_del(img)
 
         self._imgs = []
+        i = 0
         for (resource_type, value) in view.imgs:
             self._imgs.append(self._evas.Image())
             self.member_add(self._imgs[-1])
@@ -31,56 +35,34 @@ class Image(evas.SmartObject):
             except AttributeError, e:
                 print "From load in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
             else:
-                loadMethod(value, -1)
-
-    def appendView(self, view):
-        for (resource_type, value) in view.imgs:
-            img = self._evas.Image()
-            self.member_add(img)
-            self._imgs.append(img)
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From append in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, pos=-1)
-
-    def appendImage(self, image):
-        for i in image._imgs:
-            self._imgs.append(i)
-            self.member_add(i)
-
-    def prependView(self, resource_type, value):
-        for (resource_type, value) in view.imgs.reverse():
-            img = self._evas.Image()
-            self.member_add(img)
-            self._imgs.insert(0, img)
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From prepend in efl/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, pos=0)
-
-    def prependImage(self, image):
-        for i in image._imgs.reverse():
-            self._imgs.insert(0,i)
-            self.member_add(i)
+                loadMethod(value, -1, view, i)
+                i += 1
 
 
-    def _loadFromFilename(self, filename, pos=0):
+
+    def _loadFromFilename(self, filename, pos=0, view=None, i=0):
         try:
             self._imgs[pos].file_set(filename)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
 
-    def _loadFromEET(self, (eetfile, key), pos=0):
+    def _loadFromEET(self, (eetfile, key), pos=0, view=None, i=0):
         try:
             self._imgs[pos].file_set(eetfile, key)
         except evas.EvasLoadError, e:
             print "EvasLoadError: %s" % (e,)
 
-    def _loadFromSkin(self, resource_name, pos=0):
+    def _loadFromFileObject(self, fileobject, pos=0, view=None, i=0):
+        (fno, tf) = tempfile.mkstemp()
+        f = os.fdopen(fno, 'w+b')
+        f.write(fileobject.read())
+        f.close()
+        if view is not None:
+            view.imgs[i] = ("Filename", tf)
+        self._loadFromFilename(tf, pos, view, i)
+
+
+    def _loadFromSkin(self, resource_name, pos=0, view=None, i=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
             (type, value) = res
@@ -89,8 +71,10 @@ class Image(evas.SmartObject):
             except AttributeError, e:
                 print "From _loadFromSkin in efl/image.py:\n\t(type, value) = (%s, %s)\n\tAttributeError: %s" % (type, value, e)
             else:
-                loadMethod(value, pos)
+                loadMethod(value, pos, view, i)
 
+    def _loadFromNone(self, r, pos=0):
+        pass
 
     #######################################################
     # Need to overwritre some evas.SmartObject methods:
