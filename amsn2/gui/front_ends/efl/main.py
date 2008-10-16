@@ -9,7 +9,7 @@ from amsn2.gui import base
 from amsn2.core.views import MenuView, MenuItemView
 
 class aMSNMainWindow(window.aMSNWindow, base.aMSNMainWindow):
-    def __init__(self, amsn_core):     
+    def __init__(self, amsn_core):
         window.aMSNWindow.__init__(self, amsn_core)
         self.on_destroyed(self.__on_delete_request)
         self.on_shown(self.__on_show)

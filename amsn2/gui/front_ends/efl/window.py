@@ -9,7 +9,7 @@ from amsn2.gui import base
 from amsn2.core.views import MenuView, MenuItemView
 
 class aMSNWindow(etk.Window, base.aMSNWindow):
-    def __init__(self, amsn_core):     
+    def __init__(self, amsn_core):
         self._amsn_core = amsn_core
         self._vbox = etk.VBox()
         etk.Window.__init__(self,title="aMSN",
@@ -31,7 +31,7 @@ class aMSNWindow(etk.Window, base.aMSNWindow):
 
     def hide(self):
         self.hide()
-        
+
     def setTitle(self, text):
         self.title_set(text)
 
@@ -53,8 +53,8 @@ class aMSNWindow(etk.Window, base.aMSNWindow):
                 self._vbox.prepend(menu_bar, etk.VBox.START, etk.VBox.FILL, 0)
                 self._has_menu = True
             createEtkMenuFromMenuView(menu.items, menu_bar)
-        
-    
+
+
     def setChild(self, child):
         obj = self.getChild()
         if obj is not None:
@@ -78,12 +78,16 @@ class aMSNWindow(etk.Window, base.aMSNWindow):
                 menu_bar.show()
 
     def _on_key_down(self, obj, event):
-        if event.keyname in ("F6", "f"):
+        if (event.keyname == "F6" or
+            (event.keyname is "f" and event.modifiers is
+             etk.c_etk.EventEnums.MODIFIER_CTRL)):
             self.fullscreen = not self.fullscreen
-        elif event.keyname in ("F5", "b"):
+        elif (event.keyname == "F5" or
+              (event.keyname is "b" and event.modifiers is
+               etk.c_etk.EventEnums.MODIFIER_CTRL)):
             self.decorated = not self.decorated
         elif (event.keyname == "m" and
-              event.modifiers == etk.core.c_etk.EventEnums.MODIFIER_CTRL):
+              event.modifiers == etk.c_etk.EventEnums.MODIFIER_CTRL):
             self.toggleMenu()
 
 def createEtkMenuFromMenuView(items, etkmenu):

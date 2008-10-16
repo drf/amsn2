@@ -63,8 +63,6 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
 
         self._edje.part_swallow("groups", self.group_holder);
 
-        self._edje.focus = True
-
         self._edje.show()
         self._etk_evas_object.show()
 

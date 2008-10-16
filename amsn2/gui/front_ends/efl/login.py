@@ -13,7 +13,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self._parent = parent
 
         edje.frametime_set(1.0 / 30)
-        
+
         mainChild = etk.EvasObject()
 
         try:
@@ -42,7 +42,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         embed.add(self.username)
         embed.show_all()
         self._edje.part_swallow("login_screen.username", embed.object)
-        
+
         if self._edje.part_exists("login_screen.signin"):
            self.signin_b = etk.Button()
            embed = etk.Embed(self._evas)
@@ -54,16 +54,15 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         else:
            self._edje.signal_callback_add("signin", "*", self.__signin_cb)
 
-        self._edje.focus = True
 
         # We start with no profile set up, we let the Core set our starting profile
         self.switch_to_profile(None)
-        
+
         parent.setChild(mainChild)
 
     def show(self):
         self._edje.show()
-    
+
     def hide(self):
         self._edje.hide()
         #FIXME: those are not hidden by self._edje.hide() 
@@ -76,7 +75,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             pass
         else:
             self.signin_b.hide()
-        self._edje.focus = False
 
     def switch_to_profile(self, profile):
         self.current_profile = profile
@@ -100,7 +98,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             msg1 = message.split("\n")[0]
         except IndexError:
             pass
-        
+
         try:
             msg2 = message.split("\n")[1]
         except IndexError:
