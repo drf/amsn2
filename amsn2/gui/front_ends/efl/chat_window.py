@@ -1,4 +1,3 @@
-
 from constants import *
 import ecore
 import ecore.evas
@@ -56,6 +55,18 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         self.__iter_out.forward_end()
         self._output.pass_mouse_events_set(1) #not focusable
 
+        def editor_key_down(obj, event):
+            if event.keyname in ("Return", "KP_Enter"):
+                if event.modifiers is etk.c_etk.EventEnums.MODIFIER_NONE:
+                    self.__sendButton_cb(self._send_button)
+                    return False
+                elif event.modifiers is etk.c_etk.EventEnums.MODIFIER_SHIFT:
+                    iter = etk.TextblockIter(self.__input_tb)
+                    iter.forward_end()
+                    self.__input_tb.insert(iter, '\n')
+                    return False
+            return True
+        self._input.on_key_down(editor_key_down)
 
     def __sendButton_cb(self, button):
         msg = self.__input_tb.text_get(0)
