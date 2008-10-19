@@ -1,5 +1,8 @@
 
 from amsn2.core.views import StringView
+import gobject, pango
+
+GUI_FONT = pango.FontDescription('normal 8')
 
 def stringvToHtml(stringv):
 	out = ''
@@ -12,3 +15,8 @@ def stringvToHtml(stringv):
 			else:
 				out += '</i>'
 	return out
+
+def escape_pango(str):
+    str = gobject.markup_escape_text(str)
+    str = str.replace('\n',' ')
+    return str

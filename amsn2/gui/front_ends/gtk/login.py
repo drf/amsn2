@@ -75,6 +75,7 @@ class aMSNLoginWindow(gtk.VBox):
         # fill status combo
         for status in ['Online', 'Busy', 'Away', 'Show offline']:
             self.statusListStore.append( [None, 0, status] )
+            # self.statusListStore.append([None, 0, self._amsn_core.p2s[item]])
         self.statusCombo.set_active(0)
         
         # align fields

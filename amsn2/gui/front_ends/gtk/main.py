@@ -23,6 +23,12 @@ class aMSNMainWindow(base.aMSNMainWindow):
     def hide(self):
         self.main_win.hide()
     
+    def setMenu(self, menu):
+        """ This will allow the core to change the current window's main menu
+        @menu : a MenuView
+        """
+        pass
+        
     def set_view(self, view):
         current = self.main_win.get_child()
         
