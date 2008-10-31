@@ -1,9 +1,32 @@
+# -*- coding: utf-8 -*-
+#===================================================
+# 
+# contact_list.py - This file is part of the amsn2 package
+#
+# Copyright (C) 2008  Wil Alvarez <wil_alejandro@yahoo.com>
+#
+# This script is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This script is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this script (see COPYING); if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#===================================================
 
 import gtk
 import gobject
 import pango
 
-import pymsn
+#import pymsn
+from image import *
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
@@ -19,8 +42,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
         self._amsn_core = amsn_core
         self._main_win = parent
+        self._skin = amsn_core._skin_manager.skin
         
-        self._clwidget = aMSNContactListWidget(amsn_core, parent)
+        self._clwidget = aMSNContactListWidget(amsn_core, self)
         
         self.__create_controls()
         header = self.__create_box()
@@ -34,7 +58,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.pack_start(scrollwindow, True, True)
         self.show_all()
         
-        #self._main_win.set_view(self.view)
         self._main_win.set_view(self)
         
     def __create_controls(self):
@@ -110,34 +133,19 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
     def setTitle(self, text):
         self._main_win.set_title(text)
-
-    def contactUpdated(self, contact):
-        contact_data = (None, contact, common.stringvToHtml(contact.name))
-        for row in self._model:
-            obj = row[1]
-            if type(obj) == GroupView:
-                for contact_row in row.iterchildren():
-                    con = contact_row[1]
-                    if con.uid == contact.uid:
-                        self._model[contact_row.iter] = contact_data
-                        #self.groupUpdated(obj)
-            elif type(obj) == ContactView and obj.account == contact.account:
-                self._model[row.iter] = contact_data
-
-    def groupUpdated(self, group):
-        print 'group updated...'
-        raise NotImplementedError
     
-    def groupAdded(self, group):
-        group_data = (None, group, self.format_group(group))
-        iter = self._model.append(None, group_data)
-        
-        for contact in group.contacts:
-            contact_data = (None, contact, common.stringvToHtml(contact.name))
-            self._model.append(iter, contact_data)
-            
-        path = self._model.get_path(iter)
-        self.expand_row(path, False)
+    def setMenu(self, menu):
+        """ This will allow the core to change the current window's main menu
+        @menu : a MenuView
+        """
+        pass
+
+    def myInfoUpdated(self, view):
+        """ This will allow the core to change pieces of information about
+        ourself, such as DP, nick, psm, the current media being played,...
+        @view: the contactView of the ourself (contains DP, nick, psm,
+        currentMedia,...)"""
+        print view.name.toString()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
@@ -150,9 +158,18 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         self.groups = []
         self.contacts = {}
         
-        crt = gtk.CellRendererText()
+        nick = gtk.CellRendererText()
+        nick.set_property('ellipsize-set',True)
+        nick.set_property('ellipsize', pango.ELLIPSIZE_END)
+        pix = gtk.CellRendererPixbuf()
+        
         column = gtk.TreeViewColumn()
         column.set_expand(True)
+        column.set_alignment(0.0)
+        column.pack_start(nick, True)
+        column.pack_start(pix, False)
+        column.add_attribute(pix, 'pixbuf', 0)
+        column.add_attribute(nick, 'markup', 2)
         
         exp_column = gtk.TreeViewColumn()
         exp_column.set_max_width(16)       
@@ -160,9 +177,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         self.append_column(exp_column)
         self.append_column(column)
         self.set_expander_column(exp_column)
-        
-        column.pack_start(crt)
-        column.add_attribute(crt, 'markup', 2)
         
         self.set_search_column(2)
         self.set_headers_visible(False)
@@ -263,7 +277,11 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def contactUpdated(self, contactview):
         citer = self.__search_by_id(contactview.uid)
         if citer is None: return
-            
+        
+        img = Image(self._main_win._skin, contactview.dp)
+        dp = img.to_pixbuf(32)
+        
+        self._model.set_value(citer, 0, dp)
         self._model.set_value(citer, 1, contactview)
         self._model.set_value(citer, 2, common.escape_pango(
             contactview.name.toString()))
