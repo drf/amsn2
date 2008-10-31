@@ -15,7 +15,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     '''GTK contactlist'''
     def __init__(self, amsn_core, parent):
         '''Constructor'''
-        
         gtk.VBox.__init__(self)
         
         self._amsn_core = amsn_core
@@ -108,6 +107,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
 
     def hide(self):
         pass 
+        
+    def setTitle(self, text):
+        self._main_win.set_title(text)
 
     def contactUpdated(self, contact):
         contact_data = (None, contact, common.stringvToHtml(contact.name))
@@ -137,25 +139,16 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         path = self._model.get_path(iter)
         self.expand_row(path, False)
 
-    def format_group(self, group):
-        return '<b>' + group.name.toString() + '</b>'
-
-    def groupRemoved(self, group):
-        pass
-
-    def configure(self, option, value):
-        pass
-
-    def cget(self, option, value):
-        pass
-
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
         """Constructor"""
+        base.aMSNContactListWidget.__init__(self, amsn_core, parent)
         gtk.TreeView.__init__(self)
         
         self._amsn_core = amsn_core
         self._main_win = parent
+        self.groups = []
+        self.contacts = {}
         
         crt = gtk.CellRendererText()
         column = gtk.TreeViewColumn()
@@ -176,7 +169,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         
         # the image (None for groups) the object (group or contact) and 
         # the string to display
-        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str)
+        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str, str)
         self.model = self._model.filter_new(root=None)
         #self.model.set_visible_func(self._visible_func)
 
@@ -185,6 +178,21 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         
         self.set_model(self.model)
         
+    def __search_by_id(self, id):
+        parent = self._model.get_iter_first()
+        
+        while (parent is not None):
+            obj = self._model.get_value(parent, 3)
+            if (obj == id): return parent
+            child = self._model.iter_children(parent)
+            while (child is not None):
+                cobj = self._model.get_value(child, 3)
+                if (cobj == id): return child
+                child = self._model.iter_next(child)
+            parent = self._model.iter_next(parent)
+            
+        return None
+        
     def _sort_method(self, model, iter1, iter2, user_data=None):
         '''callback called to decide the order of the contacts'''
 
@@ -192,100 +200,71 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         obj2 = self._model[iter2][1]
 
         return 1
-        #if type(obj1) == Group and type(obj2) == Group:
-        #    return self.compare_groups(obj1, obj2)
-        #elif type(obj1) == Contact and type(obj2) == Contact:
-        #    return self.compare_contacts(obj1, obj2)
-        #elif type(obj1) == Group and type(obj2) == Contact:
-        #    return -1
-        #else:
-        #    return 1
 
     def show(self):
         """ Show the contact list widget """
-        self.show()
+        #self.show()
+        pass
 
     def hide(self):
         """ Hide the contact list widget """
-        self.hide()
+        #self.hide()
+        pass
 
-    def contactListUpdated(self, clView):
-        """ This method will be called when the core wants to notify
-        the contact list of the groups that it contains, and where they
-        should be drawn a group should be drawn.
-        It will be called initially to feed the contact list with the groups
-        that the CL should contain.
-        It will also be called to remove any group that needs to be removed.
-        @cl : a ContactListView containing the list of groups contained in
-        the contact list which will contain the list of ContactViews
-        for all the contacts to show in the group."""
-        raise NotImplementedError
+    def contactListUpdated(self, clview):
+        guids = self.groups
+        self.groups = []
         
-    def groupAdded(self, group):
-        gi = self._model.append(None, [None, group, common.escape_pango(
-                group.name.toString())])
-        for c in group.contacts:
-            self._model.append(gi, [None, c, common.escape_pango(
-                c.name.toString())])
+        # New groups
+        for gid in clview.group_ids:
+            if (gid == 0): gid = '0'
+            if gid not in guids:
+                self.groups.append(gid)
+                self._model.append(None, [None, None, gid, gid])
+                print "Added group %s" % gid
+                
+        # Remove unused groups
+        for gid in guids:
+            if gid not in self.groups:
+                giter = self.__search_by_id(gid)
+                self._model.remove(giter)
+                self.groups.remove(gid)
+                print "Removed group %s" % gid
         
-    def groupUpdated(self, groupView):
-        """ This method will be called to notify the contact list
-        that a group has been updated.
-        The contact list should update its icon and name
-        but also its content (the ContactViews). The order of the contacts
-        may be changed, in which case the UI should update itself accordingly.
-        A contact can also be added or removed from a group using this method
-        """
-        raise NotImplementedError
+    def groupUpdated(self, groupview):
+        if (groupview.uid == 0): groupview.uid = '0'
+        if groupview.uid not in self.groups: return
+        
+        giter = self.__search_by_id(groupview.uid)
+        self._model.set_value(giter, 1, groupview)
+        self._model.set_value(giter, 2, common.escape_pango(
+            groupview.name.toString()))
+        
+        try:
+            cuids = self.contacts[groupview.uid]
+        except:
+            cuids = []
+        self.contacts[groupview.uid] = []
+        
+        for cid in groupview.contact_ids:
+            if cid not in cuids:
+                giter = self.__search_by_id(groupview.uid)
+                self.contacts[groupview.uid].append(cid)
+                self._model.append(giter, [None, None, cid, cid])
+        
+        # Remove unused contacts
+        for cid in cuids:
+            if cid not in self.contacts[groupview.uid]:
+                citer = self.__search_by_id(cid)
+                self._model.remove(citer)
+                self.contacts[groupview.uid].remove(cid)
+        
 
-    def contactUpdated(self, contactView):
-        """ This method will be called to notify the contact list
-        that a contact has been updated.
-        The contact can be in any group drawn and his icon,
-        name or DP should be updated accordingly.
-        The position of the contact will not be changed by a call
-        to this function. If the position was changed, a groupUpdated
-        call will be made with the new order of the contacts
-        in the affects groups.
-        """
-        pass #raise NotImplementedError
-
-    def setContactCallback(self, cb):
-        """ Set the callback when a contact is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        """
-        self.callback = cb
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a contact should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError
-
-    def setGroupCallback(self, cb):
-        """ Set the callback when a group is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        """
-        raise NotImplementedError
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a group should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError
+    def contactUpdated(self, contactview):
+        citer = self.__search_by_id(contactview.uid)
+        if citer is None: return
+            
+        self._model.set_value(citer, 1, contactview)
+        self._model.set_value(citer, 2, common.escape_pango(
+            contactview.name.toString()))
+        
