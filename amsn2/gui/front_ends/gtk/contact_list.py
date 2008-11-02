@@ -30,6 +30,7 @@ from image import *
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
+from amsn2.core.views import ImageView
 from amsn2.gui import base
 
 import common
@@ -49,48 +50,46 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.__create_controls()
         self.__create_box()
         
-        self.show_all()
-        
         self._main_win.set_view(self)
         
+        self.show_all()
+        self.__setup_window()
+        
     def __create_controls(self):
+        ###self.psmlabel.modify_font(common.GUI_FONT)
         # Main Controls
         self.display = gtk.Image()
         self.display.set_size_request(64,64)
         
-        self.nickname = gtk.Label()
-        self.nickname.set_alignment(0, 0)
-        self.nickname.set_use_markup(True)
-        self.nickname.set_ellipsize(pango.ELLIPSIZE_END)
-        self.nickname.set_markup('Loading...')
+        self.nicklabel = gtk.Label()
+        self.nicklabel.set_alignment(0, 0)
+        self.nicklabel.set_use_markup(True)
+        self.nicklabel.set_ellipsize(pango.ELLIPSIZE_END)
+        self.nicklabel.set_markup('Loading...')
         
         self.btnNickname = gtk.Button()
         self.btnNickname.set_relief(gtk.RELIEF_NONE)
-        self.btnNickname.add(self.nickname)
+        self.btnNickname.add(self.nicklabel)
+        self.btnNickname.set_alignment(0,0)
         
         self.psm = gtk.Entry()
-        self.psm.modify_font(common.GUI_FONT)
         
         self.psmlabel = gtk.Label()
         self.psmlabel.set_use_markup(True)
         self.psmlabel.set_ellipsize(pango.ELLIPSIZE_END)
-        self.psmlabel.modify_font(common.GUI_FONT)
+        self.psmlabel.set_markup('<i>&lt;Personal message&gt;</i>')
         
         self.btnPsm = gtk.Button()
         self.btnPsm.add(self.psmlabel)
         self.btnPsm.set_relief(gtk.RELIEF_NONE)
-        self.btnPsm.set_alignment(0,0.5)
-        
-        self.cs = gtk.Label()
-        self.cs.set_use_markup(True)
-        self.cs.set_markup('')
-        self.cs.set_alignment(0,0.5)
-        self.cs.set_ellipsize(pango.ELLIPSIZE_END)
+        self.btnPsm.set_alignment(0,0)
         
         status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
-            icon = None
+            iv = ImageView("Skin", "buddy_%s" % name)
+            img = Image(self._skin, iv)
+            icon = img.to_pixbuf(28)
             status_list.append([icon, name])
         
         iconCell = gtk.CellRendererPixbuf()
@@ -100,6 +99,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
         self.status = gtk.ComboBox()
         self.status.set_model(status_list)
+        self.status.set_active(0)
         self.status.pack_start(iconCell, False)
         self.status.pack_start(txtCell, False)
         self.status.add_attribute(iconCell, 'pixbuf',0)
@@ -119,21 +119,17 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         boxNick.pack_start(self.btnNickname, True, True)
 
         boxPsm = gtk.HBox(False, 0)
-        boxPsm.pack_start(self.psm, True, True)
         boxPsm.pack_start(self.btnPsm, True, True)
-
-        boxCs = gtk.HBox(False, 2)
-        boxCs.pack_start(self.cs, True, True)
+        boxPsm.pack_start(self.psm, True, True)
 
         headerRight = gtk.VBox(False, 0)
-        headerRight.pack_start(boxNick, True, False)
+        headerRight.pack_start(boxNick, False, False)
         headerRight.pack_start(boxPsm, False, False)
-        headerRight.pack_start(boxCs, False, False, 3)
 
         # Header pack
-        header = gtk.HBox(False, 5)
-        header.pack_start(headerRight, True, True, 0)
+        header = gtk.HBox(False, 1)
         header.pack_start(headerLeft, False, False, 0)
+        header.pack_start(headerRight, True, True, 0)
         
         scrollwindow = gtk.ScrolledWindow()
         scrollwindow.set_shadow_type(gtk.SHADOW_ETCHED_IN)
@@ -143,9 +139,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         bottom = gtk.HBox(False, 0)
         bottom.pack_start(self.status, True, True, 0)
         
-        self.pack_start(header, False, False)
-        self.pack_start(scrollwindow, True, True)
-        self.pack_start(bottom, False, False)
+        self.pack_start(header, False, False, 2)
+        self.pack_start(scrollwindow, True, True, 2)
+        self.pack_start(bottom, False, False, 2)
+        
+    def __setup_window(self):
+        self.psm.hide()
+        self.btnPsm.show()
 
     def show(self):
         pass 
@@ -176,7 +176,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         gtk.TreeView.__init__(self)
         
         self._amsn_core = amsn_core
-        self._main_win = parent
+        self._cwin = parent
         self.groups = []
         self.contacts = {}
         
@@ -204,15 +204,13 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         
         self.set_search_column(2)
         self.set_headers_visible(False)
+        self.set_level_indentation(0)
         
         # the image (None for groups) the object (group or contact) and 
         # the string to display
         self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str, str, bool)
         self.model = self._model.filter_new(root=None)
         #self.model.set_visible_func(self._visible_func)
-
-        self._model.set_sort_func(1, self._sort_method)
-        self._model.set_sort_column_id(1, gtk.SORT_ASCENDING)
         
         self.set_model(self.model)
         
@@ -231,22 +229,10 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             
         return None
         
-    def _sort_method(self, model, iter1, iter2, user_data=None):
-        '''callback called to decide the order of the contacts'''
-
-        obj1 = self._model[iter1][1]
-        obj2 = self._model[iter2][1]
-
-        return 1
-
     def show(self):
-        """ Show the contact list widget """
-        #self.show()
         pass
 
     def hide(self):
-        """ Hide the contact list widget """
-        #self.hide()
         pass
 
     def contactListUpdated(self, clview):
@@ -259,7 +245,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             if gid not in guids:
                 self.groups.append(gid)
                 self._model.append(None, [None, None, gid, gid, False])
-                print "Added group %s" % gid
                 
         # Remove unused groups
         for gid in guids:
@@ -267,7 +252,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
                 giter = self.__search_by_id(gid)
                 self._model.remove(giter)
                 self.groups.remove(gid)
-                print "Removed group %s" % gid
         
     def groupUpdated(self, groupview):
         if (groupview.uid == 0): groupview.uid = '0'
@@ -275,7 +259,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         
         giter = self.__search_by_id(groupview.uid)
         self._model.set_value(giter, 1, groupview)
-        self._model.set_value(giter, 2, common.escape_pango(
+        self._model.set_value(giter, 2, '<b>%s</b>' % common.escape_pango(
             groupview.name.toString()))
         
         try:
@@ -302,8 +286,11 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         citer = self.__search_by_id(contactview.uid)
         if citer is None: return
         
-        img = Image(self._main_win._skin, contactview.dp)
+        # TODO: Verify if DP exist
+        img = Image(self._cwin._skin, contactview.dp)
         dp = img.to_pixbuf(32)
+        ###img = Image(self._main_win._skin, contactview.icon)
+        ###dp = img.to_pixbuf(28)
         
         self._model.set_value(citer, 0, dp)
         self._model.set_value(citer, 1, contactview)

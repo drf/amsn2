@@ -1,4 +1,6 @@
 from views import *
+import os
+import tempfile
 import pymsn
 
 
@@ -93,7 +95,8 @@ class aMSNContactListManager:
         for c in cviews:
             self.emit(self.CONTACTVIEW_UPDATED, c)
 
-        self._core._loop.timer_add(3, self.request_all_display_picture)
+        #self._core._loop.timer_add(3, self.request_all_display_picture)
+        self.request_all_display_picture()
 
     def request_all_display_picture(self):
         contacts = self._pymsn_addressbook.contacts.\
@@ -107,7 +110,12 @@ class aMSNContactListManager:
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
         c = self.getContact(uid)
-        c.dp.load("FileObject", msn_object._data)
+        ##c.dp.load("FileObject", msn_object._data)
+        (fno, tf) = tempfile.mkstemp()
+        f = os.fdopen(fno, 'w+b')
+        f.write(msn_object._data.read())
+        f.close()
+        c.dp.load("Filename", tf)
         self.emit(self.AMSNCONTACT_UPDATED, c)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)

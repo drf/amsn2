@@ -49,27 +49,21 @@ class Image(gtk.Image):
                 "(%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
             else:
                 loadMethod(value, -1, view)
-                #i += 1
             
     def _loadFromFilename(self, filename, pos=0, view=None, i=0):
         try:
-            #self._imgs[pos].file_set(filename)
             self.set_from_file(filename)
             self._filename = filename
         except Exception, e:
-            print "Error loading %s image from file" % filename, e
-
-    def _loadFromEET(self, (eetfile, key), pos=0, view=None, i=0):
-        pass
-
-    def _loadFromFileObject(self, fileobject, pos=0, view=None, i=0):
-        pass
+            print e
+            print "Error loading %s image from file" % filename
 
 
     def _loadFromSkin(self, resource_name, pos=0, view=None, i=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
             (type, value) = res
+            self._filename = value
             try:
                 loadMethod = getattr(self, "_loadFrom%s" % type)
             except AttributeError, e:

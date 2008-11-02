@@ -25,6 +25,9 @@ import os
 import gtk
 import gobject
 
+from image import *
+from amsn2.core.views import ImageView
+
 class aMSNLoginWindow(gtk.VBox):
     def __init__(self, amsn_core, parent):
         
@@ -33,6 +36,7 @@ class aMSNLoginWindow(gtk.VBox):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
         self._main_win = parent
+        self._skin = amsn_core._skin_manager.skin
         self.timer = None
         self.anim_phase = 1
         self.last_img = None
@@ -79,38 +83,41 @@ class aMSNLoginWindow(gtk.VBox):
         passlabel.set_alignment(0.0, 0.5)
         self.password = gtk.Entry(128)
         self.password.set_visibility(False)
-        self.password.connect('activate' , self._login_clicked)
+        self.password.connect('activate' , self.__login_clicked)
         passbox.pack_start(passlabel, False, False)
         passbox.pack_start(self.password, False, False)
         fields.pack_start(passbox, False, False)
         
+        # status list
+        status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
+        for key in self._amsn_core.p2s:
+            name = self._amsn_core.p2s[key]
+            iv = ImageView("Skin", "buddy_%s" % name)
+            img = Image(self._skin, iv)
+            icon = img.to_pixbuf(28)
+            status_list.append([icon, name])
+        
+        iconCell = gtk.CellRendererPixbuf()
+        iconCell.set_property('xalign', 0.0)
+        txtCell = gtk.CellRendererText()
+        txtCell.set_property('xalign', 0.0)
+        
         # status combobox
-        self.statusListStore = gtk.ListStore(gtk.gdk.Pixbuf, 
-                                              gobject.TYPE_STRING,
-                                              gobject.TYPE_STRING)
-        statusbox = gtk.VBox()
-        self.statusCombo = gtk.ComboBox(self.statusListStore)
-        #statusPixbufCell = gtk.CellRendererPixbuf()
-        statusTextCell = gtk.CellRendererText()
-        #statusCombo.pack_start(statusPixbufCell, False)
-        self.statusCombo.pack_start(statusTextCell, False)
-        #statusPixbufCell.set_property('xalign', 0.0)
-        #statusPixbufCell.set_property('xpad', 5)
-        statusTextCell.set_property('xalign', 0.0)
-        statusTextCell.set_property('xpad', 5)
-        self.statusCombo.add_attribute(statusTextCell, 'text', 2)
-        #statusCombo.add_attribute(statusPixbufCell, 'pixbuf', 0)
+        self.statusCombo = gtk.ComboBox()
+        self.statusCombo.set_model(status_list)
+        self.statusCombo.set_active(0)
+        self.statusCombo.pack_start(iconCell, False)
+        self.statusCombo.pack_start(txtCell, False)
+        self.statusCombo.add_attribute(iconCell, 'pixbuf',0)
+        self.statusCombo.add_attribute(txtCell, 'markup',1)        
+        
         statuslabel = gtk.Label('Status:')
         statuslabel.set_alignment(0.0, 0.5)
+        
+        statusbox = gtk.VBox()
         statusbox.pack_start(statuslabel, False, False)
         statusbox.pack_start(self.statusCombo, False, False)
         fields.pack_start(statusbox, False, False)
-        
-        # fill status combo
-        for status in ['Online', 'Busy', 'Away', 'Show offline']:
-            self.statusListStore.append( [None, 0, status] )
-            # self.statusListStore.append([None, 0, self._amsn_core.p2s[item]])
-        self.statusCombo.set_active(3)
         
         # align fields
         fields_align = gtk.Alignment(0.5, 0.5, 0.75, 0.0)
@@ -133,7 +140,7 @@ class aMSNLoginWindow(gtk.VBox):
         # login button
         button_box = gtk.HButtonBox()
         login_button = gtk.Button('Login', gtk.STOCK_CONNECT)
-        login_button.connect('clicked', self._login_clicked)
+        login_button.connect('clicked', self.__login_clicked)
         button_box.pack_start(login_button, False, False)
         
         self.pack_start(self.status, True, False)
@@ -164,15 +171,17 @@ class aMSNLoginWindow(gtk.VBox):
         self.anim_phase += 1
         del pix
         
-        return True
+        return True        
         
-        
+    def __login_clicked(self, *args):
+        self.signin()
         
     def show(self):
         pass
 
     def hide(self):
-        pass
+        if (self.timer is not None):
+            gobject.source_remove(self.timer)
 
     def switch_to_profile(self, profile):
         self.current_profile = profile
@@ -189,7 +198,4 @@ class aMSNLoginWindow(gtk.VBox):
 
     def onConnecting(self, message):
         self.status.set_text(message)
-
-    def _login_clicked(self, *args):
-        self.signin()
         
