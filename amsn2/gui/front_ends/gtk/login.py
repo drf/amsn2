@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+#===================================================
+# 
+# login.py - This file is part of the amsn2 package
+#
+# Copyright (C) 2008  Wil Alvarez <wil_alejandro@yahoo.com>
+#
+# This script is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This script is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this script (see COPYING); if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#===================================================
+
+import os
 import gtk
 import gobject
 
@@ -9,9 +33,19 @@ class aMSNLoginWindow(gtk.VBox):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
         self._main_win = parent
+        self.timer = None
+        self.anim_phase = 1
+        self.last_img = None
         
         self.status = gtk.Label('')
-        self.pack_start(self.status, True, False)
+        
+        # dp
+        filename = os.path.join("amsn2", "themes", "default", "images", 
+        "login_screen", "amsn.png")
+        dpbox = gtk.HBox()
+        self.dp = gtk.Image()
+        self.dp.set_from_file(filename)
+        dpbox.pack_start(self.dp, True, False)
         
         # container for user, password and status widgets
         fields = gtk.VBox(True, 5)
@@ -81,7 +115,6 @@ class aMSNLoginWindow(gtk.VBox):
         # align fields
         fields_align = gtk.Alignment(0.5, 0.5, 0.75, 0.0)
         fields_align.add(fields)
-        self.pack_start(fields_align, True, False)
         
         # checkboxes
         checkboxes = gtk.VBox()
@@ -96,13 +129,17 @@ class aMSNLoginWindow(gtk.VBox):
         # align checkboxes
         checkAlign = gtk.Alignment(0.5, 0.5)
         checkAlign.add(checkboxes)
-        self.pack_start(checkAlign, True, False)
         
         # login button
         button_box = gtk.HButtonBox()
         login_button = gtk.Button('Login', gtk.STOCK_CONNECT)
         login_button.connect('clicked', self._login_clicked)
         button_box.pack_start(login_button, False, False)
+        
+        self.pack_start(self.status, True, False)
+        self.pack_start(dpbox, False, False)
+        self.pack_start(fields_align, True, False)
+        self.pack_start(checkAlign, True, False)
         self.pack_start(button_box, True, False)
         
         self.show_all()
@@ -110,6 +147,25 @@ class aMSNLoginWindow(gtk.VBox):
         self.user.grab_focus()
         
         self.switch_to_profile(None)
+        
+    def __animation(self):
+        path = os.path.join("amsn2", "themes", "default", "images", 
+        "login_screen", "cube")
+        name = "cube_%03d.png" % self.anim_phase
+        filename = os.path.join(path, name)
+        
+        if (os.path.isfile(filename)):
+            self.last_img = filename
+        else:
+            filename = self.last_img
+            
+        pix = gtk.gdk.pixbuf_new_from_file_at_size(filename, 96, 96)
+        self.dp.set_from_pixbuf(pix)
+        self.anim_phase += 1
+        del pix
+        
+        return True
+        
         
         
     def show(self):
@@ -129,6 +185,7 @@ class aMSNLoginWindow(gtk.VBox):
         self.current_profile.email = self.user.get_active_text()
         self.current_profile.password = self.password.get_text()
         self._amsn_core.signinToAccount(self, self.current_profile)
+        self.timer = gobject.timeout_add(40, self.__animation)
 
     def onConnecting(self, message):
         self.status.set_text(message)

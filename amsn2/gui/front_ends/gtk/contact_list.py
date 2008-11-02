@@ -47,15 +47,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         
         self.__create_controls()
-        header = self.__create_box()
+        self.__create_box()
         
-        scrollwindow = gtk.ScrolledWindow()
-        scrollwindow.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        scrollwindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)	
-        scrollwindow.add(self._clwidget)
-        
-        self.pack_start(header, False, False)
-        self.pack_start(scrollwindow, True, True)
         self.show_all()
         
         self._main_win.set_view(self)
@@ -94,6 +87,24 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.cs.set_alignment(0,0.5)
         self.cs.set_ellipsize(pango.ELLIPSIZE_END)
         
+        status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
+        for key in self._amsn_core.p2s:
+            name = self._amsn_core.p2s[key]
+            icon = None
+            status_list.append([icon, name])
+        
+        iconCell = gtk.CellRendererPixbuf()
+        iconCell.set_property('xalign', 0.0)
+        txtCell = gtk.CellRendererText()
+        txtCell.set_property('xalign', 0.0)
+        
+        self.status = gtk.ComboBox()
+        self.status.set_model(status_list)
+        self.status.pack_start(iconCell, False)
+        self.status.pack_start(txtCell, False)
+        self.status.add_attribute(iconCell, 'pixbuf',0)
+        self.status.add_attribute(txtCell, 'markup',1)
+        
     def __create_box(self):
         frameDisplay = gtk.Frame()
         frameDisplay.add(self.display)
@@ -123,7 +134,18 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         header = gtk.HBox(False, 5)
         header.pack_start(headerRight, True, True, 0)
         header.pack_start(headerLeft, False, False, 0)
-        return header
+        
+        scrollwindow = gtk.ScrolledWindow()
+        scrollwindow.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        scrollwindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)	
+        scrollwindow.add(self._clwidget)
+        
+        bottom = gtk.HBox(False, 0)
+        bottom.pack_start(self.status, True, True, 0)
+        
+        self.pack_start(header, False, False)
+        self.pack_start(scrollwindow, True, True)
+        self.pack_start(bottom, False, False)
 
     def show(self):
         pass 
@@ -166,9 +188,11 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         column = gtk.TreeViewColumn()
         column.set_expand(True)
         column.set_alignment(0.0)
-        column.pack_start(nick, True)
         column.pack_start(pix, False)
-        column.add_attribute(pix, 'pixbuf', 0)
+        column.pack_start(nick, True)
+        
+        #column.add_attribute(pix, 'pixbuf', 0)
+        column.set_attributes(pix, pixbuf=0, visible=4)
         column.add_attribute(nick, 'markup', 2)
         
         exp_column = gtk.TreeViewColumn()
@@ -183,7 +207,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         
         # the image (None for groups) the object (group or contact) and 
         # the string to display
-        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str, str)
+        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str, str, bool)
         self.model = self._model.filter_new(root=None)
         #self.model.set_visible_func(self._visible_func)
 
@@ -234,7 +258,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             if (gid == 0): gid = '0'
             if gid not in guids:
                 self.groups.append(gid)
-                self._model.append(None, [None, None, gid, gid])
+                self._model.append(None, [None, None, gid, gid, False])
                 print "Added group %s" % gid
                 
         # Remove unused groups
@@ -264,7 +288,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             if cid not in cuids:
                 giter = self.__search_by_id(groupview.uid)
                 self.contacts[groupview.uid].append(cid)
-                self._model.append(giter, [None, None, cid, cid])
+                self._model.append(giter, [None, None, cid, cid, True])
         
         # Remove unused contacts
         for cid in cuids:
