@@ -54,6 +54,12 @@ class aMSNContactListManager:
 
         #TODO: update the group view
 
+        #Request the DP...
+        if (pymsn_contact.presence is not pymsn.Presence.OFFLINE and
+            pymsn_contact.msn_object):
+                self._core._profile.client._msn_object_store.request(pymsn_contact.msn_object,
+                                                                     (self.onDPdownloaded,
+                                                                      pymsn_contact.id))
 
     def onCLDownloaded(self, address_book):
         self._pymsn_addressbook = address_book
@@ -94,18 +100,6 @@ class aMSNContactListManager:
             self.emit(self.GROUPVIEW_UPDATED, g)
         for c in cviews:
             self.emit(self.CONTACTVIEW_UPDATED, c)
-
-        #self._core._loop.timer_add(3, self.request_all_display_picture)
-        self.request_all_display_picture()
-
-    def request_all_display_picture(self):
-        contacts = self._pymsn_addressbook.contacts.\
-                search_by_presence(pymsn.Presence.OFFLINE)
-        contacts = self._pymsn_addressbook.contacts - contacts
-        for c in contacts:
-            if c.msn_object:
-                self._core._profile.client._msn_object_store.request(c.msn_object,
-                                                                     (self.onDPdownloaded, c.id))
 
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
