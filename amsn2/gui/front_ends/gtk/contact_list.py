@@ -1,12 +1,36 @@
+# -*- coding: utf-8 -*-
+#===================================================
+# 
+# contact_list.py - This file is part of the amsn2 package
+#
+# Copyright (C) 2008  Wil Alvarez <wil_alejandro@yahoo.com>
+#
+# This script is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This script is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this script (see COPYING); if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#===================================================
 
 import gtk
 import gobject
 import pango
 
-import pymsn
+#import pymsn
+from image import *
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
+from amsn2.core.views import ImageView
 from amsn2.gui import base
 
 import common
@@ -15,62 +39,71 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     '''GTK contactlist'''
     def __init__(self, amsn_core, parent):
         '''Constructor'''
-        
         gtk.VBox.__init__(self)
         
         self._amsn_core = amsn_core
         self._main_win = parent
+        self._skin = amsn_core._skin_manager.skin
         
-        self._clwidget = aMSNContactListWidget(amsn_core, parent)
+        self._clwidget = aMSNContactListWidget(amsn_core, self)
         
         self.__create_controls()
-        header = self.__create_box()
+        self.__create_box()
         
-        scrollwindow = gtk.ScrolledWindow()
-        scrollwindow.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        scrollwindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)	
-        scrollwindow.add(self._clwidget)
-        
-        self.pack_start(header, False, False)
-        self.pack_start(scrollwindow, True, True)
-        self.show_all()
-        
-        #self._main_win.set_view(self.view)
         self._main_win.set_view(self)
         
+        self.show_all()
+        self.__setup_window()
+        
     def __create_controls(self):
+        ###self.psmlabel.modify_font(common.GUI_FONT)
         # Main Controls
         self.display = gtk.Image()
         self.display.set_size_request(64,64)
         
-        self.nickname = gtk.Label()
-        self.nickname.set_alignment(0, 0)
-        self.nickname.set_use_markup(True)
-        self.nickname.set_ellipsize(pango.ELLIPSIZE_END)
-        self.nickname.set_markup('Loading...')
+        self.nicklabel = gtk.Label()
+        self.nicklabel.set_alignment(0, 0)
+        self.nicklabel.set_use_markup(True)
+        self.nicklabel.set_ellipsize(pango.ELLIPSIZE_END)
+        self.nicklabel.set_markup('Loading...')
         
         self.btnNickname = gtk.Button()
         self.btnNickname.set_relief(gtk.RELIEF_NONE)
-        self.btnNickname.add(self.nickname)
+        self.btnNickname.add(self.nicklabel)
+        self.btnNickname.set_alignment(0,0)
         
         self.psm = gtk.Entry()
-        self.psm.modify_font(common.GUI_FONT)
         
         self.psmlabel = gtk.Label()
         self.psmlabel.set_use_markup(True)
         self.psmlabel.set_ellipsize(pango.ELLIPSIZE_END)
-        self.psmlabel.modify_font(common.GUI_FONT)
+        self.psmlabel.set_markup('<i>&lt;Personal message&gt;</i>')
         
         self.btnPsm = gtk.Button()
         self.btnPsm.add(self.psmlabel)
         self.btnPsm.set_relief(gtk.RELIEF_NONE)
-        self.btnPsm.set_alignment(0,0.5)
+        self.btnPsm.set_alignment(0,0)
         
-        self.cs = gtk.Label()
-        self.cs.set_use_markup(True)
-        self.cs.set_markup('')
-        self.cs.set_alignment(0,0.5)
-        self.cs.set_ellipsize(pango.ELLIPSIZE_END)
+        status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
+        for key in self._amsn_core.p2s:
+            name = self._amsn_core.p2s[key]
+            iv = ImageView("Skin", "buddy_%s" % name)
+            img = Image(self._skin, iv)
+            icon = img.to_pixbuf(28)
+            status_list.append([icon, name])
+        
+        iconCell = gtk.CellRendererPixbuf()
+        iconCell.set_property('xalign', 0.0)
+        txtCell = gtk.CellRendererText()
+        txtCell.set_property('xalign', 0.0)
+        
+        self.status = gtk.ComboBox()
+        self.status.set_model(status_list)
+        self.status.set_active(0)
+        self.status.pack_start(iconCell, False)
+        self.status.pack_start(txtCell, False)
+        self.status.add_attribute(iconCell, 'pixbuf',0)
+        self.status.add_attribute(txtCell, 'markup',1)
         
     def __create_box(self):
         frameDisplay = gtk.Frame()
@@ -86,80 +119,81 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         boxNick.pack_start(self.btnNickname, True, True)
 
         boxPsm = gtk.HBox(False, 0)
-        boxPsm.pack_start(self.psm, True, True)
         boxPsm.pack_start(self.btnPsm, True, True)
-
-        boxCs = gtk.HBox(False, 2)
-        boxCs.pack_start(self.cs, True, True)
+        boxPsm.pack_start(self.psm, True, True)
 
         headerRight = gtk.VBox(False, 0)
-        headerRight.pack_start(boxNick, True, False)
+        headerRight.pack_start(boxNick, False, False)
         headerRight.pack_start(boxPsm, False, False)
-        headerRight.pack_start(boxCs, False, False, 3)
 
         # Header pack
-        header = gtk.HBox(False, 5)
-        header.pack_start(headerRight, True, True, 0)
+        header = gtk.HBox(False, 1)
         header.pack_start(headerLeft, False, False, 0)
-        return header
+        header.pack_start(headerRight, True, True, 0)
+        
+        scrollwindow = gtk.ScrolledWindow()
+        scrollwindow.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        scrollwindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)	
+        scrollwindow.add(self._clwidget)
+        
+        bottom = gtk.HBox(False, 0)
+        bottom.pack_start(self.status, True, True, 0)
+        
+        self.pack_start(header, False, False, 2)
+        self.pack_start(scrollwindow, True, True, 2)
+        self.pack_start(bottom, False, False, 2)
+        
+    def __setup_window(self):
+        self.psm.hide()
+        self.btnPsm.show()
 
     def show(self):
         pass 
 
     def hide(self):
         pass 
-
-    def contactUpdated(self, contact):
-        contact_data = (None, contact, common.stringvToHtml(contact.name))
-        for row in self._model:
-            obj = row[1]
-            if type(obj) == GroupView:
-                for contact_row in row.iterchildren():
-                    con = contact_row[1]
-                    if con.uid == contact.uid:
-                        self._model[contact_row.iter] = contact_data
-                        #self.groupUpdated(obj)
-            elif type(obj) == ContactView and obj.account == contact.account:
-                self._model[row.iter] = contact_data
-
-    def groupUpdated(self, group):
-        print 'group updated...'
-        raise NotImplementedError
-    
-    def groupAdded(self, group):
-        group_data = (None, group, self.format_group(group))
-        iter = self._model.append(None, group_data)
         
-        for contact in group.contacts:
-            contact_data = (None, contact, common.stringvToHtml(contact.name))
-            self._model.append(iter, contact_data)
-            
-        path = self._model.get_path(iter)
-        self.expand_row(path, False)
-
-    def format_group(self, group):
-        return '<b>' + group.name.toString() + '</b>'
-
-    def groupRemoved(self, group):
+    def setTitle(self, text):
+        self._main_win.set_title(text)
+    
+    def setMenu(self, menu):
+        """ This will allow the core to change the current window's main menu
+        @menu : a MenuView
+        """
         pass
 
-    def configure(self, option, value):
-        pass
-
-    def cget(self, option, value):
-        pass
+    def myInfoUpdated(self, view):
+        """ This will allow the core to change pieces of information about
+        ourself, such as DP, nick, psm, the current media being played,...
+        @view: the contactView of the ourself (contains DP, nick, psm,
+        currentMedia,...)"""
+        print view.name.toString()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
         """Constructor"""
+        base.aMSNContactListWidget.__init__(self, amsn_core, parent)
         gtk.TreeView.__init__(self)
         
         self._amsn_core = amsn_core
-        self._main_win = parent
+        self._cwin = parent
+        self.groups = []
+        self.contacts = {}
         
-        crt = gtk.CellRendererText()
+        nick = gtk.CellRendererText()
+        nick.set_property('ellipsize-set',True)
+        nick.set_property('ellipsize', pango.ELLIPSIZE_END)
+        pix = gtk.CellRendererPixbuf()
+        
         column = gtk.TreeViewColumn()
         column.set_expand(True)
+        column.set_alignment(0.0)
+        column.pack_start(pix, False)
+        column.pack_start(nick, True)
+        
+        #column.add_attribute(pix, 'pixbuf', 0)
+        column.set_attributes(pix, pixbuf=0, visible=4)
+        column.add_attribute(nick, 'markup', 2)
         
         exp_column = gtk.TreeViewColumn()
         exp_column.set_max_width(16)       
@@ -168,124 +202,98 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         self.append_column(column)
         self.set_expander_column(exp_column)
         
-        column.pack_start(crt)
-        column.add_attribute(crt, 'markup', 2)
-        
         self.set_search_column(2)
         self.set_headers_visible(False)
+        self.set_level_indentation(0)
         
         # the image (None for groups) the object (group or contact) and 
         # the string to display
-        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str)
+        self._model = gtk.TreeStore(gtk.gdk.Pixbuf, object, str, str, bool)
         self.model = self._model.filter_new(root=None)
         #self.model.set_visible_func(self._visible_func)
-
-        self._model.set_sort_func(1, self._sort_method)
-        self._model.set_sort_column_id(1, gtk.SORT_ASCENDING)
         
         self.set_model(self.model)
         
-    def _sort_method(self, model, iter1, iter2, user_data=None):
-        '''callback called to decide the order of the contacts'''
-
-        obj1 = self._model[iter1][1]
-        obj2 = self._model[iter2][1]
-
-        return 1
-        #if type(obj1) == Group and type(obj2) == Group:
-        #    return self.compare_groups(obj1, obj2)
-        #elif type(obj1) == Contact and type(obj2) == Contact:
-        #    return self.compare_contacts(obj1, obj2)
-        #elif type(obj1) == Group and type(obj2) == Contact:
-        #    return -1
-        #else:
-        #    return 1
-
+    def __search_by_id(self, id):
+        parent = self._model.get_iter_first()
+        
+        while (parent is not None):
+            obj = self._model.get_value(parent, 3)
+            if (obj == id): return parent
+            child = self._model.iter_children(parent)
+            while (child is not None):
+                cobj = self._model.get_value(child, 3)
+                if (cobj == id): return child
+                child = self._model.iter_next(child)
+            parent = self._model.iter_next(parent)
+            
+        return None
+        
     def show(self):
-        """ Show the contact list widget """
-        self.show()
+        pass
 
     def hide(self):
-        """ Hide the contact list widget """
-        self.hide()
+        pass
 
-    def contactListUpdated(self, clView):
-        """ This method will be called when the core wants to notify
-        the contact list of the groups that it contains, and where they
-        should be drawn a group should be drawn.
-        It will be called initially to feed the contact list with the groups
-        that the CL should contain.
-        It will also be called to remove any group that needs to be removed.
-        @cl : a ContactListView containing the list of groups contained in
-        the contact list which will contain the list of ContactViews
-        for all the contacts to show in the group."""
-        raise NotImplementedError
+    def contactListUpdated(self, clview):
+        guids = self.groups
+        self.groups = []
         
-    def groupAdded(self, group):
-        gi = self._model.append(None, [None, group, common.escape_pango(
-                group.name.toString())])
-        for c in group.contacts:
-            self._model.append(gi, [None, c, common.escape_pango(
-                c.name.toString())])
+        # New groups
+        for gid in clview.group_ids:
+            if (gid == 0): gid = '0'
+            if gid not in guids:
+                self.groups.append(gid)
+                self._model.append(None, [None, None, gid, gid, False])
+                
+        # Remove unused groups
+        for gid in guids:
+            if gid not in self.groups:
+                giter = self.__search_by_id(gid)
+                self._model.remove(giter)
+                self.groups.remove(gid)
         
-    def groupUpdated(self, groupView):
-        """ This method will be called to notify the contact list
-        that a group has been updated.
-        The contact list should update its icon and name
-        but also its content (the ContactViews). The order of the contacts
-        may be changed, in which case the UI should update itself accordingly.
-        A contact can also be added or removed from a group using this method
-        """
-        raise NotImplementedError
+    def groupUpdated(self, groupview):
+        if (groupview.uid == 0): groupview.uid = '0'
+        if groupview.uid not in self.groups: return
+        
+        giter = self.__search_by_id(groupview.uid)
+        self._model.set_value(giter, 1, groupview)
+        self._model.set_value(giter, 2, '<b>%s</b>' % common.escape_pango(
+            groupview.name.toString()))
+        
+        try:
+            cuids = self.contacts[groupview.uid]
+        except:
+            cuids = []
+        self.contacts[groupview.uid] = []
+        
+        for cid in groupview.contact_ids:
+            if cid not in cuids:
+                giter = self.__search_by_id(groupview.uid)
+                self.contacts[groupview.uid].append(cid)
+                self._model.append(giter, [None, None, cid, cid, True])
+        
+        # Remove unused contacts
+        for cid in cuids:
+            if cid not in self.contacts[groupview.uid]:
+                citer = self.__search_by_id(cid)
+                self._model.remove(citer)
+                self.contacts[groupview.uid].remove(cid)
+        
 
-    def contactUpdated(self, contactView):
-        """ This method will be called to notify the contact list
-        that a contact has been updated.
-        The contact can be in any group drawn and his icon,
-        name or DP should be updated accordingly.
-        The position of the contact will not be changed by a call
-        to this function. If the position was changed, a groupUpdated
-        call will be made with the new order of the contacts
-        in the affects groups.
-        """
-        pass #raise NotImplementedError
-
-    def setContactCallback(self, cb):
-        """ Set the callback when a contact is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        """
-        self.callback = cb
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a contact should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(cid)
-        cid is the contact id of the contact actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError
-
-    def setGroupCallback(self, cb):
-        """ Set the callback when a group is clicked or double clicked (choice
-        is given to the front-end developer)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        """
-        raise NotImplementedError
-
-    def setContactContextMenu(self, cb):
-        """ Set the callback when a context menu for a group should be
-        displayed (choice is given to the front-end developer, usually on right
-        click)
-        If cb is None, the callback should be removed
-        Expected signature: function(gid)
-        gid is the group id of the group actionned
-        That function must return a MenuView
-        """
-        raise NotImplementedError
+    def contactUpdated(self, contactview):
+        citer = self.__search_by_id(contactview.uid)
+        if citer is None: return
+        
+        # TODO: Verify if DP exist
+        img = Image(self._cwin._skin, contactview.dp)
+        dp = img.to_pixbuf(32)
+        ###img = Image(self._main_win._skin, contactview.icon)
+        ###dp = img.to_pixbuf(28)
+        
+        self._model.set_value(citer, 0, dp)
+        self._model.set_value(citer, 1, contactview)
+        self._model.set_value(citer, 2, common.escape_pango(
+            contactview.name.toString()))
+        
