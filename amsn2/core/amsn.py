@@ -157,10 +157,10 @@ class aMSNCore(object):
 
 
     def idlerAdd(self, func):
-        self._loop.idler_add(func)
+        self._loop.idlerAdd(func)
 
     def timerAdd(self, delay, func):
-        self._loop.timer_add(delay, func)
+        self._loop.timerAdd(delay, func)
 
     def quit(self):
         self._loop.quit()
