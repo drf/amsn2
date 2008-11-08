@@ -13,9 +13,6 @@ def load():
 # dependency then register it to the guimanager
 try:
     import imp
-
-    # try to find any necessary module
-    # imp.find_module()
     gui.GUIManager.registerFrontEnd("mine", sys.modules[__name__])
     
 except ImportError:

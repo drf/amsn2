@@ -4,8 +4,8 @@ import gobject
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
-	"x"
-
+        self._amsn_core = amsn_core
+    
     def run(self):
         self._mainloop = gobject.MainLoop(is_running=True)
 

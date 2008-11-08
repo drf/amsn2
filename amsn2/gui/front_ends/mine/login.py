@@ -1,6 +1,6 @@
 
 class aMSNLoginWindow(object):
-    def __init__(self, amsn_core,parent):
+    def __init__(self, amsn_core, main):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
         
@@ -13,9 +13,8 @@ class aMSNLoginWindow(object):
         if self._password is not None and self._password != "":
             print "Password : ******"
         else:
-            #import getpass
-            #self._password = getpass.getpass('Password: ')
-            self._password = raw_input("Password : ");
+            import getpass
+            self._password = getpass.getpass('Password: ')
 
         self.signin()
 
@@ -41,15 +40,15 @@ class aMSNLoginWindow(object):
     def onConnected(self,mess):
         print mess
 
-    def onAuthenticating(self):
-        print "Authenticating..."
+    def onAuthenticating(self,mess):
+        print mess
 
-    def onAuthenticated(self):
-        print "Authenticated..."
+    def onAuthenticated(self,mess):
+        print mess
 
-    def onSynchronizing(self):
-        print "Fetching contact list..."
+    def onSynchronizing(self,mess):
+        print mess
 
-    def onSynchronized(self):
-        print "Synchronized!"
+    def onSynchronized(self,mess):
+        print mess
 

@@ -1,4 +1,4 @@
-import gobject
+import os.path
 
 class Skin(object):
     def __init__(self, core, path):
@@ -23,4 +23,3 @@ class SkinManager(object):
 
     def listSkins(self, path):
         pass
-

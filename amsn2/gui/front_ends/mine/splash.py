@@ -1,3 +1,4 @@
+
 class aMSNSplashScreen(object):
     """ This interface will represent the splashscreen of the UI"""
     def __init__(self, amsn_core, parent):
@@ -19,7 +20,9 @@ class aMSNSplashScreen(object):
         pass
 
     def setImage(self, image):
-        """ Set the image to show in the splashscreen. This is a gui.Image object """
+        """ Set the image to show in the splashscreen. This is an ImageView object """
+
         pass
+
 
 

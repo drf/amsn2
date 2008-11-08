@@ -11,10 +11,12 @@ class aMSNMainWindow(base.aMSNMainWindow):
     def hide(self):
         pass
     
+    def setTitle(self,title):
+        pass
+
+    def setMenu(self,menu):
+        pass
+
     def __on_show(self):
         self._amsn_core.mainWindowShown()
-    
-    def setTitle(self,title):
-	pass
-    def setMenu(self,menu):
-	pass   
+       
