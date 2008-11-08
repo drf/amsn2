@@ -29,12 +29,12 @@ class aMSNMainLoop(base.aMSNMainLoop):
             self.gcontext.iteration()
             iter += 1
 
-    def idler_add(self, func):
-        print "idler_add req"
+    def idlerAdd(self, func):
+        print "idlerAdd req"
         pass
 
-    def timer_add(self, delay, func):
-        print "timer_add req"
+    def timerAdd(self, delay, func):
+        print "timerAdd req"
         pass
 
     def quit(self):

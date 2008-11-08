@@ -16,10 +16,10 @@ class aMSNMainLoop(base.aMSNMainLoop):
                 self.quit()
 
         
-    def idler_add(self, func):
+    def idlerAdd(self, func):
         gobject.idle_add(func)
 
-    def timer_add(self, delay, func):
+    def timerAdd(self, delay, func):
         gobject.timeout_add(delay, func)
 
     def quit(self):

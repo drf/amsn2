@@ -23,10 +23,10 @@ class aMSNMainLoop(base.aMSNMainLoop):
 
         ecore.main_loop_begin()
         
-    def idler_add(self, func):
+    def idlerAdd(self, func):
         ecore.idler_add(func)
 
-    def timer_add(self, delay, func):
+    def timerAdd(self, delay, func):
         ecore.timer_add(delay, func)
 
     def quit(self):
