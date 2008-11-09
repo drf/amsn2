@@ -4,4 +4,5 @@ import console
 import curses
 import gtk
 import qt4
-import mine
+import web
+
