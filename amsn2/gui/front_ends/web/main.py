@@ -5,8 +5,14 @@ import os
 
 class aMSNMainWindow(base.aMSNMainWindow,Backend):
     def __init__(self, amsn_core):
-        os.remove("/tmp/test.in")
-        os.remove("/tmp/test.out")
+        try:
+            os.remove("/tmp/test.in")
+        except:
+            pass
+        try:
+            os.remove("/tmp/test.out")
+        except:
+            pass
         open("/tmp/test.in","w").close()
         open("/tmp/test.out","w").close()
         os.chmod("/tmp/test.in",0666)
