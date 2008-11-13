@@ -48,4 +48,3 @@ class Client(papyon.Client):
 
     def changeMessage(self, message):
         self.profile.personal_message = message.toString()
-

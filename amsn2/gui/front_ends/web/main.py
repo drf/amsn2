@@ -22,15 +22,19 @@ class aMSNMainWindow(base.aMSNMainWindow,Backend):
         self._amsn_core.timerAdd(1,self.checkEvent)
 
     def show(self):
+        self.send("showMainWindow",[])
         self._amsn_core.idlerAdd(self.__on_show)
 
     def hide(self):
+        self.send("hideMainWindow",[])
         pass
 
     def setTitle(self,title):
+        self.send("setMainWindowTitle",[title])
         pass
 
     def setMenu(self,menu):
+        print "aMSNMainWindow.setMenu"
         pass
 
     def __on_show(self):
