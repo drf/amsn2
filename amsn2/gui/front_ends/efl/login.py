@@ -90,7 +90,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self.current_profile.password = self.password.text
         self._amsn_core.signinToAccount(self, self.current_profile)
 
-    def onConnecting(self, pcent_pg, message):
+    def onConnecting(self, progress, message):
         self._edje.signal_emit("connecting", "")
         msg1 = ""
         msg2 = ""

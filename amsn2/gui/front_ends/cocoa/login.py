@@ -49,6 +49,6 @@ class aMSNLoginWindow(object):
         self.amsn_core.signinToAccount(self, self.current_profile)
         
     # Set the status message in the login window.
-    def onConnecting(self, pcent_pg, message):
+    def onConnecting(self, progress, message):
         self.loggingInView.setStatus(message)
 

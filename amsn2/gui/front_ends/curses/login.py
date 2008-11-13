@@ -59,7 +59,7 @@ class aMSNLoginWindow(object):
         self._amsn_core.signinToAccount(self, self.current_profile)
         
 
-    def onConnecting(self, pcent_pg, message):
+    def onConnecting(self, progress, message):
         self._username_t = None
         self._password_t = None
         self._win.clear()

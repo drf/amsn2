@@ -141,7 +141,7 @@ class aMSNCore(object):
         }
 
         if state in status_str:
-            profile.login.onConnecting(100 * state / 7, status_str[state])
+            profile.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == pymsn.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
             clwin.profile = profile
@@ -152,8 +152,6 @@ class aMSNCore(object):
             profile.login = None
 
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
-        else:
-            raise ValueError('state should not be equal to %s' % str(state))
 
     def idlerAdd(self, func):
         self._loop.idlerAdd(func)
