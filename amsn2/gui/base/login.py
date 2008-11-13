@@ -21,8 +21,10 @@ class aMSNLoginWindow(object):
         """ This method will be called when the core needs the login window to start the signin process """
         raise NotImplementedError
 
-    def onConnecting(self, message):
+    def onConnecting(self, pcent_pg, message):
         """ This method will be called to notify the UI that we are connecting.
+        @pcent_pg: the current progress of the connexion (to be exploited as a
+        progress bar, for example)
         @message: the message to show while loging in """
         raise NotImplementedError
 

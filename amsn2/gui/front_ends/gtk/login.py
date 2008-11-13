@@ -196,6 +196,6 @@ class aMSNLoginWindow(gtk.VBox):
         self._amsn_core.signinToAccount(self, self.current_profile)
         self.timer = gobject.timeout_add(40, self.__animation)
 
-    def onConnecting(self, message):
+    def onConnecting(self, pcent_pg, message):
         self.status.set_text(message)
         
