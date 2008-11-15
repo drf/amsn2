@@ -34,7 +34,7 @@ class aMSNLoginWindow(gtk.VBox):
         gtk.VBox.__init__(self, spacing=10)
         
         self._amsn_core = amsn_core
-        self.switch_to_profile(None)
+        #self.switch_to_profile(None)
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
         self.timer = None
@@ -89,13 +89,14 @@ class aMSNLoginWindow(gtk.VBox):
         fields.pack_start(passbox, False, False)
         
         # status list
-        status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
+        status_list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
+            if (name == 'offline'): continue
             iv = ImageView("Skin", "buddy_%s" % name)
             img = Image(self._skin, iv)
             icon = img.to_pixbuf(28)
-            status_list.append([icon, name])
+            status_list.append([icon, name, key])
         
         iconCell = gtk.CellRendererPixbuf()
         iconCell.set_property('xalign', 0.0)
@@ -153,7 +154,7 @@ class aMSNLoginWindow(gtk.VBox):
         self._main_win.set_view(self)
         self.user.grab_focus()
         
-        self.switch_to_profile(None)
+        #self.switch_to_profile(None)
         
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images", 
@@ -188,11 +189,15 @@ class aMSNLoginWindow(gtk.VBox):
         if self.current_profile is not None:
             self._username = self.current_profile.username
             self._password = self.current_profile.password
+            
+            
 
     def signin(self):
         self.current_profile.username = self.user.get_active_text()
         self.current_profile.email = self.user.get_active_text()
         self.current_profile.password = self.password.get_text()
+        i = self.statusCombo.get_active()
+        self.current_profile.presence = self._amsn_core.p2s.keys()[i]
         self._amsn_core.signinToAccount(self, self.current_profile)
         self.timer = gobject.timeout_add(40, self.__animation)
 

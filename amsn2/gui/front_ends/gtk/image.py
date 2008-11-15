@@ -76,6 +76,11 @@ class Image(gtk.Image):
         pass
         
     def to_pixbuf(self, size):
-        pix = gtk.gdk.pixbuf_new_from_file_at_size(self._filename, size, size)
-        return pix
+        #print 'image.py -> to_pixbuf: filename=%s' % self._filename
+        try:
+            pix = gtk.gdk.pixbuf_new_from_file_at_size(self._filename, size, size)
+            return pix
+        except:
+            print 'Error converting to pixbuf image %s' % self._filename
+            return None
         
