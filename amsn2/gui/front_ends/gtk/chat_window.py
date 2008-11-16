@@ -25,7 +25,8 @@ import gtk
 import time
 import cgi
 from htmltextview import *
-from amsn2.gui import base      
+from amsn2.gui import base
+from amsn2.core.views import StringView
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -43,8 +44,10 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         #if self.child is not None: 
         #    self.show_all()
         #    return
+        if self.child is None: self.add(chat_widget)
         self.child = chat_widget
-        #self.add(self.child)
+        
+        self.show_all()
 
 
 class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
@@ -55,6 +58,10 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self._amsn_conversation = amsn_conversation
         self.padding = 4
         self.lastmsg = ''
+        self.last_sender = ''
+        self.nickstyle = "color:#555555; margin-left:2px"
+        self.msgstyle = "margin-left:15px"
+        self.infostyle = "margin-left:2px; font-style:italic; color:#6d6d6d"
         
         #self.chatheader = ChatHeader(data)
         
@@ -80,9 +87,9 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         escroll.set_size_request(-1, 40)
         escroll.add(self.entry)
 
-        self.button1 = gtk.ToolButton('stock-smile')
-        self.button2 = gtk.ToggleToolButton(gtk.STOCK_BOLD)        
-        self.button3 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)        
+        self.button1 = gtk.ToolButton(gtk.STOCK_INFO)
+        self.button2 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
+        self.button3 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
         self.button4 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
         self.button5 = gtk.ToggleToolButton(gtk.STOCK_STRIKETHROUGH)
         self.button6 = gtk.ToolButton(gtk.STOCK_COLOR_PICKER)
@@ -142,25 +149,53 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
             self.__on_changed_text_effect, 'strikethrough')
         self.button6.connect("clicked", self.__on_changed_text_color)    
         self.button7.connect("clicked", self.__on_clear_textview)
-        self.entry.connect('mykeypress', self.__on_chat_send)
         self.entry.connect('key-press-event', self.__on_key_pressed)
         '''
+        self.entry.connect('mykeypress', self.__on_chat_send)
         
     def __clean_string(self, str):
         return cgi.escape(str)
         
-    def onMessageReceived(self, messageview):
-        msg = messageview.toStringView().toHtmlString()
-        msg = self.__clean_string(msg)
-        msg = str(msg.replace('\n', '<br/>'))
+    def __on_chat_send(self, entry, event_keyval, event_keymod):
+        if (event_keyval == gtk.keysyms.Return):
+            buffer = entry.get_buffer()
+            start, end = buffer.get_bounds()
+            msg = buffer.get_text(start, end)
+            entry.clear()
+            entry.grab_focus()
+            if (msg == ''): return False
         
-        html = '<div><span style="color:#555555">' +\
-                time.strftime('[%X] ')+'</span>' + msg + '</div>'
+        strv = StringView()
+        strv.appendText(msg)
+        self._amsn_conversation.sendMessage(strv)
+    
+    def __print_chat(self, nick, msg):
+        html = '<div>'
+        if (self.last_sender != messageview.sender.toString()):
+            html += '<span style="%s">%s</span><br/>' % (self.nickstyle, 
+                nick)
+        html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle,
+            time.strftime('%X'), msg)
         
-        print '****', html
         self.textview.display_html(html)
         self.textview.scroll_to_bottom()
+        
+    def __print_info(self, msg):
+        html = '<div><span style="%s">%s</span></div>' % (self.infostyle, msg)
+        self.textview.display_html(html)
+        self.textview.scroll_to_bottom()
+        
+    def onMessageReceived(self, messageview):
+        text = messageview.toStringView().toHtmlString()
+        text = self.__clean_string(text)
+        nick, msg = text.split('\n', 1)
+        nick = str(nick.replace('\n', '<br/>'))
+        msg = str(msg.replace('\n', '<br/>'))
+        
+        self.__print_chat(nick, msg)
+        
+        self.last_sender = messageview.sender.toString()
 
     def nudge(self):
-        print 'nudge received'
+        self.__print_info('Nudge received')
         

@@ -11,7 +11,14 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._amsn_core = amsn_core
         self.main_win = gtk.Window()
         self.main_win.set_default_size(250, 500)
+        self.main_win.connect('delete-event', self.__on_close)
         self.view = None
+        
+    def __on_show(self):
+        self._amsn_core.mainWindowShown()
+        
+    def __on_close(self, widget, event):
+        exit(0)
 
     def show(self):
         self.main_win.show()
@@ -37,7 +44,4 @@ class aMSNMainWindow(base.aMSNMainWindow):
         
         self.main_win.add(view)
         self.main_win.show_all()
-    
-    def __on_show(self):
-        self._amsn_core.mainWindowShown()
        
