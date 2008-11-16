@@ -71,17 +71,18 @@ def process_response(soap_response):
     service = soap_response.body.find("./ab:FindMembershipResponse/"
                                       "ab:FindMembershipResult/ab:Services/"
                                       "ab:Service")
-
-    memberships = service.find("./ab:Memberships")
-    for membership in memberships:
-        role = membership.find("./ab:MemberRole")
-        members = membership.findall("./ab:Members/ab:Member")
-        if role is None or len(members) == 0:
-            continue
-        result[role.text] = members
-
-    last_changes = service.find("./ab:LastChange")
-
+    if service is not None:
+        memberships = service.find("./ab:Memberships")
+        for membership in memberships:
+            role = membership.find("./ab:MemberRole")
+            members = membership.findall("./ab:Members/ab:Member")
+            if role is None or len(members) == 0:
+                continue
+            result[role.text] = members
+        last_changes = service.find("./ab:LastChange")
+    else:
+        last_changes = {'text':"0-0-0T0:0:0.0-0:0"}
+        result = {'Allow':{},'Block':{},'Reverse':{},'Pending':{}}
     return (result, last_changes)
 
     

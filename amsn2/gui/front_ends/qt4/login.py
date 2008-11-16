@@ -90,5 +90,5 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         self.current_profile.password = str(self.ui.linePassword.text())
         self._amsn_core.signinToAccount(self, self.current_profile)
 
-    def onConnecting(self, message):
+    def onConnecting(self, progress, message):
         self.loginThrobber.status.setText(str(message))

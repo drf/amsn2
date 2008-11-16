@@ -34,7 +34,7 @@ class aMSNLoginWindow(object):
         self._amsn_core.signinToAccount(self, self.current_profile)
         
 
-    def onConnecting(self, progress, message):
+    def onConnecting(self):
         print "Connecting..."
 
     def onConnected(self):

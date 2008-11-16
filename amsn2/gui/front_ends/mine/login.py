@@ -1,6 +1,6 @@
 
 class aMSNLoginWindow(object):
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, main):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
         
@@ -34,21 +34,21 @@ class aMSNLoginWindow(object):
         self._amsn_core.signinToAccount(self, self.current_profile)
         
 
-    def onConnecting(self, progress, message):
-        print "Connecting..."
+    def onConnecting(self,mess):
+        print mess
 
-    def onConnected(self):
-        print "Connected..."
+    def onConnected(self,mess):
+        print mess
 
-    def onAuthenticating(self):
-        print "Authenticating..."
+    def onAuthenticating(self,mess):
+        print mess
 
-    def onAuthenticated(self):
-        print "Authenticated..."
+    def onAuthenticated(self,mess):
+        print mess
 
-    def onSynchronizing(self):
-        print "Fetching contact list..."
+    def onSynchronizing(self,mess):
+        print mess
 
-    def onSynchronized(self):
-        print "Synchronized!"
+    def onSynchronized(self,mess):
+        print mess
 

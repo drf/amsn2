@@ -118,7 +118,6 @@ class aMSNCore(object):
     def getMainWindow(self):
         return self._main
 
-
     def addProfile(self, account):
         return self._profile_manager.addProfile(account)
 
@@ -130,18 +129,19 @@ class aMSNCore(object):
         profile.client.connect()
 
     def connectionStateChanged(self, profile, state):
-        if state == pymsn.event.ClientState.CONNECTING:
-            profile.login.onConnecting("Connecting to server...")
-        elif state == pymsn.event.ClientState.CONNECTED:
-            profile.login.onConnecting("Connected...")
-        elif state == pymsn.event.ClientState.AUTHENTICATING:
-            profile.login.onConnecting("Authenticating...")
-        elif state == pymsn.event.ClientState.AUTHENTICATED:
-            profile.login.onConnecting("Password accepted...")
-        elif state == pymsn.event.ClientState.SYNCHRONIZING:
-            profile.login.onConnecting("Please wait while your contact list\nis being downloaded...")
-        elif state == pymsn.event.ClientState.SYNCHRONIZED:
-            profile.login.onConnecting("Contact list downloaded successfully\nHappy Chatting")
+
+        status_str = \
+        {
+            pymsn.event.ClientState.CONNECTING : 'Connecting to server...',
+            pymsn.event.ClientState.CONNECTED : 'Connected',
+            pymsn.event.ClientState.AUTHENTICATING : 'Authentificating...',
+            pymsn.event.ClientState.AUTHENTICATED : 'Password accepted',
+            pymsn.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
+            pymsn.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully\nHappy Chatting'
+        }
+
+        if state in status_str:
+            profile.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == pymsn.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
             clwin.profile = profile
@@ -151,10 +151,7 @@ class aMSNCore(object):
             profile.clwin.show()
             profile.login = None
 
-
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
-
-
 
     def idlerAdd(self, func):
         self._loop.idlerAdd(func)

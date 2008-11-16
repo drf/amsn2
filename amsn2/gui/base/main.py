@@ -7,3 +7,15 @@ class aMSNMainWindow(object):
 
     def __init__(self, amsn_core):
         pass
+    
+    def show(self):
+        raise NotImplementedError
+
+    def hide(self):
+        raise NotImplementedError
+
+    def setTitle(self,title):
+        raise NotImplementedError
+    
+    def setMenu(self,menu):
+        raise NotImplementedError
