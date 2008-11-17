@@ -5,5 +5,6 @@ build/
 .cproject
 .pydevproject
 .ropeproject
+.svn/
 Debug/
 ui_*
