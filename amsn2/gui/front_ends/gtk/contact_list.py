@@ -213,6 +213,15 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         #self.model.set_visible_func(self._visible_func)
         
         self.set_model(self.model)
+        self.connect("row-activated", self.__on_contact_dblclick)
+        
+    def __on_contact_dblclick(self, widget, path, column):
+        model, row = widget.get_selection().get_selected()
+        if (row is None): return False
+        if not (model.get_value(row, 4)): return False
+
+        contactview = model.get_value(row, 1)
+        contactview.on_click(contactview.uid)
         
     def __search_by_id(self, id):
         parent = self._model.get_iter_first()

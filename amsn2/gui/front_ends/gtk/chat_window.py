@@ -22,8 +22,9 @@
 #===================================================
 
 import gtk
-import time
 import cgi
+import time
+import pango
 from htmltextview import *
 from amsn2.gui import base
 from amsn2.core.views import StringView
@@ -37,6 +38,8 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         self.set_default_size(550, 450)
         self.set_position(gtk.WIN_POS_CENTER)
         self.set_title("aMSN - Chatwindow")
+        
+        #leave
 
     def addChatWidget(self, chat_widget):
         print 'addedChatWidget'
@@ -48,6 +51,7 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         self.child = chat_widget
         
         self.show_all()
+        self.child.entry.grab_focus()
 
 
 class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
@@ -63,7 +67,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.msgstyle = "margin-left:15px"
         self.infostyle = "margin-left:2px; font-style:italic; color:#6d6d6d"
         
-        #self.chatheader = ChatHeader(data)
+        self.chatheader = aMSNChatHeader()
         
         # Middle
         self.textview = HtmlTextView()
@@ -88,24 +92,26 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         escroll.add(self.entry)
 
         self.button1 = gtk.ToolButton(gtk.STOCK_INFO)
-        self.button2 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
-        self.button3 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
-        self.button4 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
-        self.button5 = gtk.ToggleToolButton(gtk.STOCK_STRIKETHROUGH)
-        self.button6 = gtk.ToolButton(gtk.STOCK_COLOR_PICKER)
-        self.button7 = gtk.ToolButton(gtk.STOCK_CLEAR)
+        self.button2 = gtk.ToolButton(gtk.STOCK_CANCEL)
+        self.button3 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
+        self.button4 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
+        self.button5 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
+        self.button6 = gtk.ToggleToolButton(gtk.STOCK_STRIKETHROUGH)
+        self.button7 = gtk.ToolButton(gtk.STOCK_COLOR_PICKER)
+        self.button8 = gtk.ToolButton(gtk.STOCK_CLEAR)
         
         bbox = gtk.Toolbar()
         bbox.set_style(gtk.TOOLBAR_ICONS)
         bbox.insert(self.button1, -1)
-        bbox.insert(gtk.SeparatorToolItem(), -1)
         bbox.insert(self.button2, -1)
+        bbox.insert(gtk.SeparatorToolItem(), -1)
         bbox.insert(self.button3, -1)
         bbox.insert(self.button4, -1)
         bbox.insert(self.button5, -1)
         bbox.insert(self.button6, -1)
-        bbox.insert(gtk.SeparatorToolItem(), -1)
         bbox.insert(self.button7, -1)
+        bbox.insert(gtk.SeparatorToolItem(), -1)
+        bbox.insert(self.button8, -1)
         
         bottom_box = gtk.VBox(False, 0)
         bottom_box.pack_start(bbox, False, False, 0)
@@ -114,16 +120,14 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.statusbar = gtk.Statusbar()
         self.statusbar.set_has_resize_grip(False)
         self.statusbar.set_spacing(0)
-        #context = self.statusbar.get_context_id('msg')
-        #self.statusbar.push(context, _('Welcome to aMSN2'))
         
-        #self.append_info(_('Welcome...'), 'welcome')
+        self.__set_statusbar_text('Welcome to aMSN2')
         
         vpaned = gtk.VPaned()
         vpaned.pack1(self.middle_box, True, True)
         vpaned.pack2(bottom_box, False, True)
         
-        #self.pack_start(self.chatheader, False, False, self.padding)
+        self.pack_start(self.chatheader, False, False, self.padding)
         self.pack_start(vpaned, True, True, self.padding)
         self.pack_start(self.statusbar, False, False)
         
@@ -139,19 +143,20 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.textview.connect("url-clicked", self.__on_url_clicked)
         
         self.button1.connect("clicked", self.__create_smiles_window)
-        self.button2.connect("clicked", 
-            self.__on_changed_text_effect, 'bold')
         self.button3.connect("clicked", 
-            self.__on_changed_text_effect, 'italic')
+            self.__on_changed_text_effect, 'bold')
         self.button4.connect("clicked", 
-            self.__on_changed_text_effect, 'underline')
+            self.__on_changed_text_effect, 'italic')
         self.button5.connect("clicked", 
+            self.__on_changed_text_effect, 'underline')
+        self.button6.connect("clicked", 
             self.__on_changed_text_effect, 'strikethrough')
-        self.button6.connect("clicked", self.__on_changed_text_color)    
-        self.button7.connect("clicked", self.__on_clear_textview)
-        self.entry.connect('key-press-event', self.__on_key_pressed)
+        self.button7.connect("clicked", self.__on_changed_text_color)
         '''
+        self.button2.connect("clicked", self.__on_nudge_send)
+        self.button8.connect("clicked", self.__on_clear_textview)
         self.entry.connect('mykeypress', self.__on_chat_send)
+        self.entry.connect('key-press-event', self.__on_typing_event)
         
     def __clean_string(self, str):
         return cgi.escape(str)
@@ -168,10 +173,23 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         strv = StringView()
         strv.appendText(msg)
         self._amsn_conversation.sendMessage(strv)
+        
+    def __on_clear_textview(self, widget):
+        buffer = self.textview.get_buffer()
+        start = buffer.get_start_iter()
+        end = buffer.get_end_iter()
+        buffer.delete(start, end)
+        
+    def __on_typing_event(self, widget, event):
+        self._amsn_conversation.sendTypingNotification()
+        
+    def __on_nudge_send(self, widget):
+        self.__print_info('Nudge sent')
+        self._amsn_conversation.sendNudge()
     
-    def __print_chat(self, nick, msg):
+    def __print_chat(self, nick, msg, sender):
         html = '<div>'
-        if (self.last_sender != messageview.sender.toString()):
+        if (self.last_sender != sender):
             html += '<span style="%s">%s</span><br/>' % (self.nickstyle, 
                 nick)
         html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle,
@@ -185,17 +203,77 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.textview.display_html(html)
         self.textview.scroll_to_bottom()
         
+    def __set_statusbar_text(self, msg):
+        context = self.statusbar.get_context_id('msg')
+        self.statusbar.pop(context)
+        self.statusbar.push(context, msg)
+        
     def onMessageReceived(self, messageview):
         text = messageview.toStringView().toHtmlString()
         text = self.__clean_string(text)
         nick, msg = text.split('\n', 1)
         nick = str(nick.replace('\n', '<br/>'))
         msg = str(msg.replace('\n', '<br/>'))
+        sender = messageview.sender.toString()
         
-        self.__print_chat(nick, msg)
+        self.__print_chat(nick, msg, sender)
         
-        self.last_sender = messageview.sender.toString()
+        self.last_sender = sender
+        
+    def onUserJoined(self, contact):
+        print "%s joined the conversation" % (contact,)
+        self.__print_info("%s joined the conversation" % (contact,))
+
+    def onUserLeft(self, contact):
+        print "%s left the conversation" % (contact,)
+        self.__print_info("%s left the conversation" % (contact,))
+
+    def onUserTyping(self, contact):
+        print "%s is typing" % (contact,)
+        #self.__set_statusbar_text("%s is typing" % (contact,))
 
     def nudge(self):
         self.__print_info('Nudge received')
+
+
+class aMSNChatHeader(gtk.EventBox):
+    def __init__(self, cview=None):
+        gtk.EventBox.__init__(self)
+        
+        self.buddy_icon = gtk.Image()
+        self.title = gtk.Label()
+        self.dp = gtk.Image()
+        self.title_color = gtk.gdk.color_parse('#dadada')
+        self.psm_color = '#999999'
+        
+        self.title.set_use_markup(True)
+        self.title.set_justify(gtk.JUSTIFY_LEFT)
+        self.title.set_ellipsize(pango.ELLIPSIZE_END)
+        self.title.set_alignment(xalign=0, yalign=0.5)
+        self.title.set_padding(xpad=2, ypad=2)
+        
+        self.dp.set_size_request(50,50)
+        
+        hbox = gtk.HBox(False,0)
+        hbox.pack_start(self.buddy_icon, False,False,0)
+        hbox.pack_start(self.title, True,True,0)
+        hbox.pack_start(self.dp, False,False,0)
+        
+        self.modify_bg(gtk.STATE_NORMAL, self.title_color)
+        self.add(hbox)
+        
+        self.update(cview)
+        
+    def update(self, cview):
+        if cview is None:
+            nickname = 'Me'
+            psm = 'Testing aMSN'
+        
+        title = '<span size="large"><b>%s</b></span>' % (nickname, )
+        
+        if(psm != ''): 
+            title += '\n<span size="small" foreground="%s">%s</span>' % ( 
+            self.psm_color, psm)
+        
+        self.title.set_markup(title)
         

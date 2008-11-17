@@ -64,8 +64,8 @@ class aMSNConversation:
         pass
 
     def onUserTyping(self, contact_uid):
-        #TODO
-        pass
+        c = self._core._contactlist_manager.getContact(contact_uid)
+        self._convWidget.onUserTyping(c.nickname)
 
     def onMessageReceived(self, message, sender_uid=None):
         #TODO: messageView
