@@ -21,6 +21,7 @@
 #
 #===================================================
 
+import gc
 import gtk
 import cgi
 import time
@@ -60,6 +61,8 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         
         self._parent = parent
         self._amsn_conversation = amsn_conversation
+        self._amsn_core = amsn_conversation._core
+        self._theme_manager = self._amsn_core._theme_manager
         self.padding = 4
         self.lastmsg = ''
         self.last_sender = ''
@@ -90,9 +93,21 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         escroll.set_shadow_type(gtk.SHADOW_IN)
         escroll.set_size_request(-1, 40)
         escroll.add(self.entry)
+        
+        # Register button icons as stock icons
+        iconfactory = gtk.IconFactory()
+        icons = ['smile', 'nudge']
+        for icon in icons:
+            type, path = self._theme_manager.get_button(icon)
+            pixbuf = gtk.gdk.pixbuf_new_from_file(path)
+            iconset = gtk.IconSet(pixbuf)
+            iconfactory.add(icon, iconset)
+            iconfactory.add_default()
+            del pixbuf
+            gc.collect()
 
-        self.button1 = gtk.ToolButton(gtk.STOCK_INFO)
-        self.button2 = gtk.ToolButton(gtk.STOCK_CANCEL)
+        self.button1 = gtk.ToolButton('smile')
+        self.button2 = gtk.ToolButton('nudge')
         self.button3 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
         self.button4 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
         self.button5 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
