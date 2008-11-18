@@ -38,6 +38,7 @@ class aMSNLoginWindow(gtk.VBox):
         #self.switch_to_profile(None)
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
+        self._theme_manager = self._amsn_core._theme_manager
         self.timer = None
         self.anim_phase = 1
         self.last_img = None
@@ -49,8 +50,7 @@ class aMSNLoginWindow(gtk.VBox):
         pgAlign.add(self.pgbar)
 
         # dp
-        filename = os.path.join("amsn2", "themes", "default", "images",
-        "login_screen", "amsn.png")
+        _, filename = self._theme_manager.get_dp("dp_amsn")
         dpbox = gtk.HBox()
         self.dp = gtk.Image()
         self.dp.set_from_file(filename)
@@ -92,10 +92,9 @@ class aMSNLoginWindow(gtk.VBox):
         status_list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
+            _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
             if (name == 'offline'): continue
-            iv = ImageView("Skin", "buddy_%s" % name)
-            img = Image(self._skin, iv)
-            icon = img.to_pixbuf(28)
+            icon = gtk.gdk.pixbuf_new_from_file(path)
             status_list.append([icon, name, key])
             
         iconCell = gtk.CellRendererPixbuf()

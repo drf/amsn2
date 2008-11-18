@@ -96,18 +96,18 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         
         # Register button icons as stock icons
         iconfactory = gtk.IconFactory()
-        icons = ['smile', 'nudge']
-        for icon in icons:
-            type, path = self._theme_manager.get_button(icon)
+        icons = ['button_smile', 'button_nudge']
+        for key in icons:
+            type, path = self._theme_manager.get_button(key)
             pixbuf = gtk.gdk.pixbuf_new_from_file(path)
             iconset = gtk.IconSet(pixbuf)
-            iconfactory.add(icon, iconset)
+            iconfactory.add(key, iconset)
             iconfactory.add_default()
             del pixbuf
             gc.collect()
 
-        self.button1 = gtk.ToolButton('smile')
-        self.button2 = gtk.ToolButton('nudge')
+        self.button1 = gtk.ToolButton('button_smile')
+        self.button2 = gtk.ToolButton('button_nudge')
         self.button3 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
         self.button4 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
         self.button5 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
