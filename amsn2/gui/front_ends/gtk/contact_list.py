@@ -21,9 +21,11 @@
 #
 #===================================================
 
+import gc
+import os
 import gtk
-import gobject
 import pango
+import gobject
 
 #import pymsn
 from image import *
@@ -44,6 +46,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self._amsn_core = amsn_core
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
+        self._theme_manager = self._amsn_core._theme_manager
         
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         
@@ -84,13 +87,19 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnPsm.set_relief(gtk.RELIEF_NONE)
         self.btnPsm.set_alignment(0,0)
         
-        status_list = gtk.ListStore(gtk.gdk.Pixbuf,str)
+        # status list
+        status_list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
-            iv = ImageView("Skin", "buddy_%s" % name)
-            img = Image(self._skin, iv)
-            icon = img.to_pixbuf(28)
-            status_list.append([icon, name])
+            _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
+            if (name == 'offline'): continue
+            #iv = ImageView("Skin", "buddy_%s" % name)
+            #img = Image(self._skin, iv)
+            #icon = img.to_pixbuf(28)
+            icon = gtk.gdk.pixbuf_new_from_file(path)
+            status_list.append([icon, name, key])
+            del icon
+            gc.collect()
         
         iconCell = gtk.CellRendererPixbuf()
         iconCell.set_property('xalign', 0.0)
@@ -146,6 +155,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def __setup_window(self):
         self.psm.hide()
         self.btnPsm.show()
+        
+        _, filename = self._theme_manager.get_dp('dp_nopic')
+        pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 64, 64)
+        self.display.set_from_pixbuf(pixbuf)
+        del pixbuf
+        gc.collect()
+        
 
     def show(self):
         pass 
@@ -213,6 +229,15 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         #self.model.set_visible_func(self._visible_func)
         
         self.set_model(self.model)
+        self.connect("row-activated", self.__on_contact_dblclick)
+        
+    def __on_contact_dblclick(self, widget, path, column):
+        model, row = widget.get_selection().get_selected()
+        if (row is None): return False
+        if not (model.get_value(row, 4)): return False
+
+        contactview = model.get_value(row, 1)
+        contactview.on_click(contactview.uid)
         
     def __search_by_id(self, id):
         parent = self._model.get_iter_first()
@@ -287,13 +312,15 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         if citer is None: return
         
         # TODO: Verify if DP exist
-        img = Image(self._cwin._skin, contactview.dp)
-        dp = img.to_pixbuf(32)
-        ###img = Image(self._main_win._skin, contactview.icon)
-        ###dp = img.to_pixbuf(28)
+        #img = Image(self._cwin._theme_manager, contactview.dp)
+        #dp = img.to_pixbuf(28, 28)
+        img = Image(self._cwin._theme_manager, contactview.icon)
+        dp = img.to_pixbuf(28, 28)
         
         self._model.set_value(citer, 0, dp)
         self._model.set_value(citer, 1, contactview)
         self._model.set_value(citer, 2, common.escape_pango(
             contactview.name.toString()))
+        del dp
+        gc.collect()
         

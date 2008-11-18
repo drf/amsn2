@@ -25,60 +25,27 @@ import gtk
 from amsn2.gui import base
 from amsn2.core.views import imageview
     
-class Image(gtk.Image):
-    def __init__(self, skin, view):
+class Image(gtk.Image, base.aMSNImage):
+    def __init__(self, theme_manager, view):
         gtk.Image.__init__(self)
-        
-        self._skin = skin
-        '''
-        for (resource_type, value) in view.imgs:
-            print resource_type, value
-            
-        print contactview.dp.imgs
-        for (resource_type, value) in contactview.dp.imgs:
-            print resource_type, value
-        '''
-        self.load(view)
-        
-    def load(self, view):
-        for (resource_type, value) in view.imgs:
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
-            except AttributeError, e:
-                print "From load in gtk/image.py:\n\t(resource_type, value) = "
-                "(%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
-            else:
-                loadMethod(value, -1, view)
-            
-    def _loadFromFilename(self, filename, pos=0, view=None, i=0):
+        base.aMSNImage.__init__(self, theme_manager, view)
+
+    def _loadFromFilename(self, filename, view, index):
+        # TODO: Implement support for emblems and other embedded images
+        if (index != 0): return
+
         try:
             self.set_from_file(filename)
             self._filename = filename
         except Exception, e:
             print e
-            print "Error loading %s image from file" % filename
-
-
-    def _loadFromSkin(self, resource_name, pos=0, view=None, i=0):
-        res = self._skin.getKey(resource_name)
-        if res is not None:
-            (type, value) = res
-            self._filename = value
-            try:
-                loadMethod = getattr(self, "_loadFrom%s" % type)
-            except AttributeError, e:
-                print "From _loadFromSkin in gtk/image.py:\n\t(type, value) = "
-                "(%s, %s)\n\tAttributeError: %s" % (type, value, e)
-            else:
-                loadMethod(value, pos, view, i)
-
-    def _loadFromNone(self, r, pos=0):
-        pass
+            print "Error loading image %s" % filename
         
-    def to_pixbuf(self, size):
+    def to_pixbuf(self, width, height):
         #print 'image.py -> to_pixbuf: filename=%s' % self._filename
         try:
-            pix = gtk.gdk.pixbuf_new_from_file_at_size(self._filename, size, size)
+            pix = gtk.gdk.pixbuf_new_from_file_at_size(self._filename, 
+                width, height)
             return pix
         except:
             print 'Error converting to pixbuf image %s' % self._filename

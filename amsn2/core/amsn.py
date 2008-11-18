@@ -26,6 +26,8 @@ from views import *
 from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
+from theme_manager import *
+
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -46,6 +48,7 @@ class aMSNCore(object):
         self._loop = self._gui.gui.aMSNMainLoop(self)
         self._main = self._gui.gui.aMSNMainWindow(self)
         self._skin_manager = self._gui.gui.SkinManager(self)
+        self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)

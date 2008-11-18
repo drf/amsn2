@@ -2,8 +2,7 @@ class ImageView(object):
     """
         Known resource_type are:
             - Filename
-            - Skin
-            - FileObject
+            - Theme
             - None
     """
     def __init__(self, resource_type=None, value=None):
