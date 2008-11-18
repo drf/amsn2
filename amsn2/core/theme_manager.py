@@ -86,9 +86,8 @@ class aMSNGenericLoader:
         self.theme = theme
         self._theme_dir = os.path.join(self._basedir, theme)
         
-        for i in range(len(self._keys)):
-            key = self._keys[i][0]
-            image = self._keys[i][1]
+        for key in self._keys.keys():
+            image = self._keys[key]
             filepath = os.path.join(self._theme_dir, image)
             
             # Verificating
@@ -102,52 +101,52 @@ class aMSNGenericLoader:
 class aMSNButtonLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "buttons")
-        self._keys = [
-            ['button_nudge', 'nudge.png'], 
-            ['button_smile', 'smile.png'],
-        ]
+        self._keys = {
+            'button_nudge': 'nudge.png', 
+            'button_smile': 'smile.png',
+        }
         
 class aMSNStatusIconLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "status_icons")
-        self._keys = [
-            ['buddy_online', 'online.png'], 
-            ['buddy_away', 'away.png'],
-            ['buddy_brb', 'away.png'],
-            ['buddy_idle', 'away.png'],
-            ['buddy_lunch', 'away.png'],
-            ['buddy_busy', 'busy.png'],
-            ['buddy_phone', 'phone.png'],
-            ['buddy_offline', 'offline.png'],
-            ['buddy_hidden', 'offline.png'],
-            ['buddy_blocked', 'blocked.png'],
-            ['buddy_blocked_off', 'blocked_off.png'],
-            ['buddy_webmsn', 'webmsn.png'],
-        ]
+        self._keys = {
+            'buddy_online': 'online.png', 
+            'buddy_away': 'away.png',
+            'buddy_brb': 'away.png',
+            'buddy_idle': 'away.png',
+            'buddy_lunch': 'away.png',
+            'buddy_busy': 'busy.png',
+            'buddy_phone': 'phone.png',
+            'buddy_offline': 'offline.png',
+            'buddy_hidden': 'offline.png',
+            'buddy_blocked': 'blocked.png',
+            'buddy_blocked_off': 'blocked_off.png',
+            'buddy_webmsn': 'webmsn.png',
+        }
         
 class aMSNDisplayPicLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "displaypic")
-        self._keys = [
-            ['dp_amsn', 'amsn.png'], 
-            ['dp_female', 'female.png'],
-            ['dp_loading', 'loading.png'],
-            ['dp_male', 'male.png'],
-            ['dp_nopic', 'nopic.png'],
-        ]
+        self._keys = {
+            'dp_amsn': 'amsn.png', 
+            'dp_female': 'female.png',
+            'dp_loading': 'loading.png',
+            'dp_male': 'male.png',
+            'dp_nopic': 'nopic.png',
+        }
         
 class aMSNEmblemLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "emblems")
-        self._keys = [
-            ['emblem_online', 'plain_emblem.png'], 
-            ['emblem_away', 'away_emblem.png'],
-            ['emblem_brb', 'away_emblem.png'],
-            ['emblem_idle', 'away_emblem.png'],
-            ['emblem_lunch', 'away_emblem.png'],
-            ['emblem_busy', 'busy_emblem.png'],
-            ['emblem_phone', 'busy_emblem.png'],
-            ['emblem_offline', 'offline_emblem.png'],
-            ['emblem_hidden', 'offline_emblem.png'],
-            ['emblem_blocked', 'blocked_emblem.png'],
-        ]
+        self._keys = {
+            'emblem_online': 'plain_emblem.png', 
+            'emblem_away': 'away_emblem.png',
+            'emblem_brb': 'away_emblem.png',
+            'emblem_idle': 'away_emblem.png',
+            'emblem_lunch': 'away_emblem.png',
+            'emblem_busy': 'busy_emblem.png',
+            'emblem_phone': 'busy_emblem.png',
+            'emblem_offline': 'offline_emblem.png',
+            'emblem_hidden': 'offline_emblem.png',
+            'emblem_blocked': 'blocked_emblem.png',
+        }
