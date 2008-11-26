@@ -15,9 +15,10 @@ for gtk, you need python-gtk... and for efl, you need the EFL, the python-efl an
 If you want to install the EFL, it's easy go to http://omicron.homeip.net/projects/ and download the easy_e17.sh script :
 http://omicron.homeip.net/projects/easy_e17/easy_e17.sh
 Then do ./easy_e17.sh -i
-It will download the CVS, automake, configure, make and make install everything into /opt/e17 (so it doesn't 'contaminate' your system).
-Once done, go to ./e17_cvs/proto/python-efl and type ./buildall.sh /usr (this will build and install the python extensions into /usr/python2.X/...)
-Then in amsn2 directory, go to python-etk and build that too and install it... 
+It will download the source, automake, configure, make and make install everything into /opt/e17 (so it doesn't 'contaminate' your system).
+Once done, go to ./e17_src/BINDINGS/python and type 
+PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig ./build-all.sh /usr
+(this will build and install the python extensions into /usr/python2.X/...)
 Then the efl front end should become available...
 
 
