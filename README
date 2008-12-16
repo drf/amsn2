@@ -12,6 +12,7 @@ You can type ./amsn2.py --help for more info... and the front ends can be select
 ./amsn2.py -f qt4 
 for gtk, you need python-gtk... and for efl, you need the EFL, the python-efl and python-etk
 
+
 If you want to install the EFL, it's easy go to http://omicron.homeip.net/projects/ and download the easy_e17.sh script :
 http://omicron.homeip.net/projects/easy_e17/easy_e17.sh
 Then do ./easy_e17.sh -i
@@ -22,4 +23,11 @@ PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig ./build-all.sh /usr
 Then the efl front end should become available...
 
 
-
+If you have the following error with the qt4 front-end:
+	Traceback (most recent call last):
+	File "./amsn2.py", line 76, in <module>
+	amsn = aMSNCore(options)
+	File "/home/price/amsn2/amsn2/core/amsn.py", line 46, in __init__
+	self._loop = self._gui.gui.aMSNMainLoop(self)
+	AttributeError: 'NoneType' object has no attribute 'aMSNMainLoop'
+try moving into the amsn2/gui/front_ends/qt4 directory and calling generateFiles.sh
