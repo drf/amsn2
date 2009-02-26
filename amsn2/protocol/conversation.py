@@ -75,7 +75,7 @@ class ConversationEvents(pymsn.event.ConversationEventInterface):
             else:
                 strv.appendText(str)
 
-        self._amsn_conversation.onMessageReceived(strv, sender.id)
+        self._amsn_conversation.onMessageReceived(strv, sender.id, message.formatting)
 
     def on_conversation_nudge_received(self, sender):
         self._amsn_conversation.onNudgeReceived(sender.id)

@@ -67,7 +67,7 @@ class aMSNConversation:
         c = self._core._contactlist_manager.getContact(contact_uid)
         self._convWidget.onUserTyping(c.nickname)
 
-    def onMessageReceived(self, message, sender_uid=None):
+    def onMessageReceived(self, message, sender_uid=None, formatting=None):
         #TODO: messageView
         mv = MessageView()
         if sender_uid is None:
@@ -79,17 +79,18 @@ class aMSNConversation:
             mv.message_type = MessageView.MESSAGE_OUTGOING
             mv.sender.appendStringView(c.nickname)
         mv.msg = message
-        self._convWidget.onMessageReceived(mv)
+        self._convWidget.onMessageReceived(mv, formatting)
 
     def onNudgeReceived(self, sender_uid):
         self._convWidget.nudge()
 
     """ Actions from ourselves """
-    def sendMessage(self, msg):
+    def sendMessage(self, msg, formatting=None):
         """ msg is a StringView """
         # for the moment, no formatting, no smiley substitution... (TODO)
-        self.onMessageReceived(msg)
-        message = pymsn.ConversationMessage(msg.toString())
+        # peacey: Added formatting of styles
+        self.onMessageReceived(msg, formatting=formatting)
+        message = pymsn.ConversationMessage(msg.toString(), formatting)
         self._conv.send_text_message(message)
 
     def sendNudge(self):
