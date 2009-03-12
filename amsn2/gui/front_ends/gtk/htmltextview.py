@@ -252,13 +252,17 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             tag.set_property("strikethrough", False)
         elif value == "underline":
             tag.set_property("underline", pango.UNDERLINE_SINGLE)
-            tag.set_property("strikethrough", False)
+            # peacey: Commented out the removal of strikethrough so we could enable 
+            # both underline and strikethrough at the same time
+            #tag.set_property("strikethrough", False)
         elif value == "overline":
             warnings.warn("text-decoration:overline not implemented")
             tag.set_property("underline", pango.UNDERLINE_NONE)
             tag.set_property("strikethrough", False)
         elif value == "line-through":
-            tag.set_property("underline", pango.UNDERLINE_NONE)
+            # peacey: Commented out the removal of underline so we could enable 
+            # both underline and strikethrough at the same time
+            #tag.set_property("underline", pango.UNDERLINE_NONE)
             tag.set_property("strikethrough", True)
         elif value == "blink":
             warnings.warn("text-decoration:blink not implemented")
@@ -376,6 +380,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
                 li_head = "%i." % self.list_counters[0]
             self.text = ' '*len(self.list_counters)*4 + li_head + ' '
         elif name == 'img':
+            print "ENCOUNTERED IMAAGEEEEE"
             try:
                 ## Max image size = 10 MB (to try to prevent DoS)
                 mem = urllib2.urlopen(attrs['src']).read(10*1024*1024)

@@ -29,6 +29,8 @@ import pango
 from htmltextview import *
 from amsn2.gui import base
 from amsn2.core.views import StringView
+import gtk_extras
+import pymsn
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -87,6 +89,20 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         # Bottom
         self.entry = MessageTextView()
         
+        # Tags for entry
+        tag = self.entry.get_buffer().create_tag("bold")
+        tag.set_property("weight", pango.WEIGHT_BOLD)
+        tag = self.entry.get_buffer().create_tag("italic")
+        tag.set_property("style", pango.STYLE_ITALIC)
+        tag = self.entry.get_buffer().create_tag("underline")
+        tag.set_property("underline", pango.UNDERLINE_SINGLE)
+        tag = self.entry.get_buffer().create_tag("strikethrough")
+        tag.set_property("strikethrough", True)
+        tag = self.entry.get_buffer().create_tag("foreground")
+        tag.set_property("foreground_gdk", gtk.gdk.Color(0,0,0))
+        tag = self.entry.get_buffer().create_tag("family")
+        tag.set_property("family", "MS Sans Serif")
+        
         escroll = gtk.ScrolledWindow()
         escroll.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         escroll.set_placement(gtk.CORNER_TOP_LEFT)
@@ -108,23 +124,28 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
         self.button1 = gtk.ToolButton('button_smile')
         self.button2 = gtk.ToolButton('button_nudge')
-        self.button3 = gtk.ToggleToolButton(gtk.STOCK_BOLD)
-        self.button4 = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
-        self.button5 = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
-        self.button6 = gtk.ToggleToolButton(gtk.STOCK_STRIKETHROUGH)
-        self.button7 = gtk.ToolButton(gtk.STOCK_COLOR_PICKER)
+        self.button_bold = gtk.ToggleToolButton(gtk.STOCK_BOLD)
+        self.button_italic = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
+        self.button_underline = gtk.ToggleToolButton(gtk.STOCK_UNDERLINE)
+        self.button_strikethrough = gtk.ToggleToolButton(gtk.STOCK_STRIKETHROUGH)
+        self.button_color = gtk_extras.ColorToolButton()
+        self.button_font = gtk_extras.FontToolButton()
         self.button8 = gtk.ToolButton(gtk.STOCK_CLEAR)
+        
+        self.button_font.set_show_size(0)
+        self.button_font.set_show_style(0)
         
         bbox = gtk.Toolbar()
         bbox.set_style(gtk.TOOLBAR_ICONS)
         bbox.insert(self.button1, -1)
         bbox.insert(self.button2, -1)
         bbox.insert(gtk.SeparatorToolItem(), -1)
-        bbox.insert(self.button3, -1)
-        bbox.insert(self.button4, -1)
-        bbox.insert(self.button5, -1)
-        bbox.insert(self.button6, -1)
-        bbox.insert(self.button7, -1)
+        bbox.insert(self.button_font, -1)
+        bbox.insert(self.button_color, -1)
+        bbox.insert(self.button_bold, -1)
+        bbox.insert(self.button_italic, -1)
+        bbox.insert(self.button_underline, -1)
+        bbox.insert(self.button_strikethrough, -1)
         bbox.insert(gtk.SeparatorToolItem(), -1)
         bbox.insert(self.button8, -1)
         
@@ -168,10 +189,49 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
             self.__on_changed_text_effect, 'strikethrough')
         self.button7.connect("clicked", self.__on_changed_text_color)
         '''
+        self.entry.get_buffer().connect("changed", self.__updateTextFormat)
+        self.button_bold.connect("toggled", self.__on_changed_text_effect, "bold")
+        self.button_italic.connect("toggled", self.__on_changed_text_effect, "italic")
+        self.button_underline.connect("toggled", self.__on_changed_text_effect, "underline")
+        self.button_strikethrough.connect("toggled", self.__on_changed_text_effect, "strikethrough")
+        self.button_color.connect("color_set", self.__on_changed_text_color)
+        self.button_font.connect("font_set", self.__on_changed_text_font)
         self.button2.connect("clicked", self.__on_nudge_send)
         self.button8.connect("clicked", self.__on_clear_textview)
         self.entry.connect('mykeypress', self.__on_chat_send)
         self.entry.connect('key-press-event', self.__on_typing_event)
+        
+    def __updateTextFormat(self, textbuffer):
+        self.reapply_text_effects();
+        self.__on_changed_text_color(self.button_color)
+        self.__on_changed_text_font(self.button_font)
+        
+    def __on_changed_text_effect(self, button, tag_type):
+        buffer = self.entry.get_buffer();
+        if button.get_active():
+            buffer.apply_tag_by_name(tag_type, buffer.get_start_iter(), buffer.get_end_iter())
+        else:
+            buffer.remove_tag_by_name(tag_type, buffer.get_start_iter(), buffer.get_end_iter())
+    
+    def reapply_text_effects(self):
+        self.__on_changed_text_effect(self.button_bold, "bold")
+        self.__on_changed_text_effect(self.button_italic, "italic")
+        self.__on_changed_text_effect(self.button_underline, "underline")
+        self.__on_changed_text_effect(self.button_strikethrough, "strikethrough")
+            
+    def __on_changed_text_color(self, button):
+        buffer = self.entry.get_buffer();
+        tag = buffer.get_tag_table().lookup("foreground")
+        tag.set_property("foreground_gdk", button.get_color())
+        buffer.apply_tag_by_name("foreground", buffer.get_start_iter(), buffer.get_end_iter())
+        
+    def __on_changed_text_font(self, button):
+        buffer = self.entry.get_buffer();
+        font_name = self.button_font.get_font_name()
+        font_family = pango.FontDescription(font_name).get_family()
+        tag = buffer.get_tag_table().lookup("family")
+        tag.set_property("family", font_family)
+        buffer.apply_tag_by_name("family", buffer.get_start_iter(), buffer.get_end_iter())
         
     def __clean_string(self, str):
         return cgi.escape(str)
@@ -185,9 +245,19 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
             entry.grab_focus()
             if (msg == ''): return False
         
+        color = self.button_color.get_color()
+        hex8 = "%.2x%.2x%.2x" % ((color.red/0x101), (color.green/0x101), (color.blue/0x101))
+        style = pymsn.TextFormat.NO_EFFECT
+        if self.button_bold.get_active(): style |= pymsn.TextFormat.BOLD
+        if self.button_italic.get_active():  style |= pymsn.TextFormat.ITALIC
+        if self.button_underline.get_active(): style |= pymsn.TextFormat.UNDERLINE
+        if self.button_strikethrough.get_active(): style |= pymsn.TextFormat.STRIKETHROUGH
+        font_name = self.button_font.get_font_name()
+        font_family = pango.FontDescription(font_name).get_family()
+        format = pymsn.TextFormat(font=font_family, color=hex8, style=style)
         strv = StringView()
         strv.appendText(msg)
-        self._amsn_conversation.sendMessage(strv)
+        self._amsn_conversation.sendMessage(strv, format)
         
     def __on_clear_textview(self, widget):
         buffer = self.textview.get_buffer()
@@ -223,7 +293,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.statusbar.pop(context)
         self.statusbar.push(context, msg)
         
-    def onMessageReceived(self, messageview):
+    def onMessageReceived(self, messageview, formatting=None):
         text = messageview.toStringView().toHtmlString()
         text = self.__clean_string(text)
         nick, msg = text.split('\n', 1)
@@ -231,7 +301,31 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         msg = str(msg.replace('\n', '<br/>'))
         sender = messageview.sender.toString()
         
-        self.__print_chat(nick, msg, sender)
+        # peacey: Check formatting of styles and perform the required changes
+        if formatting:
+            fmsg = '''<span style="'''
+            if formatting.font:
+                fmsg += "font-family: %s;" % formatting.font
+            if formatting.color:
+                fmsg += "color: %s;" % ("#"+formatting.color)
+            if formatting.style & pymsn.TextFormat.BOLD == pymsn.TextFormat.BOLD:
+                fmsg += "font-weight: bold;"
+            if formatting.style & pymsn.TextFormat.ITALIC == pymsn.TextFormat.ITALIC:
+                fmsg += "font-style: italic;"
+            if formatting.style & pymsn.TextFormat.UNDERLINE == pymsn.TextFormat.UNDERLINE:
+                fmsg += "text-decoration: underline;"
+            if formatting.style & pymsn.TextFormat.STRIKETHROUGH == pymsn.TextFormat.STRIKETHROUGH:
+                fmsg += "text-decoration: line-through;"
+            if formatting.right_alignment:
+                fmsg += "text-align: right;"    
+            fmsg = fmsg.rstrip(";")
+            fmsg += '''">'''
+            fmsg += msg
+            fmsg += "</span>"
+        else:
+            fmsg = msg
+                
+        self.__print_chat(nick, fmsg, sender)
         
         self.last_sender = sender
         
