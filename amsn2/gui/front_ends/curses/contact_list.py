@@ -39,12 +39,12 @@ class Group(object):
         return (online, total)
             
 
-class aMSNContactList(base.aMSNContactList):
-    def __init__(self, amsn_core):
+class aMSNContactListWindow(base.aMSNContactListWindow):
+    def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self.groups = {}
         self.contacts = {}
-	self._stdscr = self._amsn_core.getMainWindow()._stdscr
+        self._stdscr = parent._stdscr
         self._win = curses.newwin(100, 100, 3, 3)
 
     def show(self):

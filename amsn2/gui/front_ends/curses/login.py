@@ -4,26 +4,26 @@ import curses.textpad
 
 class TextBox(object):
     def __init__(self, win, y, x, txt):
-	self._win = win.derwin(1, 30, y, x)
-	self._win.clear()
-	self._txtbox = curses.textpad.Textbox(self._win)
-	self._txtbox.stripspaces = True
+        self._win = win.derwin(1, 30, y, x)
+        self._win.clear()
+        self._txtbox = curses.textpad.Textbox(self._win)
+        self._txtbox.stripspaces = True
 
         if txt is not None:
             for x in txt:
                 self._txtbox.do_command(x)
 
     def edit(self):
-	return self._txtbox.edit()
+        return self._txtbox.edit()
 
     def value(self):
         return self._txtbox.gather()
     
 class aMSNLoginWindow(object):
-    def __init__(self, amsn_core):
+    def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
-	self._stdscr = self._amsn_core.getMainWindow()._stdscr
+        self._stdscr = parent._stdscr
         self._win = curses.newwin(20, 100, 5, 5)
         
     def show(self):
