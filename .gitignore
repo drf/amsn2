@@ -8,3 +8,4 @@ build/
 .svn/
 Debug/
 ui_*
+.*.swp
