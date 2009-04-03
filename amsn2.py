@@ -3,6 +3,8 @@ import sys
 import os
 import optparse
 sys.path.insert(0, "./pymsn")
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 from amsn2.core import aMSNCore
 

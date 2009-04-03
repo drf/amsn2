@@ -10,14 +10,43 @@ class TextBox(object):
         self._txtbox.stripspaces = True
 
         if txt is not None:
-            for x in txt:
-                self._txtbox.do_command(x)
+            self._insert(txt)
 
     def edit(self):
         return self._txtbox.edit()
 
     def value(self):
         return self._txtbox.gather()
+
+    def _insert(self, txt):
+        for ch in txt:
+            self._txtbox.do_command(ch)
+
+class PasswordBox(TextBox):
+    def __init__(self, win, y, x, txt):
+        super(PasswordBox, self).__init__(win, y, x, txt)
+        self._password = ''
+
+    def edit(self, cb=None):
+        return self._txtbox.edit(self._validateInput)
+
+    def value(self):
+        return self._password
+
+    def _validateInput(self, ch):
+        if ch in (curses.KEY_BACKSPACE, curses.ascii.BEL):
+            self._password = self._password[0:-1]
+            return ch
+        elif curses.ascii.isprint(ch):
+            self._password += chr(ch)
+            return '*'
+        else:
+            return ch
+
+    def _insert(self, str):
+        for ch in str:
+            self._password += ch
+            self._txtbox.do_command('*')
     
 class aMSNLoginWindow(object):
     def __init__(self, amsn_core, parent):
@@ -27,11 +56,12 @@ class aMSNLoginWindow(object):
         self._win = curses.newwin(20, 100, 5, 5)
         
     def show(self):
+        self._win.border()
         self._win.addstr(5, 5, "Account : ", curses.A_BOLD)
         self._username_t = TextBox(self._win, 5, 17, self._username)
 
         self._win.addstr(8, 5, "Password : ", curses.A_BOLD)
-        self._password_t = TextBox(self._win, 8, 17, self._password)
+        self._password_t = PasswordBox(self._win, 8, 17, self._password)
         
         self._win.refresh()
         
@@ -106,5 +136,3 @@ class aMSNLoginWindow(object):
         
         self._win.addstr(10, 25, "Synchronized!", curses.A_BOLD | curses.A_STANDOUT)
         self._win.refresh()
-
-
