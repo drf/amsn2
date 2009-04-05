@@ -253,9 +253,17 @@ class OfflineMessagesBox(gobject.GObject):
             network = (m.findtext('T','int'), m.findtext('S','int'))
             if network == (11,6):
                 network_id = NetworkID.MSN
+            elif network == (11,7):
+                # FIXME: What does <T>11</T> and <S>7</S> mean? We should find out...
+                # FIXME: My first guess would be Windows Live Communication Server
+                network_id = NetworkID.LCS
             elif network == (13,7):
                 network_id = NetworkID.EXTERNAL
-            
+            else:
+                # This is to ensure that network_id is always set, even if we get unknown values for network
+                # FIXME: Is NetworkID.MSN the best choice as default value?
+                network_id = NetworkID.MSN
+
             account = m.findtext('./E')
 
             try:
