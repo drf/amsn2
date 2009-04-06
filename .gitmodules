@@ -1,0 +1,3 @@
+[submodule "pymsn"]
+	path = pymsn
+	url = git://git.collabora.co.uk/git/user/kakaroto/pymsn.git
