@@ -30,3 +30,7 @@ If you have the following error with the qt4 front-end:
 	self._loop = self._gui.gui.aMSNMainLoop(self)
 	AttributeError: 'NoneType' object has no attribute 'aMSNMainLoop'
 try moving into the amsn2/gui/front_ends/qt4 directory and calling generateFiles.sh
+
+If the backspace is not working as expected with the ncurses front-end it is probably because your TERM is not set to the correct value. Try to launch amsn2 with some other setting for TERM, like:
+TERM=konsole ./amsn2.py -f curses
+If it works with some other value it means that your terminal emulator is not set correctly.
