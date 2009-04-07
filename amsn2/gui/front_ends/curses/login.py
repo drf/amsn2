@@ -53,10 +53,17 @@ class aMSNLoginWindow(object):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
         self._stdscr = parent._stdscr
-        self._win = curses.newwin(20, 100, 5, 5)
+
+        (y, x) = self._stdscr.getmaxyx()
+        wy = int(y * 0.8)
+        wx = int(x * 0.8)
+        sy = int((y - wy)/2)
+        sx = int((x - wx)/2)
+        self._win = curses.newwin(wy, wx, sy, sx)
         
     def show(self):
         self._win.border()
+        self._win.standout()
         self._win.addstr(5, 5, "Account : ", curses.A_BOLD)
         self._username_t = TextBox(self._win, 5, 17, self._username)
 
