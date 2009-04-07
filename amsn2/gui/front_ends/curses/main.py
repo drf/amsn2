@@ -8,7 +8,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def show(self):
         self._stdscr = curses.initscr()
-        curses.start_color()
+        self.__init_colors()
         curses.noecho()
         curses.cbreak()
         self._stdscr.keypad(1)
@@ -30,4 +30,9 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def setMenu(self,menu):
         pass
+
+    def __init_colors(self):
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_WHITE)
 

@@ -5,6 +5,7 @@ import curses.textpad
 class TextBox(object):
     def __init__(self, win, y, x, txt):
         self._win = win.derwin(1, 30, y, x)
+        self._win.bkgd(' ', curses.color_pair(0))
         self._win.clear()
         self._txtbox = curses.textpad.Textbox(self._win)
         self._txtbox.stripspaces = True
@@ -63,7 +64,7 @@ class aMSNLoginWindow(object):
         
     def show(self):
         self._win.border()
-        self._win.standout()
+        self._win.bkgd(' ', curses.color_pair(1))
         self._win.addstr(5, 5, "Account : ", curses.A_BOLD)
         self._username_t = TextBox(self._win, 5, 17, self._username)
 
