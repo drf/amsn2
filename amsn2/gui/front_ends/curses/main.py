@@ -8,6 +8,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def show(self):
         self._stdscr = curses.initscr()
+        curses.start_color()
         curses.noecho()
         curses.cbreak()
         self._stdscr.keypad(1)
