@@ -34,7 +34,7 @@ class PasswordBox(TextBox):
         return self._password
 
     def _validateInput(self, ch):
-        if ch in (curses.KEY_BACKSPACE, curses.ascii.BEL):
+        if ch in (curses.KEY_BACKSPACE, curses.ascii.BS):
             self._password = self._password[0:-1]
             return ch
         elif curses.ascii.isprint(ch):
@@ -94,45 +94,5 @@ class aMSNLoginWindow(object):
         self._password_t = None
         self._win.clear()
         
-        self._win.addstr(10, 25, "Connecting...", curses.A_BOLD | curses.A_STANDOUT)
-        self._win.refresh()
-
-    def onConnected(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        
-        self._win.addstr(10, 25, "Connected...", curses.A_BOLD | curses.A_STANDOUT)
-        self._win.refresh()
-
-    def onAuthenticating(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        
-        self._win.addstr(10, 25, "Authenticating...", curses.A_BOLD | curses.A_STANDOUT)
-        self._win.refresh()
-
-    def onAuthenticated(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        
-        self._win.addstr(10, 25, "Authenticated...", curses.A_BOLD | curses.A_STANDOUT)
-        self._win.refresh()
-
-    def onSynchronizing(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        
-        self._win.addstr(10, 25, "Fetching contact list...", curses.A_BOLD | curses.A_STANDOUT)
-        self._win.refresh()
-
-    def onSynchronized(self):
-        self._username_t = None
-        self._password_t = None
-        self._win.clear()
-        
-        self._win.addstr(10, 25, "Synchronized!", curses.A_BOLD | curses.A_STANDOUT)
+        self._win.addstr(10, 25, message, curses.A_BOLD | curses.A_STANDOUT)
         self._win.refresh()
