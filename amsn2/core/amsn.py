@@ -137,10 +137,10 @@ class aMSNCore(object):
         {
             pymsn.event.ClientState.CONNECTING : 'Connecting to server...',
             pymsn.event.ClientState.CONNECTED : 'Connected',
-            pymsn.event.ClientState.AUTHENTICATING : 'Authentificating...',
+            pymsn.event.ClientState.AUTHENTICATING : 'Authenticating...',
             pymsn.event.ClientState.AUTHENTICATED : 'Password accepted',
             pymsn.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
-            pymsn.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully\nHappy Chatting'
+            pymsn.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully.\nHappy Chatting'
         }
 
         if state in status_str:
