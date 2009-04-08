@@ -45,13 +45,18 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self.groups = {}
         self.contacts = {}
         self._stdscr = parent._stdscr
-        self._win = curses.newwin(100, 100, 3, 3)
+        (y,x) = self._stdscr.getmaxyx()
+        # TODO: Use a pad instead
+        self._win = curses.newwin(y, int(0.2*x), 0, 0)
+        self._win.bkgd(curses.color_pair(1))
+        self._clwidget = aMSNContactListWidget(amsn_core, self)
 
     def show(self):
-        pass
+        self._win.refresh()
 
     def hide(self):
-        pass
+        self._stdscr.clear()
+        self._stdscr.refresh()
 
     def contactStateChange(self, contact):
         for group in contact.groups:
@@ -128,3 +133,34 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._win.refresh()
                              
 
+class aMSNContactListWidget(base.aMSNContactListWidget):
+
+    def __init__(self, amsn_core, parent):
+        super(aMSNContactListWidget, self).__init__(amsn_core, parent)
+        self._groups = {}
+        self._win = parent._win
+        self._stdscr = parent._stdscr
+
+    def contactListUpdated(self, clView):
+        # TODO: Implement it to sort groups and handle add/delete
+        for g in clView.group_ids:
+            self._groups[g] = None
+
+    def groupUpdated(self, gView):
+        self._groups[gView.uid] = gView
+        self.__updateGroups()
+        # TODO: Implement something useful
+        import sys
+        print >> sys.stderr, gView.name
+
+    def contactUpdated(self, cView):
+        pass
+
+    def __updateGroups(self):
+        self._win.clear()
+        self._win.move(0,0)
+        for g in self._groups:
+            if self._groups[g] is not None:
+                self._win.insstr(str(self._groups[g].name))
+                self._win.insertln()
+        self._win.refresh()

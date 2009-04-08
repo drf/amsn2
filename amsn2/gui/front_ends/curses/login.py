@@ -76,13 +76,15 @@ class aMSNLoginWindow(object):
         self._username_t.edit()
         self._password_t.edit()
 
+        curses.curs_set(0)
         self.signin()
 
     def hide(self):
         self._username_t = None
         self._password_t = None
-        self._win.clear()
-        self._win.refresh()
+        self._win = None
+        self._stdscr.clear()
+        self._stdscr.refresh()
 
     def switch_to_profile(self, profile):
         self.current_profile = profile
