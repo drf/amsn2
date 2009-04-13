@@ -41,13 +41,14 @@ class aMSNCore(object):
            options.front_end = the front end's name to use
            options.debug = whether or not to enable debug output
         """
-        self._profile_manager = profile.aMSNProfileManager()
         self._options = options
-        self._gui_name = self._options.front_end
-        self._gui = gui.GUIManager(self, self._gui_name)
-        self._loop = self._gui.gui.aMSNMainLoop(self)
-        self._main = self._gui.gui.aMSNMainWindow(self)
-        self._skin_manager = self._gui.gui.SkinManager(self)
+
+        self._gui_name = None
+        self._gui = None
+        self._loop = None
+        self._main = None
+        self.loadUI(self._options.front_end)
+
         self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
@@ -71,6 +72,16 @@ class aMSNCore(object):
         self._main.show();
         self._loop.run();
 
+    def loadUI(self, ui_name):
+        self._gui_name = ui_name
+        self._gui = gui.GUIManager(self, self._gui_name)
+        self._loop = self._gui.gui.aMSNMainLoop(self)
+        self._main = self._gui.gui.aMSNMainWindow(self)
+        self._skin_manager = self._gui.gui.SkinManager(self)
+
+    def switchToUI(self, ui_name):
+        #TODO: unloadUI + stop loops??? + loadUI + run
+        pass
 
     def mainWindowShown(self):
         # TODO : load the profiles from disk and all settings
