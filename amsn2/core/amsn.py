@@ -18,11 +18,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import profile
 from amsn2 import gui
 from amsn2 import protocol
 import pymsn
 from views import *
+from profile import *
 from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
@@ -49,6 +49,8 @@ class aMSNCore(object):
         self._main = None
         self.loadUI(self._options.front_end)
 
+        self._profile_manager = aMSNProfileManager(options)
+        self._profile = None
         self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
@@ -100,27 +102,7 @@ class aMSNCore(object):
 
         login = self._gui.gui.aMSNLoginWindow(self, self._main)
 
-        profile = None
-        if self._options.account is not None:
-            if self._profile_manager.profileExists(self._options.account):
-                profile = self._profile_manager.getProfile(self._options.account)
-            else:
-                profile = self._profile_manager.addProfile(self._options.account)
-                profile.save = False
-            if self._options.password is not None:
-                profile.password = self._options.password
-
-        else:
-            for prof in self._profile_manager.getAllProfiles():
-                if prof.isLocked() is False:
-                    profile = prof
-                    break
-
-        if profile is None:
-            profile = self._profile_manager.addProfile("")
-            profile.password = ""
-
-        login.switch_to_profile(profile)
+        login.setProfiles(self._profile_manager.getAvailableProfileViews())
 
         splash.hide()
         self._main.setTitle("aMSN 2 - Login")
@@ -132,11 +114,9 @@ class aMSNCore(object):
     def getMainWindow(self):
         return self._main
 
-    def addProfile(self, account):
-        return self._profile_manager.addProfile(account)
-
-    def signinToAccount(self, login_window, profile):
-        print "Signing in to account '%s'" % (profile.email)
+    def signinToAccount(self, login_window, profileview):
+        print "Signing in to account %s" % (profileview.email)
+        self.profileself.profile
         profile.login = login_window
         profile.client = protocol.Client(self, profile)
         self._profile = profile
