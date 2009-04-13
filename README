@@ -5,6 +5,9 @@ python-pyopenssl
 python-crypto
 maybe some other stuff...
 
+Before launching amsn2 you have to fetch the submodules (pymsn). Instructions can be found on the aMSN forum:
+http://www.amsn-project.net/forums/viewtopic.php?t=5994
+
 If you launch ./amsn2.py and it gives an error, that error probably tells you which dependency you need...
 You can type ./amsn2.py --help for more info... and the front ends can be selected with -f :
 ./amsn2.py -f efl
