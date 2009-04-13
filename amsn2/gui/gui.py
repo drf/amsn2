@@ -27,7 +27,7 @@ class GUIManager(object):
         
     @staticmethod
     def listFrontEnds():
-        return GUIManager.front_ends.keys();
+        return GUIManager.front_ends.keys()
     
     @staticmethod
     def frontEndExists(front_end):
