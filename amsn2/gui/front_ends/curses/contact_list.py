@@ -1,5 +1,8 @@
 from amsn2.gui import base
 import curses
+from threading import Thread
+from threading import Condition
+import time
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
@@ -33,8 +36,19 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         self._contacts = {}
         self._win = parent._win
         self._stdscr = parent._stdscr
+        self._mod_lock = Condition()
+        self._modified = False
+        self._thread = Thread(target=self.__thread_run)
+        self._thread.daemon = True
+        self._thread.setDaemon(True)
+        import sys
+        print >> sys.stderr, self._thread.isDaemon()
+        self._thread.start()
 
     def contactListUpdated(self, clView):
+        # Acquire the lock to do modifications
+        self._mod_lock.acquire()
+
         # TODO: Implement it to sort groups
         for g in self._groups:
             if g not in clView.group_ids:
@@ -42,8 +56,17 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         for g in clView.group_ids:
             if not self._groups.has_key(g):
                 self._groups[g] = None
+        self._modified = True
+
+        # Notify waiting threads that we modified something
+        self._mod_lock.notify()
+        # Release the lock
+        self._mod_lock.release()
 
     def groupUpdated(self, gView):
+        # Acquire the lock to do modifications
+        self._mod_lock.acquire()
+
         if not self._groups.has_key(gView.uid):
             return
 
@@ -64,15 +87,33 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
             if self._groups[gView.uid] is None or c not in self._groups[gView.uid].contact_ids:
                 self._contacts[c]['refs'] += 1
         self._groups[gView.uid] = gView
-        self.__updateGroups()
+        self._modified = True
+
+        # Notify waiting threads that we modified something
+        self._mod_lock.notify()
+        # Release the lock
+        self._mod_lock.release()
 
     def contactUpdated(self, cView):
+        # Acquire the lock to do modifications
+        self._mod_lock.acquire()
+
         if not self._contacts.has_key(cView.uid):
             return
         self._contacts[cView.uid]['cView'] = cView
-        self.__updateGroups()
+        self._modified = True
 
-    def __updateGroups(self):
+        # Notify waiting threads that we modified something
+        self._mod_lock.notify()
+        # Release the lock
+        self._mod_lock.release()
+
+    def __repaint(self):
+        import sys
+        print >> sys.stderr, "Repainting"
+        # Acquire the lock to do modifications
+        self._mod_lock.acquire()
+
         self._win.clear()
         self._win.move(0,0)
         for g in self._groups:
@@ -88,3 +129,20 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                         self._win.insch(curses.ACS_LLCORNER)
                         self._win.insertln()
         self._win.refresh()
+        self._modified = False
+
+        # Notify waiting threads that we modified something
+        self._mod_lock.notify()
+        # Release the lock
+        self._mod_lock.release()
+
+    def __thread_run(self):
+        while True:
+            self._mod_lock.acquire()
+            t = time.time()
+            # We don't want to work before at least half a second has passed
+            while t - time.time() < 0.5 and not self._modified:
+                self._mod_lock.wait(0.5)
+            self.__repaint()
+            t = time.time()
+            self._mod_lock.release()
