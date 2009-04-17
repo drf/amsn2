@@ -20,9 +20,9 @@ If you want to install the EFL, it's easy go to http://omicron.homeip.net/projec
 http://omicron.homeip.net/projects/easy_e17/easy_e17.sh
 Then do ./easy_e17.sh -i
 It will download the CVS, automake, configure, make and make install everything into /opt/e17 (so it doesn't 'contaminate' your system).
-Once done, go to ./e17_cvs/proto/python-efl and type ./buildall.sh /usr (this will build and install the python extensions into /usr/python2.X/...)
-Then in amsn2 directory, go to python-etk and build that too and install it... 
+Once done, go to ./e17_src/BINDINGS/python and type ./buildall.sh /usr (this will build and install the python extensions into /usr/python2.X/...). See README.txt in that directory for requirements.
 Then the efl front end should become available...
+If it's not, fire up a python shell and try to import the ecore module; diagnose from there the problem.
 
 
 If you have the following error with the qt4 front-end:
