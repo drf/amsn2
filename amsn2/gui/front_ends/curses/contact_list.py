@@ -32,6 +32,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
 
     def __init__(self, amsn_core, parent):
         super(aMSNContactListWidget, self).__init__(amsn_core, parent)
+        self._groups_order = []
         self._groups = {}
         self._contacts = {}
         self._win = parent._win
@@ -41,8 +42,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         self._thread = Thread(target=self.__thread_run)
         self._thread.daemon = True
         self._thread.setDaemon(True)
-        import sys
-        print >> sys.stderr, self._thread.isDaemon()
         self._thread.start()
 
     def contactListUpdated(self, clView):
@@ -50,12 +49,13 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         self._mod_lock.acquire()
 
         # TODO: Implement it to sort groups
-        for g in self._groups:
+        for g in self._groups_order:
             if g not in clView.group_ids:
                 self._groups.delete(g)
         for g in clView.group_ids:
-            if not self._groups.has_key(g):
+            if not g in self._groups_order:
                 self._groups[g] = None
+        self._groups_order = clView.group_ids
         self._modified = True
 
         # Notify waiting threads that we modified something
@@ -116,33 +116,42 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
 
         self._win.clear()
         self._win.move(0,0)
-        for g in self._groups:
+        gso = self._groups_order
+        gso.reverse()
+        for g in gso:
             if self._groups[g] is not None:
-                self._win.insstr(self._groups[g].name.toString())
-                self._win.insch(curses.ACS_LLCORNER)
-                self._win.insertln()
-                for c in self._groups[g].contact_ids:
+                cids = self._groups[g].contact_ids
+                cids.reverse()
+                for c in cids:
                     if self._contacts.has_key(c) and self._contacts[c]['cView'] is not None:
-                        self._win.insstr(self._contacts[c]['cView'].name.toString())
+                        self._win.insstr(" " + self._contacts[c]['cView'].name.toString())
                         self._win.insch(curses.ACS_HLINE)
                         self._win.insch(curses.ACS_HLINE)
                         self._win.insch(curses.ACS_LLCORNER)
                         self._win.insertln()
+                self._win.insstr(self._groups[g].name.toString())
+                self._win.insch(curses.ACS_LLCORNER)
+                self._win.insertln()
         self._win.refresh()
         self._modified = False
 
-        # Notify waiting threads that we modified something
-        self._mod_lock.notify()
         # Release the lock
         self._mod_lock.release()
+        print >> sys.stderr, "Repainted"
 
     def __thread_run(self):
         while True:
+            import sys
+            print >> sys.stderr, "at loop start"
             self._mod_lock.acquire()
             t = time.time()
             # We don't want to work before at least half a second has passed
-            while t - time.time() < 0.5 and not self._modified:
-                self._mod_lock.wait(0.5)
+            while time.time() - t < 0.5 or not self._modified:
+                print >> sys.stderr, "Going to sleep\n"
+                self._mod_lock.wait(timeout=1)
+                print >> sys.stderr, "Ok time to see if we must repaint"
             self.__repaint()
             t = time.time()
             self._mod_lock.release()
+            print >> sys.stderr, "at loop end"
+            self._mod_lock.acquire()
