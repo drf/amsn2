@@ -59,8 +59,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
             self._modified = True
 
             # Notify waiting threads that we modified something
-            import sys
-            print >> sys.stderr, "Notify from contactListUpdated"
             self._mod_lock.notify()
 
     def groupUpdated(self, gView):
@@ -87,8 +85,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                 self._modified = True
 
                 # Notify waiting threads that we modified something
-                import sys
-                print >> sys.stderr, "Notify from groupUpdated"
                 self._mod_lock.notify()
 
     def contactUpdated(self, cView):
@@ -99,13 +95,9 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                 self._modified = True
 
                 # Notify waiting threads that we modified something
-                import sys
-                print >> sys.stderr, "Notify from contactUpdated"
                 self._mod_lock.notify()
 
     def __repaint(self):
-        import sys
-        print >> sys.stderr, "Repainting"
         # Acquire the lock to do modifications
         with self._mod_lock:
             self._win.clear()
@@ -129,19 +121,12 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
             self._win.refresh()
             self._modified = False
 
-        print >> sys.stderr, "Repainted"
 
     def __thread_run(self):
         while True:
-            import sys
-            print >> sys.stderr, "at loop start"
+            # We don't want to repaint too often, once every half second is cool
+            time.sleep(0.5)
             with self._mod_lock:
-                t = time.time()
-                # We don't want to work before at least half a second has passed
-                while time.time() - t < 0.5 or not self._modified:
-                    print >> sys.stderr, "Going to sleep\n"
+                while not self._modified:
                     self._mod_lock.wait(timeout=1)
-                    print >> sys.stderr, "Ok time to see if we must repaint"
                 self.__repaint()
-                t = time.time()
-            print >> sys.stderr, "at loop end"

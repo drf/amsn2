@@ -1,6 +1,7 @@
 
 from amsn2.gui import base
 import gobject
+gobject.threads_init()
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
