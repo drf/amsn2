@@ -2,7 +2,7 @@ from constants import *
 import edje
 import ecore
 import ecore.x
-import etk
+import elementary
 
 from amsn2.gui import base
 
@@ -14,43 +14,37 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         edje.frametime_set(1.0 / 30)
 
-        mainChild = etk.EvasObject()
-
         try:
             self._edje = edje.Edje(self._evas, file=THEME_FILE,
                                 group="login_screen")
         except edje.EdjeLoadError, e:
             raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
 
-        mainChild.evas_object = self._edje
+        self._parent.resize_object_add(self._edje)
+        self._edje.size_hint_weight_set(1.0, 1.0)
+        self.show()
 
-        self.password = etk.Entry()
-        embed = etk.Embed(self._evas)
-        embed.add(self.password)
-        embed.show_all()
-        self.password.password_mode = True
-        self._edje.part_swallow("login_screen.password", embed.object)
+        self.password = elementary.Entry(self._edje)
+        self.password.single_line_set(1)
+        self.password.password_set(1)
+        self.password.size_hint_weight_set(1.0, 1.0)
+        self.password.show()
+        self._edje.part_swallow("login_screen.password", self.password)
+        self.password.show()
 
-        self.status = etk.Entry()
-        embed = etk.Embed(self._evas)
-        embed.add(self.status)
-        embed.show_all()
-        self._edje.part_swallow("login_screen.status", embed.object)
+        #TODO: login_screen.status
 
-        self.username = etk.Entry()
-        embed = etk.Embed(self._evas)
-        embed.add(self.username)
-        embed.show_all()
-        self._edje.part_swallow("login_screen.username", embed.object)
+        self.username = elementary.Entry(self._edje)
+        self.username.single_line_set(1)
+        self.username.show()
+        self._edje.part_swallow("login_screen.username", self.username)
 
         if self._edje.part_exists("login_screen.signin"):
-           self.signin_b = etk.Button()
-           embed = etk.Embed(self._evas)
-           embed.add(self.signin_b)
-           embed.show_all()
-           self._edje.part_swallow("login_screen.signin", embed.object)
-           self.signin_b.label = "Sign in"
-           self.signin_b.connect("clicked", self.__signin_button_cb)
+           self.signin_b = elementary.Button(self._edje)
+           self.signin_b.label_set("Sign in")
+           self.signin_b.clicked = self.__signin_button_cb
+           self.signin_b.show()
+           self._edje.part_swallow("login_screen.signin", self.signin_b)
         else:
            self._edje.signal_callback_add("signin", "*", self.__signin_cb)
 
@@ -58,7 +52,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         # We start with no profile set up, we let the Core set our starting profile
         self.switch_to_profile(None)
 
-        parent.setChild(mainChild)
 
     def show(self):
         self._edje.show()
@@ -79,15 +72,20 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def switch_to_profile(self, profile):
         self.current_profile = profile
         if self.current_profile is not None:
-            self.username.text = self.current_profile.username
-            self.password.text = self.current_profile.password
+            if self.current_profile.username is None:
+                self.username.entry_set("")
+            else:
+                self.username.entry_set(self.current_profile.username)
+            if self.current_profile.password is None:
+                self.password.entry_set("")
+            else:
+                self.password.entry_set(self.current_profile.password)
 
 
     def signin(self):
-        # TODO : get/set the username/password and other options from the login screen
-        self.current_profile.username = self.username.text
-        self.current_profile.email = self.username.text
-        self.current_profile.password = self.password.text
+        self.current_profile.username = self.username.entry_get()
+        self.current_profile.email = self.username.entry_get()
+        self.current_profile.password = self.password.entry_get()
         self._amsn_core.signinToAccount(self, self.current_profile)
 
     def onConnecting(self, progress, message):
@@ -110,6 +108,5 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()
 
-    def __signin_button_cb(self, button):
-        print "clicked %s - %s" % (self, button)
+    def __signin_button_cb(self, button, event):
         self.signin()
