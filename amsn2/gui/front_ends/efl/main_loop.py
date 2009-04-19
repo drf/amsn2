@@ -2,11 +2,12 @@
 from amsn2.gui import base
 import gobject
 import ecore
+import elementary
 
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
-        pass
-    
+        elementary.init()
+
     def run(self):
         mainloop = gobject.MainLoop(is_running=True)
         context = mainloop.get_context()
@@ -21,8 +22,9 @@ class aMSNMainLoop(base.aMSNMainLoop):
         # to allow the protocol context loop to work
         ecore.timer_add(0.1, glib_context_iterate)
 
+        #equals elementary.run()
         ecore.main_loop_begin()
-        
+
     def idlerAdd(self, func):
         ecore.idler_add(func)
 
@@ -31,4 +33,4 @@ class aMSNMainLoop(base.aMSNMainLoop):
 
     def quit(self):
         ecore.main_loop_quit()
-        
+
