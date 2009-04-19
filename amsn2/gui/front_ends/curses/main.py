@@ -34,4 +34,5 @@ class aMSNMainWindow(base.aMSNMainWindow):
     def __init_colors(self):
         curses.start_color()
         curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_WHITE)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_BLUE)
 
