@@ -116,11 +116,10 @@ class aMSNCore(object):
 
     def signinToAccount(self, login_window, profileview):
         print "Signing in to account %s" % (profileview.email)
-        self.profileself.profile
-        profile.login = login_window
-        profile.client = protocol.Client(self, profile)
-        self._profile = profile
-        profile.client.connect()
+        self.profile = self._profile_manager.signinToAccount(profileview)
+        self.profile.login = login_window
+        self.profile.client = protocol.Client(self, profile)
+        self.profile.client.connect()
 
     def connectionStateChanged(self, profile, state):
 

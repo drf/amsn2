@@ -68,7 +68,6 @@ class aMSNProfileManager(object):
         pass
 
 
-
 def elementToDict(element):
     """ Converts an XML Element into a proper profile dictionary """
     def dictToTuple(name, dict):
