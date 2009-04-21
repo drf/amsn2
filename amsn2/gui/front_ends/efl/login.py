@@ -58,7 +58,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
     def hide(self):
         self._edje.hide()
-        #FIXME: those are not hidden by self._edje.hide() 
+        #FIXME: those are not hidden by self._edje.hide()
         self.password.hide()
         self.status.hide()
         self.username.hide()
@@ -83,9 +83,9 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
 
     def signin(self):
-        self.current_profile.username = self.username.entry_get()
-        self.current_profile.email = self.username.entry_get()
-        self.current_profile.password = self.password.entry_get()
+        self.current_profile.username = elementary.Entry.markup_to_utf8(self.username.entry_get())
+        self.current_profile.email = self.current_profile.username
+        self.current_profile.password = elementary.Entry.markup_to_utf8(self.password.entry_get())
         self._amsn_core.signinToAccount(self, self.current_profile)
 
     def onConnecting(self, progress, message):
@@ -108,5 +108,5 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()
 
-    def __signin_button_cb(self, button, event):
+    def __signin_button_cb(self, button, event, data):
         self.signin()

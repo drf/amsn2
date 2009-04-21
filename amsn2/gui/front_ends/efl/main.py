@@ -21,7 +21,7 @@ class aMSNMainWindow(window.aMSNWindow, base.aMSNMainWindow):
     def __on_show(self, evas_obj):
         self._amsn_core.mainWindowShown()
 
-    def __on_delete_request(self, evas_obj):
+    def __on_delete_request(self, evas_obj, emission, data):
         self._amsn_core.quit()
 
     def __on_key_down(self, obj, event):
