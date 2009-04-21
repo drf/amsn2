@@ -83,9 +83,11 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
 
     def signin(self):
-        self.current_profile.username = elementary.Entry.markup_to_utf8(self.username.entry_get())
+        self.current_profile.username = \
+        elementary.Entry.markup_to_utf8(self.username.entry_get()).strip()
         self.current_profile.email = self.current_profile.username
-        self.current_profile.password = elementary.Entry.markup_to_utf8(self.password.entry_get())
+        self.current_profile.password = \
+        elementary.Entry.markup_to_utf8(self.password.entry_get()).strip()
         self._amsn_core.signinToAccount(self, self.current_profile)
 
     def onConnecting(self, progress, message):

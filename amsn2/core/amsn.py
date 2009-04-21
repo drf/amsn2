@@ -125,7 +125,7 @@ class aMSNCore(object):
         return self._profile_manager.addProfile(account)
 
     def signinToAccount(self, login_window, profile):
-        print "Signing in to account %s" % (profile.email)
+        print "Signing in to account '%s'" % (profile.email)
         profile.login = login_window
         profile.client = protocol.Client(self, profile)
         self._profile = profile
