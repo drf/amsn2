@@ -8,13 +8,17 @@ class aMSNLoginWindow(object):
     def show(self):
         """ Draw the login window """
         raise NotImplementedError
-    
+
     def hide(self):
         """ Hide the login window """
         raise NotImplementedError
 
-    def switch_to_profile(self, profile):
-        """ This method will be called when the core needs the login window to switch to a different profile """
+    def setProfiles(self, profileviews):
+        """ This method will be called when the core needs the login window to
+        let the user select among some profiles.
+        @profileviews: list of profileviews describing profiles
+        The first one in the list
+        should be considered as default. """
         raise NotImplementedError
 
     def signin(self):

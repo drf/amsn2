@@ -3,7 +3,8 @@ import os
 import xml.etree.ElementTree
 import xml.parsers.expat
 import __builtin__
-
+from views import ProfileView
+from views import StringView
 
 class aMSNProfile(object):
     """ aMSNProfile : a Class to represent an aMSN profile
@@ -24,7 +25,7 @@ class aMSNProfileManager(object):
         elif os.name == "nt":
             self._profiles_dir = os.path.join(os.environ['USERPROFILE'], "amsn2")
         else:
-            self._profiles_dir = os.path.join(os.curdir, "amsn2")
+            self._profiles_dir = os.path.join(os.curdir, "amsn2_profiles")
 
         try :
             os.makedirs(self._profiles_dir, 0777)
@@ -35,10 +36,13 @@ class aMSNProfileManager(object):
         self.reload()
 
         if options.account is not None:
-            #TODO: check if the profile is not already in the list
-            pv = ProfileView()
-            pv.email = options.account
-            pv.password = options.password
+            pv = [p for p in self.profileviews if p.email == options.account]
+            if pv:
+                self.profileviews.remove(pv[0])
+            else:
+                pv = ProfileView()
+                pv.email = options.account
+                pv.password = options.password
             self.profileviews.insert(0, pv)
 
     def reload(self):
