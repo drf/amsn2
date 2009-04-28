@@ -45,12 +45,6 @@ class aMSNMainWindow(base.aMSNMainWindow):
                 self.main_menu.remove(chl)
         self._createMenuItemsFromView(self.main_menu, menu.items)
         self.main_menu.show()
-        #if self.view is not None:
-         #   self.view.pack_start(self.main_menu, False, False)
-          #  self.view.reorder_child(self.main_menu, 0)
-           # self.view.show()
-            #self.main_win.add(self.view)
-        #self.main_win.show_all()
         
     def _createMenuItemsFromView(self, menu, items):
         # TODO: images & radio groups, for now only basic representation
