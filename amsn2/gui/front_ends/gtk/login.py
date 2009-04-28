@@ -28,7 +28,7 @@ import gobject
 from image import *
 from amsn2.core.views import ImageView
 
-class aMSNLoginWindow(gtk.VBox):
+class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
     def __init__(self, amsn_core, parent):
 
@@ -181,7 +181,7 @@ class aMSNLoginWindow(gtk.VBox):
         self.signin()
 
     def show(self):
-        pass
+        self.show_all()
 
     def hide(self):
         if (self.timer is not None):
