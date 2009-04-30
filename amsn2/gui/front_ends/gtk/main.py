@@ -18,7 +18,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
         self._amsn_core.mainWindowShown()
         
     def __on_close(self, widget, event):
-        exit(0)
+        self._amsn_core.quit()
 
     def show(self):
         self.main_win.show()
