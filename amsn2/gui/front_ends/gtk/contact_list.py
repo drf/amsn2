@@ -33,6 +33,7 @@ from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
 from amsn2.core.views import ImageView
+from amsn2.core.views import StatusView
 from amsn2.gui import base
 
 import common
@@ -181,9 +182,12 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the contactView of the ourself (contains DP, nick, psm,
+        @view: the StatusView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
-        print view.name.toString()
+        self.nicklabel.set_markup(view.nickname.toString())
+        self.psmlabel.set_markup('<i>'+view.psm.toString()+'</i>')
+        print 'nickname: '+view.nickname.toString()
+        print 'psm: '+view.psm.toString()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
