@@ -27,6 +27,7 @@ from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
 from theme_manager import *
+from status_manager import *
 
 
 class aMSNCore(object):
@@ -52,6 +53,7 @@ class aMSNCore(object):
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
+        self._status_manager = aMSNStatusManager(self)
 
         self.p2s = {pymsn.Presence.ONLINE:"online",
                     pymsn.Presence.BUSY:"busy",
@@ -153,6 +155,9 @@ class aMSNCore(object):
             self._main.setTitle("aMSN 2")
             profile.clwin.show()
             profile.login = None
+            self._status_manager.set_profile(profile.client.profile)
+            # need something better to update info, can't always access clwin
+            clwin.myInfoUpdated(self._status_manager._statusview)
 
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
 
