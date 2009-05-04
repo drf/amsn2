@@ -24,6 +24,7 @@
 import os
 import gtk
 import gobject
+import string
 
 from image import *
 from amsn2.core.views import ImageView
@@ -95,7 +96,9 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
             if (name == 'offline'): continue
             icon = gtk.gdk.pixbuf_new_from_file(path)
+            name = string.capitalize(name)
             status_list.append([icon, name, key])
+	
             
         iconCell = gtk.CellRendererPixbuf()
         iconCell.set_property('xalign', 0.0)
@@ -105,7 +108,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         # status combobox
         self.statusCombo = gtk.ComboBox()
         self.statusCombo.set_model(status_list)
-        self.statusCombo.set_active(0)
+        self.statusCombo.set_active(4) # Set status to 'online'
         self.statusCombo.pack_start(iconCell, False)
         self.statusCombo.pack_start(txtCell, False)
         self.statusCombo.add_attribute(iconCell, 'pixbuf',0)
