@@ -75,6 +75,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnNickname.set_relief(gtk.RELIEF_NONE)
         self.btnNickname.add(self.nicklabel)
         self.btnNickname.set_alignment(0,0)
+        self.btnNickname.connect("clicked",self.__on_btnNicknameClicked)
         
         self.psm = gtk.Entry()
         
@@ -188,6 +189,29 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.psmlabel.set_markup('<i>'+view.psm.toString()+'</i>')
         print 'nickname: '+view.nickname.toString()
         print 'psm: '+view.psm.toString()
+        
+    def __on_btnNicknameClicked(self, source):
+        self.__switchToNickInput()
+        
+    def __switchToNickInput(self):
+        """ Switches the nick button into a text area for editing of the nick
+        name."""
+        #label = self.btnNickname.get_child()
+        self.btnNickname.get_child().destroy()
+        entry = gtk.Entry()
+        self.btnNickname.add(entry)
+        entry.show()
+        entry.connect("activate", self.__switchFromNickInput)
+        
+    def __switchFromNickInput(self, source):
+        """ When in the editing state of nickname, change back to the uneditable
+        label state.
+        """
+        self._amsn_core._status_manager.onNickUpdated(source.get_text());
+        self.btnNickname.get_child().destroy()
+        entry = self.nicklabel
+        self.btnNickname.add(entry)
+        entry.show()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
@@ -242,7 +266,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
 
         contactview = model.get_value(row, 1)
         contactview.on_click(contactview.uid)
-        
+              
     def __search_by_id(self, id):
         parent = self._model.get_iter_first()
         
