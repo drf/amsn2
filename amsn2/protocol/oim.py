@@ -18,13 +18,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import pymsn
-import pymsn.event
+import papyon
+import papyon.event
 
-class OIMEvents(pymsn.event.OfflineMessagesEventInterface):
+class OIMEvents(papyon.event.OfflineMessagesEventInterface):
     def __init__(self, client, oim_manager):
         self._oim_manager = oim_manager
-        pymsn.event.OfflineMessagesEventInterface.__init__(self, client)
+        papyon.event.OfflineMessagesEventInterface.__init__(self, client)
         
     def on_oim_state_changed(self, state):
         pass

@@ -18,13 +18,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import pymsn
-import pymsn.event
+import papyon
+import papyon.event
 
-class AddressBookEvents(pymsn.event.AddressBookEventInterface):
+class AddressBookEvents(papyon.event.AddressBookEventInterface):
     def __init__(self, client, amsn_core):
         self._amsn_core = amsn_core
-        pymsn.event.AddressBookEventInterface.__init__(self, client)
+        papyon.event.AddressBookEventInterface.__init__(self, client)
         
     def on_addressbook_messenger_contact_added(self, contact):
         pass

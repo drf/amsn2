@@ -10,7 +10,7 @@ from image import *
 
 from amsn2.core.views import StringView
 from amsn2.gui import base
-import pymsn
+import papyon
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
