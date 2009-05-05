@@ -5,7 +5,6 @@ class aMSNStatusManager():
         self._core = core
         self._statusview = None
         self._pymsn_profile = None
-        self._amsn_profile = core.profile
 
     def set_profile(self, pymsn_profile):
         self._pymsn_profile = pymsn_profile
