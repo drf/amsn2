@@ -19,16 +19,16 @@ class StatusView(object):
 
         # callbacks
         def update_nick_cb(nickv):
-            core.status_manager.onNickUpdated(nickv)
+            core._status_manager.onNickUpdated(nickv)
         self.update_nick = update_nick_cb
         def update_presence_cb(presencev):
-            core.status_manager.onpresenceUpdated(presencev)
+            core._status_manager.onPresenceUpdated(presencev)
         self.update_presence = update_presence_cb
         def update_pm_cb(pmv):
-            core.status_manager.onPMUpdated(pmv)
+            core._status_manager.onPMUpdated(pmv)
         self.update_pm = update_pm_cb
         def update_dp_cb(dpv):
-            core.status_manager.onDPUpdated(dpv)
+            core._status_manager.onDPUpdated(dpv)
         self.update_dp = update_dp_cb
         # TODO: get more info, how to manage webcams and mail
         self.webcam = None
