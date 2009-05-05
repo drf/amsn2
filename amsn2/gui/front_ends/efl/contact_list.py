@@ -4,7 +4,7 @@ import evas
 import edje
 import ecore
 import ecore.evas
-import etk
+import elementary
 
 from image import *
 
@@ -12,14 +12,17 @@ from amsn2.core.views import StringView
 from amsn2.gui import base
 import papyon
 
-class aMSNContactListWindow(base.aMSNContactListWindow):
+class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
         self._core = amsn_core
         self._evas = parent._evas
         self._parent = parent
         self._skin = amsn_core._skin_manager.skin
+        elementary.Box.__init__(self, parent)
         self._clwidget = aMSNContactListWidget(amsn_core, self)
-        parent.setChild(self._clwidget)
+        self._parent.resize_object_add(self)
+        self.size_hint_weight_set(1.0, 1.0)
+        self.pack_start(self._clwidget)
         self._clwidget.show()
 
     def show(self):
@@ -38,15 +41,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         pass #TODO
 
 
-class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
+class aMSNContactListWidget(elementary.Scroller, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
         self._core = amsn_core
         self._evas = parent._evas
         self._skin = parent._skin
-
-        self._etk_evas_object = etk.EvasObject()
-        etk.ScrolledView.__init__(self)
+        elementary.Scroller.__init__(self, parent)
 
         edje.frametime_set(1.0 / 30)
         try:
@@ -58,13 +59,12 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
 
         self.group_holder = GroupHolder(self._evas, self)
 
-        self._etk_evas_object.evas_object = self._edje
-        self.add_with_viewport(self._etk_evas_object)
 
         self._edje.part_swallow("groups", self.group_holder);
-
+        #elementary.Scroller.resize_object_add(self._edje)
+        self._edje.size_hint_weight_set(1.0, 1.0)
+        self.content_set(self._edje)
         self._edje.show()
-        self._etk_evas_object.show()
 
 
     def contactUpdated(self, contact):
@@ -83,7 +83,7 @@ class aMSNContactListWidget(etk.ScrolledView, base.aMSNContactListWidget):
 
 
     def size_request_set(self, w,h):
-        self._etk_evas_object.size_request_set(w,h)
+       self.size_hint_request_set(w,h)
 
 
 class ContactHolder(evas.SmartObject):

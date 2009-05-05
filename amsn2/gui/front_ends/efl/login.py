@@ -54,13 +54,14 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
 
     def show(self):
+        self._parent.resize_object_add(self._edje)
         self._edje.show()
 
     def hide(self):
+        self._parent.resize_object_del(self._edje)
         self._edje.hide()
         #FIXME: those are not hidden by self._edje.hide()
         self.password.hide()
-        self.status.hide()
         self.username.hide()
         try:
             getattr(self, "signin_b")
