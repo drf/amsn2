@@ -38,7 +38,7 @@ class aMSNContactListWindow(object):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the contactView of the ourself (contains DP, nick, psm,
+        @view: the StatusView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
