@@ -190,6 +190,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         @view: the StatusView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         # TODO: image, ...
+        # FIXME: status at login, now seems 'offline' even if we are online
         self.nicklabel.set_markup(view.nickname.toString())
         message = view.psm.toString()+' '+view.current_media.toString()
         self.psmlabel.set_markup('<i>'+message+'</i>')
@@ -222,9 +223,10 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         """ When in the editing state of nickname, change back to the uneditable
         label state.
         """
-        self._amsn_core._status_manager.onNickUpdated(source.get_text());
+        self._amsn_core._status_manager.onNickUpdated(source.get_text())
         self.btnNickname.get_child().destroy()
         entry = self.nicklabel
+        entry.set_markup(source.get_text())
         self.btnNickname.add(entry)
         entry.show()
 
