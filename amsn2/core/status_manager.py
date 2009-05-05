@@ -5,6 +5,7 @@ class aMSNStatusManager():
         self._core = core
         self._statusview = None
         self._pymsn_profile = None
+        self._amsn_profile = core.profile
 
     def set_profile(self, pymsn_profile):
         self._pymsn_profile = pymsn_profile
@@ -35,12 +36,9 @@ class aMSNStatusManager():
         # TODO: update the contactlist gui from the core
         pass
 
-    # TODO: connect to pymsn signals
+    # TODO: connect to pymsn event, maybe build a mailbox_manager
     """ Actions from outside """
     def onNewMail(self, info):
-        pass
-
-    def onOIM(self, oims):
         pass
 
 
