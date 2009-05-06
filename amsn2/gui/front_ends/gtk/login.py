@@ -28,7 +28,7 @@ import gobject
 from image import *
 from amsn2.core.views import ImageView
 
-class aMSNLoginWindow(gtk.VBox):
+class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
     def __init__(self, amsn_core, parent):
 
@@ -191,9 +191,9 @@ class aMSNLoginWindow(gtk.VBox):
         self.current_profile = profile
         if profile is not None:
             self._username = self.current_profile.username
+            self.user.get_children()[0].set_text(self._username)
             self._password = self.current_profile.password
-            
-            
+            self.password.set_text(self._password)
 
     def signin(self):
         self.current_profile.username = self.user.get_active_text()

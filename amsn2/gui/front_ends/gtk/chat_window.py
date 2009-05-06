@@ -30,7 +30,7 @@ from htmltextview import *
 from amsn2.gui import base
 from amsn2.core.views import StringView
 import gtk_extras
-import pymsn
+import papyon
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -247,14 +247,14 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         
         color = self.button_color.get_color()
         hex8 = "%.2x%.2x%.2x" % ((color.red/0x101), (color.green/0x101), (color.blue/0x101))
-        style = pymsn.TextFormat.NO_EFFECT
-        if self.button_bold.get_active(): style |= pymsn.TextFormat.BOLD
-        if self.button_italic.get_active():  style |= pymsn.TextFormat.ITALIC
-        if self.button_underline.get_active(): style |= pymsn.TextFormat.UNDERLINE
-        if self.button_strikethrough.get_active(): style |= pymsn.TextFormat.STRIKETHROUGH
+        style = papyon.TextFormat.NO_EFFECT
+        if self.button_bold.get_active(): style |= papyon.TextFormat.BOLD
+        if self.button_italic.get_active():  style |= papyon.TextFormat.ITALIC
+        if self.button_underline.get_active(): style |= papyon.TextFormat.UNDERLINE
+        if self.button_strikethrough.get_active(): style |= papyon.TextFormat.STRIKETHROUGH
         font_name = self.button_font.get_font_name()
         font_family = pango.FontDescription(font_name).get_family()
-        format = pymsn.TextFormat(font=font_family, color=hex8, style=style)
+        format = papyon.TextFormat(font=font_family, color=hex8, style=style)
         strv = StringView()
         strv.appendText(msg)
         self._amsn_conversation.sendMessage(strv, format)
@@ -308,13 +308,13 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
                 fmsg += "font-family: %s;" % formatting.font
             if formatting.color:
                 fmsg += "color: %s;" % ("#"+formatting.color)
-            if formatting.style & pymsn.TextFormat.BOLD == pymsn.TextFormat.BOLD:
+            if formatting.style & papyon.TextFormat.BOLD == papyon.TextFormat.BOLD:
                 fmsg += "font-weight: bold;"
-            if formatting.style & pymsn.TextFormat.ITALIC == pymsn.TextFormat.ITALIC:
+            if formatting.style & papyon.TextFormat.ITALIC == papyon.TextFormat.ITALIC:
                 fmsg += "font-style: italic;"
-            if formatting.style & pymsn.TextFormat.UNDERLINE == pymsn.TextFormat.UNDERLINE:
+            if formatting.style & papyon.TextFormat.UNDERLINE == papyon.TextFormat.UNDERLINE:
                 fmsg += "text-decoration: underline;"
-            if formatting.style & pymsn.TextFormat.STRIKETHROUGH == pymsn.TextFormat.STRIKETHROUGH:
+            if formatting.style & papyon.TextFormat.STRIKETHROUGH == papyon.TextFormat.STRIKETHROUGH:
                 fmsg += "text-decoration: line-through;"
             if formatting.right_alignment:
                 fmsg += "text-align: right;"    

@@ -21,7 +21,7 @@
 import profile
 from amsn2 import gui
 from amsn2 import protocol
-import pymsn
+import papyon
 from views import *
 from contactlist_manager import *
 from conversation_manager import *
@@ -53,15 +53,15 @@ class aMSNCore(object):
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
 
-        self.p2s = {pymsn.Presence.ONLINE:"online",
-                    pymsn.Presence.BUSY:"busy",
-                    pymsn.Presence.IDLE:"idle",
-                    pymsn.Presence.AWAY:"away",
-                    pymsn.Presence.BE_RIGHT_BACK:"brb",
-                    pymsn.Presence.ON_THE_PHONE:"phone",
-                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
-                    pymsn.Presence.INVISIBLE:"hidden",
-                    pymsn.Presence.OFFLINE:"offline"}
+        self.p2s = {papyon.Presence.ONLINE:"online",
+                    papyon.Presence.BUSY:"busy",
+                    papyon.Presence.IDLE:"idle",
+                    papyon.Presence.AWAY:"away",
+                    papyon.Presence.BE_RIGHT_BACK:"brb",
+                    papyon.Presence.ON_THE_PHONE:"phone",
+                    papyon.Presence.OUT_TO_LUNCH:"lunch",
+                    papyon.Presence.INVISIBLE:"hidden",
+                    papyon.Presence.OFFLINE:"offline"}
 
         if self._options.debug:
             import logging
@@ -125,7 +125,7 @@ class aMSNCore(object):
         return self._profile_manager.addProfile(account)
 
     def signinToAccount(self, login_window, profile):
-        print "Signing in to account %s" % (profile.email)
+        print "Signing in to account '%s'" % (profile.email)
         profile.login = login_window
         profile.client = protocol.Client(self, profile)
         self._profile = profile
@@ -135,17 +135,17 @@ class aMSNCore(object):
 
         status_str = \
         {
-            pymsn.event.ClientState.CONNECTING : 'Connecting to server...',
-            pymsn.event.ClientState.CONNECTED : 'Connected',
-            pymsn.event.ClientState.AUTHENTICATING : 'Authenticating...',
-            pymsn.event.ClientState.AUTHENTICATED : 'Password accepted',
-            pymsn.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
-            pymsn.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully.\nHappy Chatting'
+            papyon.event.ClientState.CONNECTING : 'Connecting to server...',
+            papyon.event.ClientState.CONNECTED : 'Connected',
+            papyon.event.ClientState.AUTHENTICATING : 'Authenticating...',
+            papyon.event.ClientState.AUTHENTICATED : 'Password accepted',
+            papyon.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
+            papyon.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully.\nHappy Chatting'
         }
 
         if state in status_str:
             profile.login.onConnecting((state + 1)/ 7., status_str[state])
-        elif state == pymsn.event.ClientState.OPEN:
+        elif state == papyon.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
             clwin.profile = profile
             profile.clwin = clwin

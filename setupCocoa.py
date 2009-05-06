@@ -5,7 +5,7 @@ import py2app
 from dircache import listdir
 
 # A list of files to include in the bundle.
-files = ['amsn2', 'pymsn']
+files = ['amsn2', 'papyon']
 
 # Nibs need to be appened individually because they they need to be in the root of the bundle.
 for f in listdir('amsn2/gui/front_ends/cocoa/nibs/files/'):

@@ -62,7 +62,7 @@ class Image(evas.SmartObject):
         self._loadFromFilename(tf, pos, view, i)
 
 
-    def _loadFromSkin(self, resource_name, pos=0, view=None, i=0):
+    def _loadFromTheme(self, resource_name, pos=0, view=None, i=0):
         res = self._skin.getKey(resource_name)
         if res is not None:
             (type, value) = res

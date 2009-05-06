@@ -25,8 +25,8 @@ class TextBox(object):
 
 class PasswordBox(TextBox):
     def __init__(self, win, y, x, txt):
-        super(PasswordBox, self).__init__(win, y, x, txt)
         self._password = ''
+        super(PasswordBox, self).__init__(win, y, x, txt)
 
     def edit(self, cb=None):
         return self._txtbox.edit(self._validateInput)
