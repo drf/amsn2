@@ -23,12 +23,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._stdscr.clear()
         self._stdscr.refresh()
 
-    def configure(self, option, value):
-        pass
-
-    def cget(self, option, value):
-        pass
-
 class aMSNContactListWidget(base.aMSNContactListWidget):
 
     def __init__(self, amsn_core, parent):
@@ -101,23 +95,46 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         # Acquire the lock to do modifications
         with self._mod_lock:
             self._win.clear()
+            (y, x) = self._stdscr.getmaxyx()
             self._win.move(0,0)
-            gso = self._groups_order
+            available = y
+            gso = []
+            for g in self._groups_order:
+                available -= 1
+                available -= len(self._groups[g].contact_ids)
+                gso.append(g)
+                if available <= 0:
+                    break
             gso.reverse()
+            available = y
+            i = 0
             for g in gso:
                 if self._groups[g] is not None:
+                    available -= 1
                     cids = self._groups[g].contact_ids
+                    cids = cids[:available]
                     cids.reverse()
                     for c in cids:
                         if self._contacts.has_key(c) and self._contacts[c]['cView'] is not None:
-                            self._win.insstr(" " + self._contacts[c]['cView'].name.toString())
+                            if i == y - 3:
+                                self._win.bkgdset(curses.color_pair(1))
+                            self._win.insstr(self._contacts[c]['cView'].name.toString())
+                            self._win.bkgdset(curses.color_pair(0))
+                            self._win.insch(' ')
                             self._win.insch(curses.ACS_HLINE)
                             self._win.insch(curses.ACS_HLINE)
                             self._win.insch(curses.ACS_LLCORNER)
                             self._win.insertln()
+                            self._win.bkgdset(curses.color_pair(0))
+                            i += 1
+                    if i == y - 3:
+                        self._win.bkgdset(curses.color_pair(1))
                     self._win.insstr(self._groups[g].name.toString())
+                    self._win.bkgdset(curses.color_pair(0))
+                    self._win.insch(' ')
                     self._win.insch(curses.ACS_LLCORNER)
                     self._win.insertln()
+                    i += 1
             self._win.refresh()
             self._modified = False
 
