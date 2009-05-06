@@ -96,7 +96,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         with self._mod_lock:
             self._win.clear()
             (y, x) = self._stdscr.getmaxyx()
-            self._win.move(0,0)
+            self._win.move(0,1)
             available = y
             gso = []
             for g in self._groups_order:
@@ -135,6 +135,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                     self._win.insch(curses.ACS_LLCORNER)
                     self._win.insertln()
                     i += 1
+            self._win.border()
             self._win.refresh()
             self._modified = False
 
