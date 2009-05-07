@@ -1,5 +1,6 @@
 
 from amsn2.gui import base
+import command
 
 import curses
 class aMSNMainWindow(base.aMSNMainWindow):
@@ -8,6 +9,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def show(self):
         self._stdscr = curses.initscr()
+        self._command_line = command.CommandLine(self._stdscr, None)
         self.__init_colors()
         curses.noecho()
         curses.cbreak()
@@ -30,6 +32,9 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def setMenu(self,menu):
         pass
+
+    def setFocusedWindow(self, window):
+        self._command_line.setCharCb(window._on_char_cb)
 
     def __init_colors(self):
         curses.start_color()

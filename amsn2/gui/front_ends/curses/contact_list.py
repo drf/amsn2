@@ -9,6 +9,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._stdscr = parent._stdscr
+        parent.setFocusedWindow(self)
         (y,x) = self._stdscr.getmaxyx()
         # TODO: Use a pad instead
         self._win = curses.newwin(y, int(0.25*x), 0, 0)
@@ -22,6 +23,11 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
     def hide(self):
         self._stdscr.clear()
         self._stdscr.refresh()
+
+    def _on_char_cb(self, ch):
+        import sys
+        print >> sys.stderr, "Length is %d" % len(ch)
+        print >> sys.stderr, "Received %s in Contact List" % ch.encode("UTF-8")
 
 class aMSNContactListWidget(base.aMSNContactListWidget):
 
