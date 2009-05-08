@@ -225,6 +225,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         """
         self._amsn_core._status_manager.onNickUpdated(source.get_text())
         self.btnNickname.get_child().destroy()
+        print source.get_text()
         entry = self.nicklabel
         entry.set_markup(source.get_text())
         self.btnNickname.add(entry)
