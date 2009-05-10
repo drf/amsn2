@@ -1,13 +1,13 @@
 
 
-import pymsn
-import pymsn.event
+import papyon
+import papyon.event
 
-class InviteEvents(pymsn.event.InviteEventInterface):
+class InviteEvents(papyon.event.InviteEventInterface):
 
     def __init__(self, client, amsn_core):
         self._amsn_core = amsn_core
-        pymsn.event.InviteEventInterface.__init__(self, client)
+        papyon.event.InviteEventInterface.__init__(self, client)
         
     def on_invite_conversation(self, conversation):
         self._amsn_core._conversation_manager.onInviteConversation(conversation)

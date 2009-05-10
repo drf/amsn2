@@ -1,23 +1,23 @@
 from amsn2.gui import base
-import pymsn
+import papyon
 
 class Contact(object):
     def __init__(self, name, presence):
         self.name = name
         self.presence = presence
-        self.p2s = {pymsn.Presence.ONLINE:"online",
-                    pymsn.Presence.BUSY:"busy",
-                    pymsn.Presence.IDLE:"idle",
-                    pymsn.Presence.AWAY:"away",
-                    pymsn.Presence.BE_RIGHT_BACK:"brb",
-                    pymsn.Presence.ON_THE_PHONE:"phone",
-                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
-                    pymsn.Presence.INVISIBLE:"hidden",
-                    pymsn.Presence.OFFLINE:"offline"}
+        self.p2s = {papyon.Presence.ONLINE:"online",
+                    papyon.Presence.BUSY:"busy",
+                    papyon.Presence.IDLE:"idle",
+                    papyon.Presence.AWAY:"away",
+                    papyon.Presence.BE_RIGHT_BACK:"brb",
+                    papyon.Presence.ON_THE_PHONE:"phone",
+                    papyon.Presence.OUT_TO_LUNCH:"lunch",
+                    papyon.Presence.INVISIBLE:"hidden",
+                    papyon.Presence.OFFLINE:"offline"}
         
 
     def is_online(self):
-        return self.presence != pymsn.Presence.OFFLINE
+        return self.presence != papyon.Presence.OFFLINE
 
     def status(self):
         return self.p2s[self.presence]

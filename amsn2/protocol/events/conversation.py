@@ -19,15 +19,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from amsn2.core.views import *
-import pymsn
-import pymsn.event
+import papyon
+import papyon.event
 
 
-class ConversationEvents(pymsn.event.ConversationEventInterface):
+class ConversationEvents(papyon.event.ConversationEventInterface):
     def __init__(self, amsn_conversation):
         self._amsn_conversation = amsn_conversation
         self._conversation = amsn_conversation._conv
-        pymsn.event.ConversationEventInterface.__init__(self, self._conversation)
+        papyon.event.ConversationEventInterface.__init__(self, self._conversation)
 
     def on_conversation_state_changed(self, state):
         self._amsn_conversation.onStateChanged(state)
