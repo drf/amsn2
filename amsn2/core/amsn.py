@@ -22,7 +22,7 @@ from amsn2 import gui
 from amsn2 import protocol
 import papyon
 from views import *
-from profile import *
+from account_manager import *
 from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
@@ -49,8 +49,8 @@ class aMSNCore(object):
         self._main = None
         self.loadUI(self._options.front_end)
 
-        self._profile_manager = aMSNProfileManager(options)
-        self._profile = None
+        self._account_manager = aMSNAccountManager(options)
+        self._account = None
         self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
@@ -86,7 +86,7 @@ class aMSNCore(object):
         pass
 
     def mainWindowShown(self):
-        # TODO : load the profiles from disk and all settings
+        # TODO : load the accounts from disk and all settings
         # then show the login window if autoconnect is disabled
 
         self._main.setTitle("aMSN 2 - Loading")
@@ -102,7 +102,7 @@ class aMSNCore(object):
 
         login = self._gui.gui.aMSNLoginWindow(self, self._main)
 
-        login.setProfiles(self._profile_manager.getAvailableProfileViews())
+        login.setAccounts(self._account_manager.getAvailableAccountViews())
 
         splash.hide()
         self._main.setTitle("aMSN 2 - Login")
@@ -114,14 +114,14 @@ class aMSNCore(object):
     def getMainWindow(self):
         return self._main
 
-    def signinToAccount(self, login_window, profileview):
-        print "Signing in to account %s" % (profileview.email)
-        self.profile = self._profile_manager.signinToAccount(profileview)
-        self.profile.login = login_window
-        self.profile.client = protocol.Client(self, profile)
-        self.profile.client.connect()
+    def signinToAccount(self, login_window, accountview):
+        print "Signing in to account %s" % (accountview.email)
+        self._account = self._profile_manager.signinToAccount(accountview)
+        self._account.login = login_window
+        self._account.client = protocol.Client(self, self._account)
+        self._account.client.connect()
 
-    def connectionStateChanged(self, profile, state):
+    def connectionStateChanged(self, account, state):
 
         status_str = \
         {
@@ -136,15 +136,17 @@ class aMSNCore(object):
         if state in status_str:
             profile.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == papyon.event.ClientState.OPEN:
+            account.login.onConnecting((state + 1)/ 7., status_str[state])
+        elif state == pymsn.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
-            clwin.profile = profile
-            profile.clwin = clwin
-            profile.login.hide()
+            clwin.account = account
+            account.clwin = clwin
+            account.login.hide()
             self._main.setTitle("aMSN 2")
-            profile.clwin.show()
-            profile.login = None
+            account.clwin.show()
+            account.login = None
 
-            self._contactlist_manager.onCLDownloaded(profile.client.address_book)
+            self._contactlist_manager.onCLDownloaded(account.client.address_book)
 
     def idlerAdd(self, func):
         self._loop.idlerAdd(func)

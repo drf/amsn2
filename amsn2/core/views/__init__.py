@@ -6,3 +6,4 @@ from tooltipview import *
 from messageview import *
 from imageview import *
 from profileview import *
+from accountview import *
