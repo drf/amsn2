@@ -43,11 +43,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def __init__(self, amsn_core, parent):
         '''Constructor'''
         gtk.VBox.__init__(self)
+        base.aMSNContactListWindow.__init__(self, amsn_core, parent)
         
         self._amsn_core = amsn_core
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
         self._theme_manager = self._amsn_core._theme_manager
+        self._myview = amsn_core._status_manager._statusview
         
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         
@@ -58,7 +60,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
         self.show_all()
         self.__setup_window()
-        self._onStatusChanged = lambda *args: args
         
     def __create_controls(self):
         ###self.psmlabel.modify_font(common.GUI_FONT)
@@ -191,11 +192,14 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         currentMedia,...)"""
         # TODO: image, ...
         # FIXME: status at login, now seems 'offline' even if we are online
-        self.nicklabel.set_markup(view.nickname.toString())
-        message = view.psm.toString()+' '+view.current_media.toString()
+        self._myview = view
+        nk = view.nick
+        self.nicklabel.set_markup(nk.toString())
+        psm = view.psm
+        cm = view.current_media
+        message = psm.toString()+' '+cm.toString()
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
-        self._onStatusChanged = view.update_presence
 
     def onStatusChanged(self, combobox):
         status = combobox.get_active()
@@ -204,7 +208,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
         # also fix pymsn, gives an error on setting 'offline'
-        self._onStatusChanged(key)
+        self._myview.presence = key
         
     def __on_btnNicknameClicked(self, source):
         self.__switchToNickInput()
@@ -223,10 +227,11 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         """ When in the editing state of nickname, change back to the uneditable
         label state.
         """
-        self._amsn_core._status_manager.onNickUpdated(source.get_text())
+        strv = StringView()
+        strv.appendText(source.get_text())
+        self._myview.nick = strv
         self.btnNickname.get_child().destroy()
         entry = self.nicklabel
-        entry.set_markup(source.get_text())
         self.btnNickname.add(entry)
         entry.show()
 

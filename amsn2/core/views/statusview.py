@@ -1,37 +1,74 @@
 from stringview import *
 from imageview import *
 
+def rw_property(f):
+    return property(**f())
+
 class StatusView(object):
     def __init__(self, core, pymsn_profile):
         # TODO: parse fields for smileys, format, etc
-        self.nickname = StringView()
-        self.nickname.appendText(pymsn_profile.display_name)
-        self.psm = StringView()
-        self.psm.appendText(pymsn_profile.personal_message)
-        self.current_media  = StringView()
+        self._nickname = StringView()
+        self._nickname.appendText(pymsn_profile.display_name)
+        self._psm = StringView()
+        self._psm.appendText(pymsn_profile.personal_message)
+        self._current_media  = StringView()
         if pymsn_profile.current_media is not None:
-            self.current_media.appendText(pymsn_profile.current_media[0])
-            self.current_media.appendText(pymsn_profile.current_media[1])
+            self._current_media.appendText(pymsn_profile.current_media[0])
+            self._current_media.appendText(pymsn_profile.current_media[1])
         # TODO: How do I get the profile image?
-        self.image = ImageView()
+        self._image = ImageView()
         #self.image.load(pymsn_profile.msn_object)
-        self.presence = core.p2s[pymsn_profile.presence]
+        self._presence = core.p2s[pymsn_profile.presence]
+        self._status_manager = core._status_manager
 
-        # callbacks
-        def update_nick_cb(nickv):
-            core._status_manager.onNickUpdated(nickv)
-        self.update_nick = update_nick_cb
-        def update_presence_cb(presencev):
-            core._status_manager.onPresenceUpdated(presencev)
-        self.update_presence = update_presence_cb
-        def update_pm_cb(pmv):
-            core._status_manager.onPMUpdated(pmv)
-        self.update_pm = update_pm_cb
-        def update_dp_cb(dpv):
-            core._status_manager.onDPUpdated(dpv)
-        self.update_dp = update_dp_cb
         # TODO: get more info, how to manage webcams and mail
-        self.webcam = None
-        self.mail_unread = None
-        
+        self._webcam = None
+        self._mail_unread = None
+
+    @rw_property
+    def nick():
+        def fget(self):
+            return self._nickname
+        def fset(self, nick):
+            self._nickname = nick
+            self._status_manager._onNickUpdated(nick)
+        return locals()
+
+    @rw_property
+    def psm():
+        def fget(self):
+            return self._psm
+        def fset(self, psm):
+            self._psm = psm
+            self._status_manager._onPMUpdated(psm)
+        return locals()
+
+    @rw_property
+    def dp():
+        def fget(self):
+            return self._image
+        def fset(self, imagev):
+            self._image = imagev
+            self._status_manager._onDPUpdated(imagev)
+        return locals()
+
+    @rw_property
+    def current_media():
+        def fget(self):
+            return self._current_media
+        def fset(self, artist, song):
+            # TODO: separators
+            self._current_media.appendText(artist)
+            self._current_media.appendText(song)
+            self._status_manager._onCMUpdated((artist, song))
+        return locals()
+
+    @rw_property
+    def presence():
+        def fget(self):
+            return self._presence
+        def fset(self, p):
+            self._presence = p
+            self._status_manager._onPresenceUpdated(p)
+        return locals()
 

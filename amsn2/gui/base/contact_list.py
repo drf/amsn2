@@ -13,7 +13,8 @@ class aMSNContactListWindow(object):
     """
 
     def __init__(self, amsn_core, parent):
-        raise NotImplementedError
+        sm = amsn_core._status_manager
+        sm.register(sm.STATUS_UPDATED, self.myInfoUpdated)
 
     def show(self):
         """ Show the contact list window """

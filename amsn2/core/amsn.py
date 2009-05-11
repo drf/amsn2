@@ -156,8 +156,7 @@ class aMSNCore(object):
             profile.clwin.show()
             profile.login = None
             self._status_manager.set_profile(profile.client.profile)
-            # need something better to update info, can't always access clwin
-            clwin.myInfoUpdated(self._status_manager._statusview)
+            self._status_manager._statusview.presence = 'online'
 
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
 
