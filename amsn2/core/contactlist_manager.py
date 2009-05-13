@@ -1,7 +1,7 @@
 from views import *
 import os
 import tempfile
-import pymsn
+import papyon
 
 
 class aMSNContactListManager:
@@ -18,7 +18,7 @@ class aMSNContactListManager:
 
         self._contacts = {}
         self._groups = {}
-        self._pymsn_addressbook = None
+        self._papyon_addressbook = None
 
     #TODO: sorting contacts & groups
 
@@ -44,10 +44,10 @@ class aMSNContactListManager:
 
 
 
-    def onContactPresenceChanged(self, pymsn_contact):
+    def onContactPresenceChanged(self, papyon_contact):
         #1st/ update the aMSNContact object
-        c = self.getContact(pymsn_contact.id, pymsn_contact)
-        c.fill(self._core, pymsn_contact)
+        c = self.getContact(papyon_contact.id, papyon_contact)
+        c.fill(self._core, papyon_contact)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
         self.emit(self.CONTACTVIEW_UPDATED, cv)
@@ -55,14 +55,14 @@ class aMSNContactListManager:
         #TODO: update the group view
 
         #Request the DP...
-        if (pymsn_contact.presence is not pymsn.Presence.OFFLINE and
-            pymsn_contact.msn_object):
-                self._core._profile.client._msn_object_store.request(pymsn_contact.msn_object,
+        if (papyon_contact.presence is not papyon.Presence.OFFLINE and
+            papyon_contact.msn_object):
+                self._core._profile.client._msn_object_store.request(papyon_contact.msn_object,
                                                                      (self.onDPdownloaded,
-                                                                      pymsn_contact.id))
+                                                                      papyon_contact.id))
 
     def onCLDownloaded(self, address_book):
-        self._pymsn_addressbook = address_book
+        self._papyon_addressbook = address_book
         grpviews = []
         cviews = []
         clv = ContactListView()
@@ -80,7 +80,7 @@ class aMSNContactListManager:
             grpviews.append(gv)
             clv.group_ids.append(group.id)
 
-        contacts = address_book.contacts.search_by_memberships(pymsn.Membership.FORWARD)
+        contacts = address_book.contacts.search_by_memberships(papyon.Membership.FORWARD)
         no_group_ids= []
         for contact in contacts:
             if len(contact.groups) == 0:
@@ -116,13 +116,13 @@ class aMSNContactListManager:
         self.emit(self.CONTACTVIEW_UPDATED, cv)
 
 
-    def getContact(self, cid, pymsn_contact=None):
+    def getContact(self, cid, papyon_contact=None):
         #TODO: should raise UnknownContact or sthg like that
         try:
             return self._contacts[cid]
         except KeyError:
-            if pymsn_contact is not None:
-                c = aMSNContact(self._core, pymsn_contact)
+            if papyon_contact is not None:
+                c = aMSNContact(self._core, papyon_contact)
                 self._contacts[cid] = c
                 self.emit(self.AMSNCONTACT_UPDATED, c)
                 return c
@@ -135,29 +135,29 @@ class aMSNContactListManager:
     everytime
 """
 class aMSNContact():
-    def __init__(self, core, pymsn_contact):
-        self.uid = pymsn_contact.id
-        self.fill(core, pymsn_contact)
+    def __init__(self, core, papyon_contact):
+        self.uid = papyon_contact.id
+        self.fill(core, papyon_contact)
 
-    def fill(self, core, pymsn_contact):
+    def fill(self, core, papyon_contact):
         self.icon = ImageView()
-        self.icon.load("Theme","buddy_" + core.p2s[pymsn_contact.presence])
+        self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
         self.dp = ImageView()
         #TODO: for the moment, use default dp
         self.dp.load("Theme", "dp_nopic")
         self.emblem = ImageView()
-        self.emblem.load("Theme", "emblem_" + core.p2s[pymsn_contact.presence])
+        self.emblem.load("Theme", "emblem_" + core.p2s[papyon_contact.presence])
         #TODO: PARSE ONLY ONCE
         self.nickname = StringView()
-        self.nickname.appendText(pymsn_contact.display_name)
+        self.nickname.appendText(papyon_contact.display_name)
         self.personal_message = StringView()
-        self.personal_message.appendText(pymsn_contact.personal_message)
+        self.personal_message.appendText(papyon_contact.personal_message)
         self.current_media = StringView()
-        self.current_media.appendText(pymsn_contact.current_media)
+        self.current_media.appendText(papyon_contact.current_media)
         self.status = StringView()
-        self.status.appendText(core.p2s[pymsn_contact.presence])
-        #for the moment, we store the pymsn_contact object, but we shouldn't have to
-        #TODO: getPymsnContact(self, core...) or _pymsn_contact?
-        self._pymsn_contact = pymsn_contact
+        self.status.appendText(core.p2s[papyon_contact.presence])
+        #for the moment, we store the papyon_contact object, but we shouldn't have to
+        #TODO: getPymsnContact(self, core...) or _papyon_contact?
+        self._papyon_contact = papyon_contact
 
 

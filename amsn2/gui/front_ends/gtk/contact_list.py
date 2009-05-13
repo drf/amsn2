@@ -27,7 +27,7 @@ import gtk
 import pango
 import gobject
 
-#import pymsn
+#import papyon
 from image import *
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
