@@ -240,9 +240,9 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         label state.
         """
 
-        if(source != None): #Source == None if called from __handleInputNickname
+        if(source != None): 
             newNick = source.get_text()
-            self._amsn_core._status_manager.onNickUpdated(newNick)
+            self._amsn_core._personalinfo_manager._papyon_profile.display_name = newNick
         else:
             newNick = self.nicklabel.get_text() # Old nickname
 

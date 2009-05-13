@@ -53,8 +53,6 @@ class aMSNCore(object):
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
-   
-        self._status_manager = aMSNStatusManager(self)
         self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
 
