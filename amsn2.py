@@ -2,7 +2,7 @@
 import sys
 import os
 import optparse
-sys.path.insert(0, "./pymsn")
+sys.path.insert(0, "./papyon")
 import locale
 locale.setlocale(locale.LC_ALL, '')
 

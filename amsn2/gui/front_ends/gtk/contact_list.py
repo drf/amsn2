@@ -27,13 +27,13 @@ import gtk
 import pango
 import gobject
 
-#import pymsn
+#import papyon
 from image import *
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
 from amsn2.core.views import ImageView
-from amsn2.core.views import StatusView
+from amsn2.core.views import PersonalInfoView
 from amsn2.gui import base
 
 import common
@@ -43,11 +43,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def __init__(self, amsn_core, parent):
         '''Constructor'''
         gtk.VBox.__init__(self)
+        base.aMSNContactListWindow.__init__(self, amsn_core, parent)
         
         self._amsn_core = amsn_core
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
         self._theme_manager = self._amsn_core._theme_manager
+        self._myview = amsn_core._personalinfo_manager._personalinfoview
         
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         
@@ -58,7 +60,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
         self.show_all()
         self.__setup_window()
-        self._onStatusChanged = lambda *args: args
         
     def __create_controls(self):
         ###self.psmlabel.modify_font(common.GUI_FONT)
@@ -187,15 +188,18 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the StatusView of the ourself (contains DP, nick, psm,
+        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         # TODO: image, ...
         # FIXME: status at login, now seems 'offline' even if we are online
-        self.nicklabel.set_markup(view.nickname.toString())
-        message = view.psm.toString()+' '+view.current_media.toString()
+        self._myview = view
+        nk = view.nick
+        self.nicklabel.set_markup(nk.toString())
+        psm = view.psm
+        cm = view.current_media
+        message = psm.toString()+' '+cm.toString()
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
-        self._onStatusChanged = view.update_presence
 
     def onStatusChanged(self, combobox):
         status = combobox.get_active()
@@ -203,8 +207,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
             if self.status_values[key] == status:
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
-        # also fix pymsn, gives an error on setting 'offline'
-        self._onStatusChanged(key)
+        # also fix papyon, gives an error on setting 'offline'
+        self._myview.presence = key
         
     def __on_btnNicknameClicked(self, source):
         self.__switchToNickInput()
@@ -235,6 +239,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         """ When in the editing state of nickname, change back to the uneditable
         label state.
         """
+
         if(source != None): #Source == None if called from __handleInputNickname
             newNick = source.get_text()
             self._amsn_core._status_manager.onNickUpdated(newNick)

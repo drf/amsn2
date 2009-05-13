@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from amsn2.protocol import conversation
+from amsn2.protocol.events import conversation
 from amsn2.core.contactlist_manager import *
 from amsn2.core.views import *
 import papyon
