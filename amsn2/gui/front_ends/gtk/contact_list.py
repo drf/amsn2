@@ -33,7 +33,7 @@ from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
 from amsn2.core.views import ImageView
-from amsn2.core.views import StatusView
+from amsn2.core.views import PersonalInfoView
 from amsn2.gui import base
 
 import common
@@ -49,7 +49,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
         self._theme_manager = self._amsn_core._theme_manager
-        self._myview = amsn_core._status_manager._statusview
+        self._myview = amsn_core._personalinfo_manager._personalinfoview
         
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         
@@ -188,7 +188,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the StatusView of the ourself (contains DP, nick, psm,
+        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         # TODO: image, ...
         # FIXME: status at login, now seems 'offline' even if we are online
@@ -207,7 +207,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
             if self.status_values[key] == status:
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
-        # also fix pymsn, gives an error on setting 'offline'
+        # also fix papyon, gives an error on setting 'offline'
         self._myview.presence = key
         
     def __on_btnNicknameClicked(self, source):

@@ -27,7 +27,7 @@ from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
 from theme_manager import *
-from status_manager import *
+from personalinfo_manager import *
 
 
 class aMSNCore(object):
@@ -53,7 +53,7 @@ class aMSNCore(object):
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
-        self._status_manager = aMSNStatusManager(self)
+        self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
         self.p2s = {papyon.Presence.ONLINE:"online",
                     papyon.Presence.BUSY:"busy",
@@ -155,8 +155,8 @@ class aMSNCore(object):
             self._main.setTitle("aMSN 2")
             profile.clwin.show()
             profile.login = None
-            self._status_manager.set_profile(profile.client.profile)
-            self._status_manager._statusview.presence = 'online'
+            self._personalinfo_manager.set_profile(profile.client.profile)
+            self._personalinfo_manager._personalinfoview.presence = 'online'
 
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
 

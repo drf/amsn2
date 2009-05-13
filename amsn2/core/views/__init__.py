@@ -5,4 +5,4 @@ from stringview import *
 from tooltipview import *
 from messageview import *
 from imageview import *
-from statusview import *
+from personalinfoview import *

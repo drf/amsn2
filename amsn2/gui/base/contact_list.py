@@ -13,8 +13,8 @@ class aMSNContactListWindow(object):
     """
 
     def __init__(self, amsn_core, parent):
-        sm = amsn_core._status_manager
-        sm.register(sm.STATUS_UPDATED, self.myInfoUpdated)
+        pim = amsn_core._personalinfo_manager
+        pim.register(pim.PERSONALINFO_UPDATED, self.myInfoUpdated)
 
     def show(self):
         """ Show the contact list window """
@@ -39,7 +39,7 @@ class aMSNContactListWindow(object):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the StatusView of the ourself (contains DP, nick, psm,
+        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
