@@ -28,6 +28,7 @@ from conversation_manager import *
 from oim_manager import *
 from theme_manager import *
 from personalinfo_manager import *
+from event_manager import *
 
 
 class aMSNCore(object):
@@ -42,6 +43,7 @@ class aMSNCore(object):
            options.front_end = the front end's name to use
            options.debug = whether or not to enable debug output
         """
+        self._event_manager = aMSNEventManager(self)
         self._profile_manager = profile.aMSNProfileManager()
         self._options = options
         self._gui_name = self._options.front_end
