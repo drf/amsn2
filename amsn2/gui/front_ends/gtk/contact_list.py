@@ -90,6 +90,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnPsm.add(self.psmlabel)
         self.btnPsm.set_relief(gtk.RELIEF_NONE)
         self.btnPsm.set_alignment(0,0)
+        self.btnPsm.connect("clicked",self.__on_btnPsmClicked)
         
         # status list
         self.status_values = {}
@@ -211,49 +212,63 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self._myview.presence = key
         
     def __on_btnNicknameClicked(self, source):
-        self.__switchToNickInput()
+        self.__switchToInput(source)
         
-    def __switchToNickInput(self):
+    def __on_btnPsmClicked(self, source):
+        self.__switchToInput(source)
+        
+    def __switchToInput(self, source):
         """ Switches the nick button into a text area for editing of the nick
         name."""
         #label = self.btnNickname.get_child()
-        self.btnNickname.remove(self.btnNickname.get_child())
+        source.remove(source.get_child())
         entry = gtk.Entry()
-        self.btnNickname.add(entry)
+        source.add(entry)
         entry.show()
         entry.grab_focus()
-        self.btnNickname.set_relief(gtk.RELIEF_NORMAL) # Add cool elevated effect
-        entry.connect("activate", self.__switchFromNickInput)
-        entry.connect("key-press-event", self.__handleInputNickname)
-        self.focusOutId = entry.connect("focus-out-event", self.__handleInputNickname)
+        source.set_relief(gtk.RELIEF_NORMAL) # Add cool elevated effect
+        entry.connect("activate", self.__switchFromInput, True)
+        entry.connect("key-press-event", self.__handleInput)
+        self.focusOutId = entry.connect("focus-out-event", self.__handleInput)
         
-    def __handleInputNickname(self, source, event):
+    def __handleInput(self, source, event):
         """ Handle various inputs from the nicknameEntry-box """
         if(event.type == gtk.gdk.FOCUS_CHANGE): #user clickd outside textfield
-            self.__switchFromNickInput(None)
+            self.__switchFromInput(source, False)
         elif (event.type == gtk.gdk.KEY_PRESS): #user wrote something, esc perhaps?
             if event.keyval == gtk.keysyms.Escape:
-                self.__switchFromNickInput(None)
+                self.__switchFromInput(source, False)
 
-    def __switchFromNickInput(self, source):
+    def __switchFromInput(self, source, isNew):
         """ When in the editing state of nickname, change back to the uneditable
         label state.
         """
-
-        if(source != None): 
-            newNick = source.get_text()
-            self._amsn_core._personalinfo_manager._papyon_profile.display_name = newNick
+        if(isNew):
+            if(source == self.btnNickname.get_child()): 
+                newText = source.get_text()
+                strv = StringView()
+                strv.appendText(newText)
+                self._myview.nick = strv
+            elif (source == self.btnPsm.get_child()):
+                newText = source.get_text()
+                strv = StringView()
+                strv.appendText(newText)
+                self._myview.psm = strv
         else:
-            newNick = self.nicklabel.get_text() # Old nickname
+            if(source == self.btnNickname.get_child()): # User discards input
+                newText = self.nicklabel.get_text() # Old nickname
 
-        currWidget = self.btnNickname.get_child()
+        parentWidget = source.get_parent()
+        currWidget = parentWidget.get_child()
         currWidget.disconnect(self.focusOutId) # Else we trigger focus-out-event; segfault.
-        self.btnNickname.remove(currWidget)
-        entry = self.nicklabel
-        entry.set_markup(newNick)
-        self.btnNickname.add(entry)
+        
+        parentWidget.remove(currWidget)
+        entry = gtk.Label()
+        entry.set_markup(newText)
+        
+        parentWidget.add(entry)
         entry.show()
-        self.btnNickname.set_relief(gtk.RELIEF_NONE) # remove cool elevated effect
+        parentWidget.set_relief(gtk.RELIEF_NONE) # remove cool elevated effect
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
