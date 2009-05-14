@@ -67,6 +67,12 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.display = gtk.Image()
         self.display.set_size_request(64,64)
         
+        self.btnDisplay = gtk.Button()
+        self.btnDisplay.set_relief(gtk.RELIEF_NONE)
+        self.btnDisplay.add(self.display)
+        self.btnDisplay.set_alignment(0,0)
+        self.btnDisplay.connect("clicked", self.__onDisplayClicked)
+        
         self.nicklabel = gtk.Label()
         self.nicklabel.set_alignment(0, 0)
         self.nicklabel.set_use_markup(True)
@@ -124,7 +130,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
     def __create_box(self):
         frameDisplay = gtk.Frame()
-        frameDisplay.add(self.display)
+        frameDisplay.add(self.btnDisplay)
         self.evdisplay = gtk.EventBox()
         self.evdisplay.add(frameDisplay)
 
@@ -257,6 +263,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         else:
             if(source == self.btnNickname.get_child()): # User discards input
                 newText = self.nicklabel.get_text() # Old nickname
+            if(source == self.btnPsm.get_child()):
+                newText = self.psmlabel.get_text()
 
         parentWidget = source.get_parent()
         currWidget = parentWidget.get_child()
@@ -269,6 +277,29 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         parentWidget.add(entry)
         entry.show()
         parentWidget.set_relief(gtk.RELIEF_NONE) # remove cool elevated effect
+        
+    def __onDisplayClicked(self, source):
+        print "Display clicked!"
+        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                    buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+        
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        chooser.add_filter(filter)
+
+        response = chooser.run()
+        if(response == gtk.RESPONSE_OK):
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(chooser.get_filename(), 64, 64)
+            self.display.set_from_pixbuf(pixbuf)
+            del pixbuf
+            gc.collect()
+        elif (response == gtk.RESPONSE_CANCEL):
+            pass
+        chooser.destroy()
+
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
