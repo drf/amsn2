@@ -203,7 +203,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.current_profile.email = self.user.get_active_text()
         self.current_profile.password = self.password.get_text()
         i = self.statusCombo.get_active()
-        self.current_profile.presence = self._amsn_core.p2s.keys()[i]
+        self.current_profile.presence = self._amsn_core.p2s.values()[i]
         self._amsn_core.signinToAccount(self, self.current_profile)
         self.timer = gobject.timeout_add(40, self.__animation)
 

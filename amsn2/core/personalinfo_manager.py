@@ -7,10 +7,12 @@ class aMSNPersonalInfoManager:
         self._personalinfoview = None
         self._papyon_profile = None
 
-    def set_profile(self, papyon_profile):
-        self._papyon_profile = papyon_profile
-        self._personalinfoview = PersonalInfoView(self._core, papyon_profile)
-        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+    def set_profile(self, amsn_profile):
+        self._papyon_profile = amsn_profile.client.profile
+        self._personalinfoview = PersonalInfoView(self._core, self._papyon_profile)
+
+        # set login presence and update the gui
+        self._personalinfoview.presence = amsn_profile.presence
 
     """ Actions from ourselves """
     def _onNickUpdated(self, new_nick):
