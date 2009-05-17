@@ -1,5 +1,5 @@
 import os
-import xml.etree.ElementTree
+from xml.etree.ElementTree import Element, SubElement, ElementTree
 import xml.parsers.expat
 import __builtin__
 from views import AccountView
@@ -10,9 +10,65 @@ class aMSNAccount(object):
     This class will contain all settings relative to an account
     and will store the protocol and GUI objects
     """
-    def __init__(self, accountview, core, account_dir):
+    #TODO: use the personnal info stuff instead of the view
+    def __init__(self, core, accountview, account_dir):
         self.view = profileview
+        self.account_dir = account_dir
+        self.password_backend = "default"
+        self.dp_backend = "default"
+        self.do_save = accountview.save
+
+        self.lock()
         #TODO
+
+    def signOut(self):
+        self.save()
+        self.unlock()
+
+    def lock(self):
+        #TODO
+        pass
+
+    def unlock(self):
+        #TODO
+        pass
+
+    def load(self):
+        #TODO
+        pass
+
+    def save(self):
+        if self.view is not None and self.view.email is not None:
+            root_section = Element("aMSNAccount")
+            #email
+            emailElmt = SubElement(root_section, "email")
+            emailElmt.text = self.view.email
+            #nick
+            nick = self.view.nick.toString()
+            nickElmt = SubElement(root_section, "nick")
+            nickElmt.text = nick
+            #status
+            statusElmt = SubElement(root_section, "status")
+            statusElmt.text = self.view.status
+            #password
+            #TODO ask the backend
+            passwordElmt = SubElement(root_section, "dp",
+                                      backend=self.password_backend)
+            passwordElmt.text = self.view.password
+            #dp
+            dpElmt = SubElement(root_section, "dp",
+                                  backend=self.dp_backend)
+            #TODO
+
+            #TODO: save or not, preferred_ui
+            #TODO: backend for config/logs/...
+
+            if not os.path.isdir(self.account_dir):
+                os.makedirs(self.account_dir, 0700)
+            accpath = os.path.join(self.account_dir, "account.xml")
+            xml_tree = ElementTree(root_section)
+            xml_tree.write(accpath)
+
 
 class aMSNAccountManager(object):
     """ aMSNAccountManager : The account manager that takes care of storing
@@ -27,11 +83,10 @@ class aMSNAccountManager(object):
             self._accounts_dir = os.path.join(os.curdir, "amsn2_accounts")
 
         try :
-            os.makedirs(self._accounts_dir, 0777)
+            os.makedirs(self._accounts_dir, 0700)
         except :
             pass
 
-        self.accountviews = []
         self.reload()
 
         if options.account is not None:
@@ -46,80 +101,64 @@ class aMSNAccountManager(object):
 
     def reload(self):
         self.accountviews = []
-        #TODO
-        pass
+        for root, dirs, files in os.walk(self._accounts_dir):
+            account_dirs = dirs
+            break
 
-    def getAllaccountviews(self):
-        #TODO
-        pass
+        for account_dir in account_dirs:
+            self.accountviews.append(self.loadAccount(account_dir))
 
-    def getAvailableaccountviews(self):
-        #TODO
+
+    def loadAccount(self, dir):
+        accview = None
+        accpath = os.path.join(dir, "account.xml")
+        root_tree = parse(accpath)
+        account = root_tree.find("aMSNAccount")
+        if account is not None:
+            accview = Accountview()
+            #email
+            emailElt = account.find("email")
+            accview.email = text
+            #nick
+            nickElmt = account.find("nick")
+            accview.nick.appendText(nickElmt.text)
+            #TODO: parse...
+            #status
+            statusElmt = account.find("status")
+            accview.status = statusElmt.text
+            #password
+            passwordElmt = account.find("password")
+            accview.password = passwordElmt.text
+            #TODO: use backend & all
+            #dp
+            dpElt = account.find("dp")
+            #TODO
+
+            #TODO: preferred_ui ?
+
+            accview.save = True
+        return accview
+
+
+
+    def getAllAccountViews(self):
         return self.accountviews
+
+    def getAvailableAccountViews(self):
+        return [v for v in self.accountviews if not self.isAccountLocked(v)]
         pass
 
     def signingToAccount(self, accountview):
+        accdir = os.path.join(self._accounts_dir,
+                              accountNameToDirName(accountview.email))
+        acc = aMSNAccount(self.core, accountview, accdir)
+        return acc
+
+    def isAccountLocked(self, accountview):
         #TODO
-        pass
+        return False
 
-    def loadAccount(self, accountview, core):
-        #TODO
-        return aMSNAccount(accountview, core)
+def accountNameToDirName(acc):
+    #Having to do that just sucks
+    str = acc.lower().strip().replace("@","_at_");
 
-    def unloadAccount(self, amsnAccount):
-        #TODO: unlock the Account
-        pass
-
-
-def elementToDict(element):
-    """ Converts an XML Element into a proper Account dictionary """
-    def dictToTuple(name, dict):
-        """ Converts a dictionary returned by expat XML parser into a proper tuple and adds it to a list ready for dict() """
-        key = dict['name']
-        type = dict['type']
-        if type == "bool":
-            value = int(dict['value'])
-        else:
-            value = dict['value']
-
-        config_pair = (key,eval(type)(value))
-
-        config_pair_list.append(config_pair)
-
-    config_pair_list = []
-
-    for entry in element :
-        entry_str = xml.etree.ElementTree.tostring(entry)
-
-        parser=xml.parsers.expat.ParserCreate()
-        parser.StartElementHandler = dictToTuple
-        parser.Parse(entry_str, 1)
-        del parser
-
-    config_dict = dict(config_pair_list)
-
-    return config_dict
-
-def dictToElement(name, dict):
-    """ Converts a dictionary into a proper XML Element with tag 'name' """
-    keys=[]
-    types=[]
-    values=[]
-
-    root_element = xml.etree.ElementTree.Element(name)
-
-    for key, value in dict.iteritems() :
-        keys.append(key)
-        type = str(__builtin__.type(value))[7:-2]
-        types.append(type)
-        if type == "bool":
-            int_value = int(value)
-            values.append(str(int_value))
-        else:
-            values.append(str(value))
-
-    for key, type, value in zip(keys, types, values) :
-        element = xml.etree.ElementTree.Element("entry", {"name":key, "type":type, "value":value})
-        root_element.append(element)
-
-    return root_element

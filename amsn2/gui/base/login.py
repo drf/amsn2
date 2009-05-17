@@ -13,10 +13,10 @@ class aMSNLoginWindow(object):
         """ Hide the login window """
         raise NotImplementedError
 
-    def setProfiles(self, profileviews):
+    def setAccounts(self, accountviews):
         """ This method will be called when the core needs the login window to
-        let the user select among some profiles.
-        @profileviews: list of profileviews describing profiles
+        let the user select among some accounts.
+        @accountviews: list of accountviews describing accounts
         The first one in the list
         should be considered as default. """
         raise NotImplementedError

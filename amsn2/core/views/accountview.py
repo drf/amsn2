@@ -5,10 +5,12 @@ import papyon
 
 class AccountView:
     def __init__(self):
-        self.email = StringView()
-        self.password = StringView()
+        self.email = None
+        self.password = None
         self.nick = StringView()
         self.status = papyon.Presence.ONLINE
         self.dp = ImageView()
-        self.saveprofile = False
-        #TODO: preferred UI ?
+
+        self.save = False
+
+        self.preferred_ui = None

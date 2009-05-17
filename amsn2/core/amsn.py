@@ -116,7 +116,7 @@ class aMSNCore(object):
 
     def signinToAccount(self, login_window, accountview):
         print "Signing in to account %s" % (accountview.email)
-        self._account = self._profile_manager.signinToAccount(accountview)
+        self._account = self._account_manager.signinToAccount(accountview)
         self._account.login = login_window
         self._account.client = protocol.Client(self, self._account)
         self._account.client.connect()
@@ -155,6 +155,8 @@ class aMSNCore(object):
         self._loop.timerAdd(delay, func)
 
     def quit(self):
+        if self._account is not None:
+            self._account.signOut()
         self._loop.quit()
 
     def createMainMenuView(self):
