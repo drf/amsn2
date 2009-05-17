@@ -5,12 +5,14 @@ import ecore.x
 import elementary
 
 from amsn2.gui import base
+from amsn2.core.views import accountview
 
 class aMSNLoginWindow(base.aMSNLoginWindow):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
         self._evas = parent._evas
         self._parent = parent
+        self._account_views = []
 
         edje.frametime_set(1.0 / 30)
 
@@ -49,10 +51,6 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
            self._edje.signal_callback_add("signin", "*", self.__signin_cb)
 
 
-        # We start with no profile set up, we let the Core set our starting profile
-        self.switch_to_profile(None)
-
-
     def show(self):
         self._parent.resize_object_add(self._edje)
         self._edje.show()
@@ -70,26 +68,27 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         else:
             self.signin_b.hide()
 
-    def switch_to_profile(self, profile):
-        self.current_profile = profile
-        if self.current_profile is not None:
-            if self.current_profile.username is None:
-                self.username.entry_set("")
-            else:
-                self.username.entry_set(self.current_profile.username)
-            if self.current_profile.password is None:
-                self.password.entry_set("")
-            else:
-                self.password.entry_set(self.current_profile.password)
+
+    def setAccounts(self, accountviews):
+        self._account_views = accountviews
+        if accountviews:
+            #Only select the first one
+            acc = accountviews[0]
+            self.username.entry_set(acc.email)
+            self.password.entry_set(acc.password)
 
 
     def signin(self):
-        self.current_profile.username = \
-        elementary.Entry.markup_to_utf8(self.username.entry_get()).strip()
-        self.current_profile.email = self.current_profile.username
-        self.current_profile.password = \
-        elementary.Entry.markup_to_utf8(self.password.entry_get()).strip()
-        self._amsn_core.signinToAccount(self, self.current_profile)
+        email = elementary.Entry.markup_to_utf8(self.username.entry_get()).strip()
+        password = elementary.Entry.markup_to_utf8(self.password.entry_get()).strip()
+
+        accv = [accv for accv in self._account_views if accv.email == email]
+        if not accv:
+            accv = AccountView()
+            accv.email = email
+        accv.password = password
+
+        self._amsn_core.signinToAccount(self, accv)
 
     def onConnecting(self, progress, message):
         self._edje.signal_emit("connecting", "")
