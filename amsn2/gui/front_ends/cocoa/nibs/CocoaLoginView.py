@@ -18,14 +18,14 @@ class aMSNCocoaLoginView(NSView):
     passwordLabel =     IBOutlet('passwordLabel')       # Text label next to passwordField.
     rememberMe =        IBOutlet('rememberMe')          # Check box for save profile.
     rememberPassword =  IBOutlet('rememberPassword')    # Check box for save password.
-    
+
     def awakeFromNib(self):
         global loginView
         loginView = self
-    
+
     def setParent(self, parent):
         self.parent = parent
-    
+
     def login_(self):
         username = str(self.usernameField.stringValue())
         password = str(self.passwordField.stringValue())

@@ -16,9 +16,9 @@ try:
     imp.find_module('objc')
     imp.find_module('Foundation')
     imp.find_module('AppKit')
-    
+
     gui.GUIManager.registerFrontEnd("cocoa", sys.modules[__name__])
-    
+
 except ImportError:
     pass
-        
+

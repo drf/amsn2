@@ -13,7 +13,7 @@ class aMSNMainLoop(base.aMSNMainLoop):
             except KeyboardInterrupt:
                 self.quit()
 
-        
+
     def idlerAdd(self, func):
         gobject.idle_add(func)
 
@@ -22,4 +22,4 @@ class aMSNMainLoop(base.aMSNMainLoop):
 
     def quit(self):
         self._mainloop.quit()
-        
+

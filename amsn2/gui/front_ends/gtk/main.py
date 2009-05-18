@@ -7,7 +7,7 @@ import gtk
 
 class aMSNMainWindow(base.aMSNMainWindow):
     main_win = None
-    
+
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
         self.main_win = gtk.Window()
@@ -18,23 +18,23 @@ class aMSNMainWindow(base.aMSNMainWindow):
         inner.pack_start(self.main_menu, False, False)
         self.main_win.add(inner)
         self.view = None
-        
+
     def __on_show(self):
         self._amsn_core.mainWindowShown()
-        
+
     def __on_close(self, widget, event):
         self._amsn_core.quit()
 
     def show(self):
         self.main_win.show()
         self._amsn_core.idlerAdd(self.__on_show)
-        
+
     def setTitle(self, title):
         self.main_win.set_title(title)
-        
+
     def hide(self):
         self.main_win.hide()
-    
+
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
@@ -45,7 +45,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
                 self.main_menu.remove(chl)
         self._createMenuItemsFromView(self.main_menu, menu.items)
         self.main_menu.show()
-        
+
     def _createMenuItemsFromView(self, menu, items):
         # TODO: images & radio groups, for now only basic representation
         for item in items:
@@ -83,7 +83,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
         for c in chldn:
             if isinstance(c, base.aMSNLoginWindow) or isinstance(c, base.aMSNContactListWindow):
                 inner.remove(c)
-                
+
         inner.pack_start(view)
         self.main_win.show_all()
-       
+

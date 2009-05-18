@@ -9,30 +9,30 @@ class aMSNProfilesList(object):
     def __init__(self, profiles_dir):
         self.path = os.path.join(profiles_dir, "profiles.xml")
         self.updateProfilesList()
-    
+
     def updateProfilesList(self):
         """ Reads the content of profiles.xml """
         if os.access(self.path, os.F_OK):
             profiles_file = file(self.path, "r")
-            
+
             self.tree = xml.etree.ElementTree.ElementTree(file=profiles_file)
-            
+
             profiles_file.close()
-            
+
             self.root_element = self.tree.getroot()
         else :
             self.root_element = xml.etree.ElementTree.Element("aMSNProfilesList")
-            
+
             self.tree = xml.etree.ElementTree.ElementTree(element =
                                                           self.root_element)
-    
+
     def setProfileKey(self, profile_name, key, value):
         self.updateProfilesList()
         if self.ProfileIsListed(profile_name):
             profile_element = self.root_element.find(profile_name.replace("@", "_"))
             self.root_element.remove(profile_element)
             profile_dict = elementToDict(profile_element)
-            
+
             if profile_dict.has_key(key):
                 profile_dict[key] = value
                 profile_element = dictToElement(profile_name.replace("@", "_"), profile_dict)
@@ -40,20 +40,20 @@ class aMSNProfilesList(object):
                 self.saveProfilesList()
             else:
                 raise ProfileKeyNotListedError
-    
+
     def getProfileKey(self, profile_name, key, default=None):
         self.updateProfilesList()
         if self.ProfileIsListed(profile_name):
             profile_element = self.root_element.find(profile_name.replace("@", "_"))
             profile_dict = elementToDict(profile_element)
-            
+
             try:
                 return profile_dict[key]
             except KeyError:
                 return default
         else:
             return default
-    
+
     def addProfile(self, profile, attributes_dict):
         """ Adds a profile section in profiles.xml """
         self.updateProfilesList()
@@ -61,7 +61,7 @@ class aMSNProfilesList(object):
             profile_element = dictToElement(profile.email.replace("@","_"), attributes_dict)
             self.root_element.append(profile_element)
             self.saveProfilesList()
-    
+
     def deleteProfile(self, profile):
         """ Deletes a profile section from profiles.xml """
         self.updateProfilesList()
@@ -69,18 +69,18 @@ class aMSNProfilesList(object):
             if profile_element.tag == profile.email.replace("@","_"):
                 self.root_element.remove(profile_element)
         self.saveProfilesList()
-    
+
     def getAllProfilesNames(self):
         """ Returns a list of all profiles' email addresses """
         self.updateProfilesList()
         names_list = []
-        
+
         for profile_element in self.root_element:
             profile_dict = elementToDict(profile_element)
             names_list.append(profile_dict["email"])
-        
+
         return names_list
-    
+
     def ProfileIsListed(self, profile_name):
         """ Returns True if the profile is in profiles.xml """
         return (profile_name in self.getAllProfilesNames())
@@ -95,13 +95,13 @@ class aMSNProfileConfiguration(object):
         self.config = {"ns_server":'messenger.hotmail.com',
                        "ns_port":1863,
                        }
-        
+
     def getKey(self, key, default = None):
         try:
             return self.config[key]
         except KeyError:
             return default
-        
+
     def setKey(self, key, value):
         self.config[key] = value
 
@@ -118,14 +118,14 @@ class aMSNPluginConfiguration(object):
             return self.config[key]
         except KeyError:
             return default
-        
+
     def setKey(self, key, value):
         self.config[key] = value
 
 class aMSNSmileyConfiguration(object):
     """ aMSNSmileyCinfiguration : A smiley object for profiles."""
     def __init__(self, profile, smiley, config_dict):
-        """ config_dict must be a dictionary of configurations ("option": value, ...), 
+        """ config_dict must be a dictionary of configurations ("option": value, ...),
             the "shortcut" and "image" keys are mandatory."""
         self._profile = profile
         self._smiley = smiley
@@ -146,14 +146,14 @@ class aMSNSmileyConfiguration(object):
             return self.config[key]
         except KeyError:
             return default
-        
+
     def setKey(self, key, value):
         self.config[key] = value
 
 class aMSNProfile(object):
     """ aMSNProfile : a Class to represent an aMSN profile
     This class will contain all settings relative to a profile
-    and will store the protocol and GUI objects    
+    and will store the protocol and GUI objects
     """
     def __init__(self, email, profiles_dir):
         self.email = email
@@ -171,7 +171,7 @@ class aMSNProfile(object):
         ###                                        "Smiley2_name":.....
         ###                                        }
         self.smileys_configs = {}
-    
+
     def isLocked(self):
         """ Returns whether the profile is locked or not"""
         return False
@@ -179,14 +179,14 @@ class aMSNProfile(object):
     def lock(self):
         """ Locks a profile to avoid concurrent access to it from multiple instances """
         pass
-    
+
     def unlock(self):
         """ Unlocks a profile to allow other instances to acces it """
         pass
-    
+
     def remove_dir(self):
         """ Removes profile's directory from disk """
-        
+
         for root, dirs, files in os.walk(self.directory, topdown=False):
             for name in files:
                 os.remove(os.path.join(root, name))
@@ -215,14 +215,14 @@ class aMSNProfile(object):
             return True
         except KeyError:
             return False
-    
+
     def addPlugin(self, plugin_name, plugin_config_dict={}):
         self.plugins_configs[plugin_name] = \
             aMSNPluginConfiguration(self, plugin_name, plugin_config_dict)
-    
+
     def removePlugin(self, plugin_name):
         return self.plugins_configs.pop(plugin_name, None)
-    
+
     def getSmileyKey(self, plugin_name, key, default = None):
         try:
             return self.plugins_configs[plugin_name].getKey(key, default)
@@ -235,14 +235,14 @@ class aMSNProfile(object):
             return True
         except KeyError:
             return False
-    
+
     def addSmiley(self, smiley_name, smiley_config_dict={"shortcut":"dummy", "image":"dummy"}):
         self.smileys_configs[smiley_name] = \
             aMSNSmileyConfiguration(self, smiley_name, smiley_config_dict)
-    
+
     def removeSmiley(self, smiley_name):
         return self.smileys_configs.pop(smiley_name, None)
-    
+
 
 class aMSNProfileManager(object):
     """ aMSNProfileManager : The profile manager that takes care of storing
@@ -255,21 +255,21 @@ class aMSNProfileManager(object):
             self._profiles_dir = os.path.join(os.environ['USERPROFILE'], "amsn2")
         else:
             self._profiles_dir = os.path.join(os.curdir, "amsn2")
-            
+
         try :
             os.makedirs(self._profiles_dir, 0777)
         except :
             pass
-        
+
         self.profiles_list = aMSNProfilesList(self._profiles_dir)
-        
+
         self.profiles = {}
         self.loadAllProfiles()
-        
+
     def profileExists(self, email):
         """ Checks whether a profile exists """
         return self.getProfile(email) is not None
-    
+
     def getProfile(self, email):
         """ Get a profile object by email """
         try:
@@ -286,7 +286,7 @@ class aMSNProfileManager(object):
         if self.profileExists(email) is False:
             new_profile = aMSNProfile(email, self._profiles_dir)
             self.profiles[email] = new_profile
-        
+
         return self.getProfile(email)
 
     def createProfile(self, email):
@@ -299,40 +299,40 @@ class aMSNProfileManager(object):
         """ Removes a profile from the current instance of aMSN """
         if self.profileExists(profile.email):
             del self.profiles[profile.email]
-        
+
         self.profiles_list.deleteProfile(profile)
-        
+
         if and_delete == True:
             self.deleteProfile(profile)
-        
+
     def deleteProfile(self, profile):
         """ Removes a profile from the current instance of aMSN and deletes it from disk """
         profile.remove_dir()
 
         return self.removeProfile(profile)
-    
+
     def saveProfile(self, profile):
-        """ Stores a profile on disk """ 
-        
+        """ Stores a profile on disk """
+
         config = profile.config.config
-            
+
         config_section = dictToElement("Configurations", config)
-        
+
         settings = {"email":profile.email,
                     "username":profile.username,
                     "alias":profile.alias,
                     "password":profile.password,
                     "account":profile.account
                     }
-        
+
         if profile.password == None :
             settings["password"] = ""
         if profile.account == None :
             settings["account"] = ""
-        
+
         settings_section = dictToElement("Settings", settings)
-        
-        plugins = profile.plugins_configs        
+
+        plugins = profile.plugins_configs
         plugins_section = xml.etree.ElementTree.Element("Plugins")
 
         for plugin_name, plugin in plugins.iteritems():
@@ -341,22 +341,22 @@ class aMSNProfileManager(object):
 
         smileys = profile.smileys_configs
         smileys_section = xml.etree.ElementTree.Element("Smileys")
-        
+
         for smiley_name, smiley in smileys.iteritems():
             smiley_section = dictToElement(smiley_name, smiley.config)
             smileys_section.append(smiley_section)
-        
+
         root_section = xml.etree.ElementTree.Element("aMSNProfile")
-        
+
         settings_section.append(config_section)
         settings_section.append(plugins_section)
         settings_section.append(smileys_section)
         root_section.append(settings_section)
-        
+
         xml_tree = xml.etree.ElementTree.ElementTree(root_section)
-        
+
         profile_dir = os.path.join(self._profiles_dir, profile.email)
-        
+
         try :
             os.makedirs(profile_dir, 0777)
             os.makedirs(os.path.join(profile_dir, "smileys"), 0777)
@@ -365,25 +365,25 @@ class aMSNProfileManager(object):
             ## Other directories here
         except :
             pass
-        
+
         profile_path = os.path.join(self._profiles_dir, profile.email, "config.xml")
         profile_file = file(profile_path, "w")
         xml_tree.write(profile_file)
         profile_file.close()
-        
+
         list_opts={"email":profile.email,
                    "auto_connect":False
                    }
         self.profiles_list.addProfile(profile, list_opts)
-    
+
     def saveAllProfiles(self):
         for profile in self.getAllProfiles():
             self.saveProfile(profile)
-    
+
     def loadAllProfiles(self):
-        """ Loads all profiles from disk """  
+        """ Loads all profiles from disk """
         profiles_names = self.profiles_list.getAllProfilesNames()
-        
+
         for profile_name in profiles_names :
             profile_file_path = os.path.join(self._profiles_dir, \
                                              profile_name, \
@@ -401,7 +401,7 @@ class aMSNProfileManager(object):
             settings.remove(plugins)
             smileys = settings_tree.find("Smileys")
             settings.remove(smileys)
-            
+
             ### Loads Settings
             settings_dict = elementToDict(settings)
             profile = aMSNProfile(settings_dict['email'], self._profiles_dir)
@@ -415,16 +415,16 @@ class aMSNProfileManager(object):
                 profile.password = None
             if profile.account == "" :
                 profile.account = None
-                
+
             ### Loads Configurations
             configs_dict = elementToDict(configs)
             profile.config.config = configs_dict
-            
+
             ### Loads Plugins
             plugins_dict = {}
             for plugin_element in plugins:
                 plugins_dict[plugin_element.tag] = elementToDict(plugin_element)
-            
+
             for plugin_name, plugin_config_dict in plugins_dict.iteritems():
                 profile.addPlugin(plugin_name, plugin_config_dict)
 
@@ -432,7 +432,7 @@ class aMSNProfileManager(object):
             smileys_dict = {}
             for smiley_element in smileys:
                 smileys_dict[smiley_element.tag] = elementToDict(smiley_element)
-            
+
             for smiley_name, smiley_config_dict in smileys_dict.iteritems():
                 profile.addSmiley(smiley_name, smiley_config_dict)
 
@@ -450,21 +450,21 @@ def elementToDict(element):
             value = int(dict['value'])
         else:
             value = dict['value']
-        
+
         config_pair = (key,eval(type)(value))
-        
+
         config_pair_list.append(config_pair)
-        
+
     config_pair_list = []
 
     for entry in element :
         entry_str = xml.etree.ElementTree.tostring(entry)
-    
+
         parser=xml.parsers.expat.ParserCreate()
         parser.StartElementHandler = dictToTuple
         parser.Parse(entry_str, 1)
         del parser
-    
+
     config_dict = dict(config_pair_list)
 
     return config_dict

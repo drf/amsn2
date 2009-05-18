@@ -19,23 +19,23 @@ class aMSNPersonalInfoManager:
         # TODO: parsing
         self._papyon_profile.display_name = new_nick.toString()
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
- 
+
     def _onPMUpdated(self, new_pm):
         # TODO: parsing
         self._papyon_profile.personal_message = new_pm.toString()
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
- 
+
     def _onDPUpdated(self, new_dp):
         # TODO: manage msn_objects
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
- 
+
     def _onPresenceUpdated(self, new_presence):
         for key in self._core.p2s:
             if self._core.p2s[key] == new_presence:
                 break
         self._papyon_profile.presence = key
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
- 
+
     """ actions from the core """
     def _onCMUpdated(self, new_media):
         self._papyon_profile.current_media = new_media

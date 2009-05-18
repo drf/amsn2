@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #===================================================
-# 
+#
 # theme_manager.py - This file is part of the amsn2 package
 #
 # Copyright (C) 2008  Wil Alvarez <wil_alejandro@yahoo.com>
@@ -29,16 +29,16 @@ class aMSNThemeManager:
         self._statusicons = {}
         self._displaypic = {}
         self._emblems = {}
-        
+
         self.load()
-        
+
     def __get(self, var, key):
         # TODO: evaluate if should be returned None when key is not valid
         if key in var.keys():
             return var[key]
         else:
             return (None, None)
-        
+
     def load(self):
         # Here aMSNThemeManager should read user's files to know what theme
         # will be loaded to each aspect
@@ -46,7 +46,7 @@ class aMSNThemeManager:
         self._statusicons = aMSNStatusIconLoader().load('default')
         self._displaypic = aMSNDisplayPicLoader().load('default')
         self._emblems = aMSNEmblemLoader().load('default')
-        
+
     def get_value(self, key):
         if (key.startswith('button_')):
             return self.get_button(key)
@@ -59,7 +59,7 @@ class aMSNThemeManager:
         else:
             # TODO: This should raise a exception
             return (None, None)
-            
+
     def get_button(self, key):
         return self.__get(self._buttons, key)
 
@@ -81,36 +81,36 @@ class aMSNGenericLoader:
         # Should be initialized after creating the class
         self._keys = []
         self._dict = {}
-        
+
     def load(self, theme='default'):
         self.theme = theme
         self._theme_dir = os.path.join(self._basedir, theme)
-        
+
         for key in self._keys.keys():
             image = self._keys[key]
             filepath = os.path.join(self._theme_dir, image)
-            
+
             # Verificating
             if (not os.path.isfile(filepath)):
                 filepath = os.path.join(self._defaultdir, image)
-                
+
             self._dict[key] = ("Filename", filepath)
-            
+
         return self._dict
-    
+
 class aMSNButtonLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "buttons")
         self._keys = {
-            'button_nudge': 'nudge.png', 
+            'button_nudge': 'nudge.png',
             'button_smile': 'smile.png',
         }
-        
+
 class aMSNStatusIconLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "status_icons")
         self._keys = {
-            'buddy_online': 'online.png', 
+            'buddy_online': 'online.png',
             'buddy_away': 'away.png',
             'buddy_brb': 'away.png',
             'buddy_idle': 'away.png',
@@ -123,7 +123,7 @@ class aMSNStatusIconLoader(aMSNGenericLoader):
             'buddy_blocked_off': 'blocked_off.png',
             'buddy_webmsn': 'webmsn.png',
         }
-        
+
 class aMSNDisplayPicLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "displaypic")
@@ -134,12 +134,12 @@ class aMSNDisplayPicLoader(aMSNGenericLoader):
             'dp_male': 'male.png',
             'dp_nopic': 'nopic.png',
         }
-        
+
 class aMSNEmblemLoader(aMSNGenericLoader):
     def __init__(self):
         aMSNGenericLoader.__init__(self, "emblems")
         self._keys = {
-            'emblem_online': 'plain_emblem.png', 
+            'emblem_online': 'plain_emblem.png',
             'emblem_away': 'away_emblem.png',
             'emblem_brb': 'away_emblem.png',
             'emblem_idle': 'away_emblem.png',

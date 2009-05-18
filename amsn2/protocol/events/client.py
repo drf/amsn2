@@ -13,5 +13,5 @@ class ClientEvents(papyon.event.ClientEventInterface):
 
     def on_client_error(self, error_type, error):
         print "ERROR :", error_type, " ->", error
-    
-    
+
+

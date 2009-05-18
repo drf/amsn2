@@ -8,7 +8,7 @@ class aMSNLoginWindow(object):
     def show(self):
         """ Draw the login window """
         raise NotImplementedError
-    
+
     def hide(self):
         """ Hide the login window """
         raise NotImplementedError

@@ -23,7 +23,7 @@ from amsn2.gui import base
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from amsn2.core.views import imageview
-    
+
 class Image(QPixmap):
     def __init__(self):
         QPixmap.__init__(self)
@@ -37,7 +37,7 @@ class Image(QPixmap):
         """
         if resource_name == "File":
             self._loadFromFilename(value)
-            
+
     def loadFromImageView(self, view):
         for (resource_type, value) in view.imgs:
             try:
@@ -46,7 +46,7 @@ class Image(QPixmap):
                 print "From append in qt4/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
             else:
                 loadMethod(value)
-            
+
     def getAsFilename(self):
         return self._fileName
 
@@ -63,15 +63,15 @@ class Image(QPixmap):
         """
         if resource_name == "File":
             self.load(value)
-            
+
     def _loadFromFilename(self, filename):
         QPixmap.load(self, filename)
         self._fileName = filename
-        
+
     def _loadFromSkin(self, skin):
         pass
-    
+
     def _loadFromFileObject(self, obj):
         pass
-        
-            
+
+

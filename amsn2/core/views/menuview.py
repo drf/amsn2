@@ -6,7 +6,7 @@ class MenuItemView(object):
     RADIOBUTTONGROUP = "radiobuttongroup"
     SEPARATOR = "separator"
     COMMAND = "command"
-    
+
     def __init__(self, type, label = None, icon = None, accelerator = None,
                  radio_value = None, checkbox_value = False, disabled = False,  command = None):
         """ Create a new MenuItemView
@@ -48,7 +48,7 @@ class MenuItemView(object):
              (radio_value is not None or
               checkbox_value is not False or
               icon is not None or
-              command is not None))):              
+              command is not None))):
             raise ValueError, InvalidArgument
 
         new_label = label
@@ -71,7 +71,7 @@ class MenuItemView(object):
                         done = True
                 else:
                     done = True
-        
+
 
         self.type = type
         self.label = new_label
@@ -84,7 +84,7 @@ class MenuItemView(object):
 
     def addItem(self, item):
         self.items.append(item)
-        
+
 
 class MenuView(object):
 
@@ -93,4 +93,4 @@ class MenuView(object):
 
     def addItem(self, item):
         self.items.append(item)
-        
+

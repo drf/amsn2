@@ -10,11 +10,11 @@ def getView():
 
 class aMSNCocoaSplashScreenView(NSView):
     statusText = IBOutlet('statusText')  # Text field with status text.
-    
+
     def awakeFromNib(self):
         global view
         view = self
-    
+
     def setStatus(self, text):
         self.statusText.setStringValue_(text)
 

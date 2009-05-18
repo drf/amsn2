@@ -43,10 +43,10 @@ def _parse_css_color(color):
         return gtk.gdk.Color(r, g, b)
     else:
         return gtk.gdk.color_parse(color)
-    
+
 
 class HtmlHandler(xml.sax.handler.ContentHandler):
-    
+
     def __init__(self, textview, startiter):
         xml.sax.handler.ContentHandler.__init__(self)
         self.textbuf = textview.get_buffer()
@@ -76,9 +76,9 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             self.iter.get_attributes(attrs)
             self.iter.forward_char()
             return attrs
-        
+
     else:
-        
+
         ## Workaround http://bugzilla.gnome.org/show_bug.cgi?id=317455
         def _get_current_style_attr(self, propname, comb_oper=None):
             tags = [tag for tag in self.styles if tag is not None]
@@ -155,7 +155,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
 
         else:
             warnings.warn("Unable to parse length value '%s'" % value)
-        
+
     def __parse_font_size_cb(length, tag):
         tag.set_property("size-points", length/display_resolution)
     __parse_font_size_cb = staticmethod(__parse_font_size_cb)
@@ -200,7 +200,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
     def __frac_length_tag_cb(length, tag, propname):
         tag.set_property(propname, length)
     __frac_length_tag_cb = staticmethod(__frac_length_tag_cb)
-        
+
     def _parse_style_margin_left(self, tag, value):
         self._parse_length(value, False, self.__frac_length_tag_cb,
                            tag, "left-margin")
@@ -245,7 +245,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             warnings.warn("Invalid text-align:%s requested" % value)
         else:
             tag.set_property("justification", align)
-    
+
     def _parse_style_text_decoration(self, tag, value):
         if value == "none":
             tag.set_property("underline", pango.UNDERLINE_NONE)
@@ -268,7 +268,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             warnings.warn("text-decoration:blink not implemented")
         else:
             warnings.warn("text-decoration:%s not implemented" % value)
-        
+
 
     ## build a dictionary mapping styles to methods, for greater speed
     __style_methods = dict()
@@ -315,7 +315,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             self.textbuf.insert_with_tags(self.iter, text, *tags)
         else:
             self.textbuf.insert(self.iter, text)
-    
+
     def _flush_text(self):
         if not self.text: return
         self._insert_text(self.text.replace('\n', ''))
@@ -326,7 +326,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
             self.textview.emit("url-clicked", href, type_)
             return True
         return False
-        
+
     def characters(self, content):
         if allwhitespace_rx.match(content) is not None:
             return
@@ -351,7 +351,7 @@ class HtmlHandler(xml.sax.handler.ContentHandler):
                 type_ = None
             tag.connect('event', self._anchor_event, attrs['href'], type_)
             tag.is_anchor = True
-        
+
         self._begin_span(style, tag)
 
         if name == 'br':
@@ -451,7 +451,7 @@ class HtmlTextView(gtk.TextView):
     __gsignals__ = {
         'url-clicked': (gobject.SIGNAL_RUN_LAST, None, (str, str)), # href, type
     }
-    
+
     def __init__(self):
         gtk.TextView.__init__(self)
         self.set_wrap_mode(gtk.WRAP_CHAR)
@@ -472,7 +472,7 @@ class HtmlTextView(gtk.TextView):
             window = widget.get_window(gtk.TEXT_WINDOW_TEXT)
             window.set_cursor(gtk.gdk.Cursor(gtk.gdk.XTERM))
             self._changed_cursor = False
-    
+
     def __motion_notify_event(self, widget, event):
         x, y, _ = widget.window.get_pointer()
         x, y = widget.window_to_buffer_coords(gtk.TEXT_WINDOW_TEXT, x, y)
@@ -501,10 +501,10 @@ class HtmlTextView(gtk.TextView):
         # parser.setFeature(xml.sax.handler.feature_validation, True)
         parser.setContentHandler(HtmlHandler(self, eob))
         parser.parse(StringIO(html))
-        
+
         if not eob.starts_line():
             buffer.insert(eob, "\n")
-            
+
     def scroll_to_bottom(self):
         textbuffer = self.get_buffer()
         textiter = textbuffer.get_end_iter()
@@ -518,7 +518,7 @@ class MessageTextView(gtk.TextView):
     for chat/groupchat windows'''
     __gtype_name__ = 'MessageTextView'
     __gsignals__ = dict(mykeypress = (gobject.SIGNAL_RUN_LAST | gobject.SIGNAL_ACTION, None, (int, gtk.gdk.ModifierType )))
-        
+
     def __init__(self):
         gtk.TextView.__init__(self)
 

@@ -48,7 +48,7 @@ class PasswordBox(TextBox):
         for ch in str:
             self._password += ch
             self._txtbox.do_command('*')
-    
+
 class aMSNLoginWindow(object):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
@@ -61,7 +61,7 @@ class aMSNLoginWindow(object):
         sy = int((y - wy)/2)
         sx = int((x - wx)/2)
         self._win = curses.newwin(wy, wx, sy, sx)
-        
+
     def show(self):
         self._win.border()
         self._win.bkgd(' ', curses.color_pair(1))
@@ -70,9 +70,9 @@ class aMSNLoginWindow(object):
 
         self._win.addstr(8, 5, "Password : ", curses.A_BOLD)
         self._password_t = PasswordBox(self._win, 8, 17, self._password)
-        
+
         self._win.refresh()
-        
+
         self._username_t.edit()
         self._password_t.edit()
 
@@ -97,12 +97,12 @@ class aMSNLoginWindow(object):
         self.current_profile.email = self._username_t.value()
         self.current_profile.password = self._password_t.value()
         self._amsn_core.signinToAccount(self, self.current_profile)
-        
+
 
     def onConnecting(self, progress, message):
         self._username_t = None
         self._password_t = None
         self._win.clear()
-        
+
         self._win.addstr(10, 25, message, curses.A_BOLD | curses.A_STANDOUT)
         self._win.refresh()

@@ -36,7 +36,7 @@ def load():
 try:
     import imp
     imp.find_module("PyQt4")
-    
+
     gui.GUIManager.registerFrontEnd("qt4", sys.modules[__name__])
 except ImportError:
     pass

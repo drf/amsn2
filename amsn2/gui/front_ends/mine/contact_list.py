@@ -9,7 +9,7 @@
 
 class aMSNContactListWindow(object):
     """ This interface represents the main Contact List Window
-        self._clwiget is an aMSNContactListWidget 
+        self._clwiget is an aMSNContactListWidget
     """
 
     def __init__(self, amsn_core, parent):

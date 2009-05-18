@@ -98,8 +98,8 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             icon = gtk.gdk.pixbuf_new_from_file(path)
             name = string.capitalize(name)
             status_list.append([icon, name, key])
-	
-            
+
+
         iconCell = gtk.CellRendererPixbuf()
         iconCell.set_property('xalign', 0.0)
         txtCell = gtk.CellRendererText()
@@ -159,9 +159,9 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
         self.show_all()
         self._main_win.set_view(self)
-        self.user.grab_focus()        
+        self.user.grab_focus()
         #self.switch_to_profile(None)
-        
+
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
         "login_screen", "cube")

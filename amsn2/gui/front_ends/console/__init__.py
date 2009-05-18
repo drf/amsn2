@@ -17,7 +17,7 @@ try:
     # try to find any necessary module
     # imp.find_module()
     gui.GUIManager.registerFrontEnd("console", sys.modules[__name__])
-    
+
 except ImportError:
     pass
-        
+

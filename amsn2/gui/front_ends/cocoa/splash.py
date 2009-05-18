@@ -9,13 +9,13 @@ class aMSNSplashScreen(base.aMSNSplashScreen):
 
     def show(self):
         self.parent._loadView(self.view)
-    
+
     def hide(self):
         pass
-    
+
     def setText(self, text):
         self.view.setStatus(text)
-        
+
     def setImage(self, image):
         pass
 
