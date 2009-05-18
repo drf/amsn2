@@ -4,4 +4,3 @@ class TooltipView (object):
         self.name = None
         self.icon = None
 
-    

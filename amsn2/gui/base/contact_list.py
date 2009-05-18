@@ -13,7 +13,8 @@ class aMSNContactListWindow(object):
     """
 
     def __init__(self, amsn_core, parent):
-        raise NotImplementedError
+        em = amsn_core._event_manager
+        em.register(em.events.PERSONALINFO_UPDATED, self.myInfoUpdated)
 
     def show(self):
         """ Show the contact list window """
@@ -38,17 +39,17 @@ class aMSNContactListWindow(object):
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the contactView of the ourself (contains DP, nick, psm,
+        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
 class aMSNContactListWidget(object):
     """ This interface implements the contact list of the UI """
     def __init__(self, amsn_core, parent):
-        clm = amsn_core._contactlist_manager
-        clm.register(clm.CLVIEW_UPDATED, self.contactListUpdated)
-        clm.register(clm.GROUPVIEW_UPDATED, self.groupUpdated)
-        clm.register(clm.CONTACTVIEW_UPDATED, self.contactUpdated)
+        em = amsn_core._event_manager
+        em.register(em.events.CLVIEW_UPDATED, self.contactListUpdated)
+        em.register(em.events.GROUPVIEW_UPDATED, self.groupUpdated)
+        em.register(em.events.CONTACTVIEW_UPDATED, self.contactUpdated)
 
     def show(self):
         """ Show the contact list widget """

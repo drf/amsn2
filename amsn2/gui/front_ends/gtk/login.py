@@ -24,6 +24,7 @@
 import os
 import gtk
 import gobject
+import string
 
 from image import *
 from amsn2.core.views import ImageView
@@ -95,8 +96,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
             if (name == 'offline'): continue
             icon = gtk.gdk.pixbuf_new_from_file(path)
+            name = string.capitalize(name)
             status_list.append([icon, name, key])
-            
+
+
         iconCell = gtk.CellRendererPixbuf()
         iconCell.set_property('xalign', 0.0)
         txtCell = gtk.CellRendererText()
@@ -105,7 +108,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         # status combobox
         self.statusCombo = gtk.ComboBox()
         self.statusCombo.set_model(status_list)
-        self.statusCombo.set_active(0)
+        self.statusCombo.set_active(4) # Set status to 'online'
         self.statusCombo.pack_start(iconCell, False)
         self.statusCombo.pack_start(txtCell, False)
         self.statusCombo.add_attribute(iconCell, 'pixbuf',0)
@@ -156,9 +159,9 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
         self.show_all()
         self._main_win.set_view(self)
-        self.user.grab_focus()        
+        self.user.grab_focus()
         #self.switch_to_profile(None)
-        
+
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
         "login_screen", "cube")
@@ -181,7 +184,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.signin()
 
     def show(self):
-        pass
+        self.show_all()
 
     def hide(self):
         if (self.timer is not None):
@@ -200,7 +203,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.current_profile.email = self.user.get_active_text()
         self.current_profile.password = self.password.get_text()
         i = self.statusCombo.get_active()
-        self.current_profile.presence = self._amsn_core.p2s.keys()[i]
+        self.current_profile.presence = self._amsn_core.p2s.values()[i]
         self._amsn_core.signinToAccount(self, self.current_profile)
         self.timer = gobject.timeout_add(40, self.__animation)
 

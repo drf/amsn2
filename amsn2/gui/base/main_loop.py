@@ -20,4 +20,4 @@ class aMSNMainLoop(object):
     def quit(self):
         """ This will be called when the core wants to exit """
         raise NotImplementedError
-    
+

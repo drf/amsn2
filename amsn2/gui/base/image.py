@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #===================================================
-# 
+#
 # image.py - This file is part of the amsn2 package
 #
 # Copyright (C) 2008  Wil Alvarez <wil_alejandro@yahoo.com>
@@ -28,7 +28,7 @@ class aMSNImage(object):
     def __init__(self, theme_manager, view):
         self._theme_manager = theme_manager
         self.load(view)
-        
+
     def load(self, view):
         i = 0
         for (resource_type, value) in view.imgs:
@@ -40,7 +40,7 @@ class aMSNImage(object):
             else:
                 loadMethod(value, view, i)
                 i += 1
-            
+
     def _loadFromFilename(self, filename, view, index):
         """ Load an image from a path. This method should be reimplemented """
         pass
@@ -57,4 +57,4 @@ class aMSNImage(object):
 
     def _loadFromNone(self, resource_name, view=None, index=0):
         pass
-        
+

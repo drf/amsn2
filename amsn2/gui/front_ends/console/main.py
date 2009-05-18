@@ -10,7 +10,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def hide(self):
         pass
-    
+
     def __on_show(self):
         self._amsn_core.mainWindowShown()
-       
+

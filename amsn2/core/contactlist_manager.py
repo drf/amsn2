@@ -7,42 +7,12 @@ import papyon
 class aMSNContactListManager:
     def __init__(self, core):
         self._core = core
-
-        #TODO: have only one event manager?
-        #TODO: describe the events:
-        self.CONTACTVIEW_UPDATED = 0
-        self.GROUPVIEW_UPDATED = 1
-        self.CLVIEW_UPDATED = 2
-        self.AMSNCONTACT_UPDATED = 3
-        self._events_cbs = [[], [], [], []]
-
+        self._em = core._event_manager
         self._contacts = {}
         self._groups = {}
         self._papyon_addressbook = None
 
     #TODO: sorting contacts & groups
-
-    def emit(self, event, *args):
-        """ emit the event """
-        for cb in self._events_cbs[event]:
-            #TODO: try except
-            cb(*args)
-
-    def register(self, event, callback, pos=None):
-        """ register a callback for an event """
-        #TODO: try except
-        if pos is None:
-            self._events_cbs[event].append(callback)
-        else:
-            self._events_cbs[event].insert(pos,callback)
-
-    def unregister(self, event, callback):
-        """ unregister a callback for an event """
-        #TODO: try except
-        self._events_cbs[event].remove(callback)
-
-
-
 
     def onContactPresenceChanged(self, papyon_contact):
         #1st/ update the aMSNContact object
@@ -50,7 +20,7 @@ class aMSNContactListManager:
         c.fill(self._core, papyon_contact)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
-        self.emit(self.CONTACTVIEW_UPDATED, cv)
+        self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
 
         #TODO: update the group view
 
@@ -95,11 +65,11 @@ class aMSNContactListManager:
             clv.group_ids.append(0)
 
         #Emit the events
-        self.emit(self.CLVIEW_UPDATED, clv)
+        self._em.emit(self._em.events.CLVIEW_UPDATED, clv)
         for g in grpviews:
-            self.emit(self.GROUPVIEW_UPDATED, g)
+            self._em.emit(self._em.events.GROUPVIEW_UPDATED, g)
         for c in cviews:
-            self.emit(self.CONTACTVIEW_UPDATED, c)
+            self._em.emit(self._em.events.CONTACTVIEW_UPDATED, c)
 
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
@@ -110,10 +80,10 @@ class aMSNContactListManager:
         f.write(msn_object._data.read())
         f.close()
         c.dp.load("Filename", tf)
-        self.emit(self.AMSNCONTACT_UPDATED, c)
+        self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
-        self.emit(self.CONTACTVIEW_UPDATED, cv)
+        self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
 
 
     def getContact(self, cid, papyon_contact=None):
@@ -124,7 +94,7 @@ class aMSNContactListManager:
             if papyon_contact is not None:
                 c = aMSNContact(self._core, papyon_contact)
                 self._contacts[cid] = c
-                self.emit(self.AMSNCONTACT_UPDATED, c)
+                self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
                 return c
             else:
                 raise ValueError
@@ -157,7 +127,7 @@ class aMSNContact():
         self.status = StringView()
         self.status.appendText(core.p2s[papyon_contact.presence])
         #for the moment, we store the papyon_contact object, but we shouldn't have to
-        #TODO: getPymsnContact(self, core...) or _papyon_contact?
+        #TODO: getPapyonContact(self, core...) or _papyon_contact?
         self._papyon_contact = papyon_contact
 
 

@@ -27,6 +27,8 @@ from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
 from theme_manager import *
+from personalinfo_manager import *
+from event_manager import *
 
 
 class aMSNCore(object):
@@ -41,6 +43,7 @@ class aMSNCore(object):
            options.front_end = the front end's name to use
            options.debug = whether or not to enable debug output
         """
+        self._event_manager = aMSNEventManager(self)
         self._options = options
 
         self._gui_name = None
@@ -55,6 +58,7 @@ class aMSNCore(object):
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
+        self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
         self.p2s = {papyon.Presence.ONLINE:"online",
                     papyon.Presence.BUSY:"busy",
@@ -134,7 +138,7 @@ class aMSNCore(object):
         }
 
         if state in status_str:
-            profile.login.onConnecting((state + 1)/ 7., status_str[state])
+            account.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == papyon.event.ClientState.OPEN:
             account.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == pymsn.event.ClientState.OPEN:
@@ -147,6 +151,7 @@ class aMSNCore(object):
             account.login = None
 
             self._contactlist_manager.onCLDownloaded(account.client.address_book)
+            self._personalinfo_manager.setAccount(account)
 
     def idlerAdd(self, func):
         self._loop.idlerAdd(func)

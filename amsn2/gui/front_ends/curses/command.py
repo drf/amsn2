@@ -21,7 +21,7 @@ class CommandLine(object):
             self._on_char_cb = ch_cb
             if ch_cb is not None:
                 self._cb_cond.notify()
-    
+
     def _get_key(self):
         while( True ):
             with self._cb_cond:

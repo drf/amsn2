@@ -17,7 +17,7 @@ class aMSNWindow(object):
         @text : a string
         """
         raise NotImplementedError
-    
+
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView

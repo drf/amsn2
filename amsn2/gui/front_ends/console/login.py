@@ -3,7 +3,7 @@ class aMSNLoginWindow(object):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
-        
+
     def show(self):
         if self._username is not None and self._username != "":
             print "Account : %s" % (self._username)
@@ -32,7 +32,7 @@ class aMSNLoginWindow(object):
         self.current_profile.email = self._username
         self.current_profile.password = self._password
         self._amsn_core.signinToAccount(self, self.current_profile)
-        
+
 
     def onConnecting(self, progress, message):
         print "Connecting..."

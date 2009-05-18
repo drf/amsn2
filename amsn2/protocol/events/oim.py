@@ -25,7 +25,7 @@ class OIMEvents(papyon.event.OfflineMessagesEventInterface):
     def __init__(self, client, oim_manager):
         self._oim_manager = oim_manager
         papyon.event.OfflineMessagesEventInterface.__init__(self, client)
-        
+
     def on_oim_state_changed(self, state):
         pass
 

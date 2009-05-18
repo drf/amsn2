@@ -16,7 +16,7 @@ try:
 
     imp.find_module("gtk")
     gui.GUIManager.registerFrontEnd("gtk", sys.modules[__name__])
-    
+
 except ImportError:
     pass
-        
+

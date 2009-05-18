@@ -15,7 +15,7 @@ def load():
 try:
     import imp
     gui.GUIManager.registerFrontEnd("mine", sys.modules[__name__])
-    
+
 except ImportError:
     pass
-        
+

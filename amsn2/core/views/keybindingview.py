@@ -14,13 +14,13 @@ class KeyBindingView(object):
     PAGEDOWN = "PageDown"
     INSERT = "Insert"
     DELETE = "Delete"
-    
+
     def __init__(self, key = None, control = False, alt = False, shift = False):
         self.key = key
         self.control = control
         self.alt = alt
         self.shift = shift
-        
+
     def __repr__(self):
         out = ""
         if self.control:
@@ -30,6 +30,6 @@ class KeyBindingView(object):
         if self.shift:
             out += "Shift-"
         out += self.key
-        
+
         return out
-    
+

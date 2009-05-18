@@ -14,7 +14,7 @@ class Contact(object):
                     papyon.Presence.OUT_TO_LUNCH:"lunch",
                     papyon.Presence.INVISIBLE:"hidden",
                     papyon.Presence.OFFLINE:"offline"}
-        
+
 
     def is_online(self):
         return self.presence != papyon.Presence.OFFLINE
@@ -36,7 +36,7 @@ class Group(object):
                 online +=1
 
         return (online, total)
-            
+
 
 class aMSNContactList(base.aMSNContactList):
     def __init__(self, amsn_core):
@@ -53,15 +53,15 @@ class aMSNContactList(base.aMSNContactList):
     def contactStateChange(self, contact):
         for group in contact.groups:
             self.groups[group.id].contacts[contact.id].presence = contact.presence
-            
+
         self.__update_view()
 
     def contactNickChange(self, contact):
         pass
-        
+
     def contactPSMChange(self, contact):
         pass
-    
+
     def contactAlarmChange(self, contact):
         pass
 
@@ -70,7 +70,7 @@ class aMSNContactList(base.aMSNContactList):
 
     def contactSpaceChange(self, contact):
         pass
-    
+
     def contactSpaceFetched(self, contact):
         pass
 
@@ -86,7 +86,7 @@ class aMSNContactList(base.aMSNContactList):
     def contactAdded(self, group, contact):
         self.groups[group.id].contacts[contact.id] = Contact(contact.display_name, contact.presence)
         self.__update_view()
-    
+
     def contactRemoved(self, group, contact):
         pass
 
@@ -111,7 +111,7 @@ class aMSNContactList(base.aMSNContactList):
 
     def __cls(self):
         print "[H[2J"
-        
+
     def __update_view(self):
         self.__cls()
         for g in self.groups:

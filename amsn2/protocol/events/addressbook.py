@@ -25,7 +25,7 @@ class AddressBookEvents(papyon.event.AddressBookEventInterface):
     def __init__(self, client, amsn_core):
         self._amsn_core = amsn_core
         papyon.event.AddressBookEventInterface.__init__(self, client)
-        
+
     def on_addressbook_messenger_contact_added(self, contact):
         pass
 
@@ -52,4 +52,4 @@ class AddressBookEvents(papyon.event.AddressBookEventInterface):
 
     def on_addressbook_group_contact_deleted(self, group, contact):
         pass
-    
+

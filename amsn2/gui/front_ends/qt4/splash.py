@@ -24,7 +24,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from fadingwidget import FadingWidget
 from image import *
-    
+
 class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
 
     def __init__(self, amsn_core, parent):
@@ -33,15 +33,15 @@ class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
     def show(self):
         self.setVisible(True)
         qApp.processEvents()
-    
+
     def hide(self):
         self.setVisible(False)
         qApp.processEvents()
-    
+
     def setText(self, text):
         self.showMessage(text)
         qApp.processEvents()
-        
+
     def setImage(self, image):
         img = Image()
         img.loadFromImageView(image)

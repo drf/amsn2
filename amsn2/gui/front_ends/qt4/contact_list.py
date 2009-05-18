@@ -38,7 +38,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
     def show(self):
         self._clwidget.show()
-    
+
     def hide(self):
         self._clwidget.hide()
 
@@ -53,8 +53,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
     def myInfoUpdated(self, view):
         pass #TODO
-    
-            
+
+
 class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
@@ -69,10 +69,10 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         self._proxyModel.setSourceModel(self._model)
         self.ui.cList.setModel(self._proxyModel)
         self._contactDict = dict()
-        
+
         self._proxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self._proxyModel.setFilterKeyColumn(-1)
-        
+
         self.connect(self.ui.searchLine, SIGNAL('textChanged(QString)'),
                      self._proxyModel, SLOT('setFilterFixedString(QString)'))
         QObject.connect(self.ui.nickName, SIGNAL('textChanged(QString)'),
@@ -83,19 +83,19 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
 
     def hide(self):
         pass
-    
+
     def __slotChangeNick(self):
         sv = StringView()
         sv.appendText(str(self.ui.nickName.text()))
         self._amsn_core._profile.client.changeNick(sv)
-        
+
     def contactListUpdated(self, view):
         pass
-    
+
     def contactUpdated(self, contact):
         print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))
         l = self._model.findItems("*", Qt.MatchWildcard | Qt.MatchRecursive)
-        
+
         for itm in l:
             if itm.data(40).toString() == contact.uid:
                 itm.setText(QString.fromUtf8(contact.name.toString()))
@@ -104,34 +104,34 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def groupUpdated(self, group):
         print "GroupUpdated"
         l = self._model.findItems("*", Qt.MatchWildcard)
-        
+
         for itm in l:
-            
+
             if itm.data(40).toString() == group.uid:
-                
+
                 itm.setText(QString.fromUtf8(group.name.toString()))
-            
+
                 for contact in group.contacts:
-                    
+
                     for ent in l:
-                        
+
                         if ent.data(40).toString() == contact.uid:
                             itm.setText(QString.fromUtf8(contact.name.toString()))
                             continue
-                        
+
                     print "  * " + contact.name.toString()
-            
+
                     contactItem = ContactItem()
                     contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
                     contactItem.setData(QVariant(contact.uid), 40)
-            
+
                     itm.appendRow(contactItem)
 
                 break
 
     def groupRemoved(self, group):
         l = self._model.findItems("", Qt.MatchWildcard)
-        
+
         for itm in l:
             if itm.data(40) == group.uid:
                 row = self._model.indexFromItem(itm)
@@ -164,23 +164,23 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
 
     def groupAdded(self, group):
         print group.name.toString()
-        
+
         pi = self._model.invisibleRootItem();
-        
+
         # Adding Group Item
-        
+
         groupItem = QStandardItem()
         groupItem.setText(QString.fromUtf8(group.name.toString()))
         groupItem.setData(QVariant(group.uid), 40)
         pi.appendRow(groupItem)
-        
+
         for contact in group.contacts:
             print "  * " + contact.name.toString()
-            
+
             contactItem = ContactItem()
             contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
             contactItem.setData(QVariant(contact.uid), 40)
-            
+
             groupItem.appendRow(contactItem)
-            
+
             self._contactDict[contact.uid] = contact
