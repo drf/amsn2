@@ -16,16 +16,16 @@ if __name__ == '__main__':
     # Detect graphical toolkit available.
     # Format - 'default_front_end : module name'
     # cocoa > efl > qt4 > gtk > console
-    toolkits = {'cocoa' : '????',
+    toolkits = {'cocoa' : 'amsn2.gui.front_ends.cocoa',
                 'elf' : 'ecore',
                 'qt4' : 'PyQt4.QtGui',
                 'gtk' : 'gtk',
                 'console' : None}
     for toolkit in toolkits:
         try:
-            default_front_end = toolkit
             module_name = toolkits[toolkit]
             module = __import__(module_name)
+            default_front_end = toolkit
             vars()[module_name] = module
             # Debug
             # print 'Imported toolkit "%s" with module "%s"' % (toolkit, module)
@@ -36,7 +36,7 @@ if __name__ == '__main__':
             pass
         except TypeError:
             pass
-
+        
     parser = optparse.OptionParser()
     parser.add_option("-a", "--account", dest="account",
                       default=None, help="The account's username to use")
