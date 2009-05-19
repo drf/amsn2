@@ -208,7 +208,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
         # also fix papyon, gives an error on setting 'offline'
-        self._myview.presence = key
+        if key != self._myview.presence:
+            self._myview.presence = key
 
     def __on_btnNicknameClicked(self, source):
         self.__switchToNickInput()
