@@ -25,6 +25,7 @@ from events.contact import *
 from events.invite import *
 from events.oim import *
 from events.addressbook import *
+from events.profile import *
 
 class Client(papyon.Client):
     def __init__(self, amsn_core, profile):
@@ -39,6 +40,7 @@ class Client(papyon.Client):
         self._invite_events_handler = InviteEvents(self, self._amsn_core)
         self._oim_events_handler = OIMEvents(self, self._amsn_core._oim_manager)
         self._addressbook_events_handler = AddressBookEvents(self, self._amsn_core)
+        self._profile_events_handler = ProfileEvents(self, self._amsn_core._personalinfo_manager)
 
     def connect(self):
         self.login(self._amsn_profile.email, self._amsn_profile.password)

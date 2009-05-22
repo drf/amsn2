@@ -21,7 +21,7 @@ class ContactEvents(papyon.event.ContactEventInterface):
         self._contact_manager.onContactChanged(contact)
 
     def on_contact_msn_object_changed(self, contact):
-        # TODO: filter DPs
+        # TODO: filter objects
         if contact.msn_object._type is papyon.p2p.MSNObjectType.DISPLAY_PICTURE:
             self._contact_manager.onContactDPChanged(contact)
 

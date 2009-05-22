@@ -4,41 +4,65 @@ class aMSNPersonalInfoManager:
     def __init__(self, core):
         self._core = core
         self._em = core._event_manager
-        self._personalinfoview = None
+        self._personalinfoview = PersonalInfoView(self)
         self._papyon_profile = None
 
-    def set_profile(self, amsn_profile):
+    def set_profile_connected(self, amsn_profile):
         self._papyon_profile = amsn_profile.client.profile
-        self._personalinfoview = PersonalInfoView(self._core, self._papyon_profile)
 
         # set login presence and update the gui
         self._personalinfoview.presence = amsn_profile.presence
 
     """ Actions from ourselves """
-    def _onNickUpdated(self, new_nick):
+    def _onNickChanged(self, new_nick):
         # TODO: parsing
         self._papyon_profile.display_name = new_nick.toString()
-        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
-    def _onPMUpdated(self, new_pm):
+    def _onPSMChanged(self, new_psm):
         # TODO: parsing
-        self._papyon_profile.personal_message = new_pm.toString()
-        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+        self._papyon_profile.personal_message = new_psm.toString()
 
-    def _onDPUpdated(self, new_dp):
+    def _onDPChanged(self, new_dp):
         # TODO: manage msn_objects
-        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+        self._papyon_profile.msn_object = new_dp
 
-    def _onPresenceUpdated(self, new_presence):
+    def _onPresenceChanged(self, new_presence):
         for key in self._core.p2s:
             if self._core.p2s[key] == new_presence:
                 break
         self._papyon_profile.presence = key
+
+    """ Actions from the core """
+    def _onCMChanged(self, new_media):
+        self._papyon_profile.current_media = new_media
+
+    """ Notifications from the server """
+    def onNickUpdated(self, nick):
+        # TODO: parse fields for smileys, format, etc
+        self._personalinfoview._nickname.reset()
+        self._personalinfoview._nickname.appendText(nick)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
-    """ actions from the core """
-    def _onCMUpdated(self, new_media):
-        self._papyon_profile.current_media = new_media
+    def onPSMUpdated(self, psm):
+        # TODO: parse fields for smileys, format, etc
+        self._personalinfoview._psm.reset()
+        self._personalinfoview._psm.appendText(psm)
+        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+
+    def onDPUpdated(self, dp):
+        self._personalinfoview._image.reset()
+        self._personalinfoview._image.load(dp)
+        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+
+    def onPresenceUpdated(self, presence):
+        self._personalinfoview._presence = self._core.p2s[presence]
+        self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
+
+    def onCMUpdated(self, cm):
+        self._personalinfoview._current_media.reset()
+        #TODO: insert separators
+        self._personalinfoview._current_media.apprndText(cm[0])
+        self._personalinfoview._current_media.apprndText(cm[1])
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
     # TODO: connect to papyon event, maybe build a mailbox_manager
