@@ -18,6 +18,9 @@ class PersonalInfoView(object):
         self._webcam = None
         self._mail_unread = None
 
+    def onDPChangeRequest(self):
+        self._personalinfo_manager._onDPChangeRequest()
+
     @rw_property
     def nick():
         def fget(self):
@@ -56,5 +59,22 @@ class PersonalInfoView(object):
             return self._presence
         def fset(self, presence):
             self._personalinfo_manager._onPresenceChanged(presence)
+        return locals()
+
+    # custom presence
+    @rw_property
+    def presence_dp():
+        def fget(self):
+            return (self.presence, self.dp)
+        def fset(self, presence, dpv):
+            self._personalinfo_manager._onPresenceDPChanged(presence, dpv)
+        return locals()
+
+    @rw_property
+    def psm_current_media():
+        def fget(self):
+            return (self.psm, self.current_media)
+        def fset(self, psm, artist, song):
+            self._personalinfo_manager._onPSMCMChanged(psm, (artist, song))
         return locals()
 

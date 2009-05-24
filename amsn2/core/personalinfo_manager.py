@@ -9,6 +9,7 @@ class aMSNPersonalInfoManager:
 
     def set_profile_connected(self, amsn_profile):
         self._papyon_profile = amsn_profile.client.profile
+        #print '%s' % self._papyon_profile._profile
 
         # set login presence and update the gui
         self._personalinfoview.presence = amsn_profile.presence
@@ -22,15 +23,27 @@ class aMSNPersonalInfoManager:
         # TODO: parsing
         self._papyon_profile.personal_message = new_psm.toString()
 
-    def _onDPChanged(self, new_dp):
-        # TODO: manage msn_objects
-        self._papyon_profile.msn_object = new_dp
-
     def _onPresenceChanged(self, new_presence):
+        # TODO: manage custom presence
         for key in self._core.p2s:
             if self._core.p2s[key] == new_presence:
                 break
         self._papyon_profile.presence = key
+
+    def _onDPChangeRequest(self):
+        # TODO: tell the core to invoke a file chooser and change DP
+        pass
+
+    def _onDPChanged(self, new_dp):
+        # TODO: manage msn_objects
+        self._papyon_profile.msn_object = new_dp
+
+    def _onPresenceDPChanged(self, new_presence, new_dp):
+        # TODO: manage msn_objects
+        self._papyon_profile.presence_msn_object = presence, new_dp
+
+    def _onPSMCMChanged(self, new_psm, new_media):
+        self._papyon_profile.personal_message_current_media = new_psm, new_media
 
     """ Actions from the core """
     def _onCMChanged(self, new_media):
