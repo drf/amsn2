@@ -191,7 +191,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         # TODO: image, ...
-        # FIXME: status at login, now seems 'offline' even if we are online
         self._myview = view
         nk = view.nick
         self.nicklabel.set_markup(nk.toString())

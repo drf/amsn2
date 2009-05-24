@@ -11,7 +11,17 @@ class aMSNPersonalInfoManager:
         self._papyon_profile = amsn_profile.client.profile
         #print '%s' % self._papyon_profile._profile
 
-        # set login presence and update the gui
+        # set nickname at login
+        # could be overriden by the one set in the saved profile
+        # TODO: add setting display picture and saved personal message
+        strv = StringView()
+        if amsn_profile.username == amsn_profile.email:
+            strv.appendText(self._papyon_profile.display_name)
+        else:
+            strv.appendText(amsn_profile.username)
+        self._personalinfoview.nick = strv
+
+        # set login presence, from this moment the client appears to the others
         self._personalinfoview.presence = amsn_profile.presence
 
     """ Actions from ourselves """
