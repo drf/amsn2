@@ -9,3 +9,4 @@ build/
 Debug/
 ui_*
 .*.swp
+pymsn/

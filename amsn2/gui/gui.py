@@ -14,7 +14,7 @@ class GUIManager(object):
     def __init__(self, core, gui_name):
         self._core = core
         self._name = gui_name
-
+   		
         if GUIManager.frontEndExists(self._name) is False:
             raise InvalidFrontEndException("Invalid Front End. Available front ends are : " + str(GUIManager.listFrontEnds()))
         else:
