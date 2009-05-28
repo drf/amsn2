@@ -86,6 +86,8 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         if not accv:
             accv = AccountView()
             accv.email = email
+        else:
+            accv = accv[0]
         accv.password = password
 
         self._amsn_core.signinToAccount(self, accv)

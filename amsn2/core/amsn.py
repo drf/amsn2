@@ -20,6 +20,7 @@
 
 from amsn2 import gui
 from amsn2 import protocol
+from amsn2.backend import aMSNBackendManager
 import papyon
 from views import *
 from account_manager import *
@@ -29,7 +30,6 @@ from oim_manager import *
 from theme_manager import *
 from personalinfo_manager import *
 from event_manager import *
-
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -52,8 +52,9 @@ class aMSNCore(object):
         self._main = None
         self.loadUI(self._options.front_end)
 
-        self._account_manager = aMSNAccountManager(options)
+        self._account_manager = aMSNAccountManager(self, options)
         self._account = None
+        self._backend_manager = aMSNBackendManager()
         self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)

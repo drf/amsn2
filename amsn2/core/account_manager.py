@@ -12,11 +12,10 @@ class aMSNAccount(object):
     """
     #TODO: use the personnal info stuff instead of the view
     def __init__(self, core, accountview, account_dir):
-        self.view = profileview
+        self.view = accountview
         self.account_dir = account_dir
-        self.password_backend = "default"
-        self.dp_backend = "default"
         self.do_save = accountview.save
+        self.backend_manager = core.backend_manager
 
         self.lock()
         #TODO
@@ -51,13 +50,12 @@ class aMSNAccount(object):
             statusElmt = SubElement(root_section, "status")
             statusElmt.text = self.view.status
             #password
-            #TODO ask the backend
-            passwordElmt = SubElement(root_section, "dp",
-                                      backend=self.password_backend)
+            passwordElmt = self.backend_manager.setPassword(self.view.password, root_section)
             passwordElmt.text = self.view.password
             #dp
+            #TODO ask the backend
             dpElmt = SubElement(root_section, "dp",
-                                  backend=self.dp_backend)
+                                backend=self.dp_backend)
             #TODO
 
             #TODO: save or not, preferred_ui
@@ -74,7 +72,8 @@ class aMSNAccountManager(object):
     """ aMSNAccountManager : The account manager that takes care of storing
     and retreiving all the account.
     """
-    def __init__(self, options):
+    def __init__(self, core, options):
+        self.core = core
         if os.name == "posix":
             self._accounts_dir = os.path.join(os.environ['HOME'], ".amsn2")
         elif os.name == "nt":
@@ -148,7 +147,7 @@ class aMSNAccountManager(object):
         return [v for v in self.accountviews if not self.isAccountLocked(v)]
         pass
 
-    def signingToAccount(self, accountview):
+    def signinToAccount(self, accountview):
         accdir = os.path.join(self._accounts_dir,
                               accountNameToDirName(accountview.email))
         acc = aMSNAccount(self.core, accountview, accdir)
@@ -160,5 +159,5 @@ class aMSNAccountManager(object):
 
 def accountNameToDirName(acc):
     #Having to do that just sucks
-    str = acc.lower().strip().replace("@","_at_");
+    return acc.lower().strip().replace("@","_at_")
 
