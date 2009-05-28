@@ -6,4 +6,3 @@ from main import *
 from splash import *
 from chat_window import *
 from skins import *
-from image import *
