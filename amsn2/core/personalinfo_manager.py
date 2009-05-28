@@ -12,7 +12,7 @@ class aMSNPersonalInfoManager:
         self._personalinfoview = PersonalInfoView(self._core, self._papyon_profile)
 
         # set login presence and update the gui
-        self._personalinfoview.presence = amsn_account.presence
+        self._personalinfoview.presence = self._papyon_profile.presence
 
     """ Actions from ourselves """
     def _onNickUpdated(self, new_nick):

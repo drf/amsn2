@@ -1,4 +1,5 @@
 *.pyc
+*.pyo
 build/
 *~
 .project
@@ -9,3 +10,4 @@ build/
 Debug/
 ui_*
 .*.swp
+pymsn/
