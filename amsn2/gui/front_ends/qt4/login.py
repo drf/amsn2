@@ -2,7 +2,12 @@ from amsn2.gui import base
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from ui_login import Ui_Login
+try:
+    from ui_login import Ui_Login
+except ImportError, e:
+    # FIXME: Should do that with logging...
+    print " WARNING: To use the QT4 you need to run the generateFiles.sh, check the README"
+    raise e
 from styledwidget import StyledWidget
 
 
