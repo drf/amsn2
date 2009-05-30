@@ -67,9 +67,11 @@ class aMSNCore(object):
                     papyon.Presence.INVISIBLE:"hidden",
                     papyon.Presence.OFFLINE:"offline"}
 
+        import logging
         if self._options.debug:
-            import logging
             logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.basicConfig(level=logging.WARNING)
 
     def run(self):
         self._main.show();
