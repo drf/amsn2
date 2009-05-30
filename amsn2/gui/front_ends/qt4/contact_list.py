@@ -24,7 +24,12 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from contact_model import ContactModel
 from contact_item import ContactItem
-from ui_contactlist import Ui_ContactList
+try:
+    from ui_contactlist import Ui_ContactList
+except ImportError, e:
+    # FIXME: Should do that with logging...
+    print "WARNING: To use the QT4 you need to run the generateFiles.sh, check the README"
+    raise e
 from styledwidget import StyledWidget
 from amsn2.core.views import StringView, ContactView
 from amsn2.gui import base

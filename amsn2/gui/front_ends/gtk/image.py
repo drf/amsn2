@@ -25,10 +25,9 @@ import gtk
 from amsn2.gui import base
 from amsn2.core.views import imageview
 
-class Image(gtk.Image, base.aMSNImage):
+class Image(gtk.Image):
     def __init__(self, theme_manager, view):
         gtk.Image.__init__(self)
-        base.aMSNImage.__init__(self, theme_manager, view)
 
     def _loadFromFilename(self, filename, view, index):
         # TODO: Implement support for emblems and other embedded images
