@@ -161,6 +161,7 @@ class aMSNProfile(object):
         self.alias = self.email
         self.password = None
         self.account = None
+        self.presence = 'online'
         self.directory = os.path.join(profiles_dir, self.email)
         self.config = aMSNProfileConfiguration(self)
         ###self.plugins_configs must be a dictionary like {"Plugin1_name":aMSNPluginConfiguration(self,"Plugin1_name",{"option1":123}),
