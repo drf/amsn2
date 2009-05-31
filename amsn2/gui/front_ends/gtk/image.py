@@ -28,6 +28,19 @@ from amsn2.core.views import imageview
 class Image(gtk.Image):
     def __init__(self, theme_manager, view):
         gtk.Image.__init__(self)
+        self._theme_manager = theme_manager
+        self.load(view)
+
+    def load(self, view):
+        i = 0
+        for (resource_type, value) in view.imgs:
+            try:
+                loadMethod = getattr(self, "_loadFrom%s" % resource_type)
+            except AttributeError, e:
+                print "From load in gtk/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+            else:
+                loadMethod(value, view, i)
+                i += 1
 
     def _loadFromFilename(self, filename, view, index):
         # TODO: Implement support for emblems and other embedded images
@@ -39,6 +52,17 @@ class Image(gtk.Image):
         except Exception, e:
             print e
             print "Error loading image %s" % filename
+
+    def _loadFromTheme(self, resource_name, view, index):
+        # TODO: Implement support for emblems and other embedded images
+        if (index != 0): return
+
+        _, filename = self._theme_manager.get_value(resource_name)
+
+        if filename is not None:
+            self._loadFromFilename(filename, view, index)
+        else:
+            print 'Error loading image %s from theme' %resource_name
 
     def to_pixbuf(self, width, height):
         #print 'image.py -> to_pixbuf: filename=%s' % self._filename

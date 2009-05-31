@@ -191,7 +191,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         # TODO: image, ...
-        # FIXME: status at login, now seems 'offline' even if we are online
         self._myview = view
         nk = view.nick
         self.nicklabel.set_markup(nk.toString())
@@ -208,7 +207,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
         # also fix papyon, gives an error on setting 'offline'
-        self._myview.presence = key
+        if key != self._myview.presence:
+            self._myview.presence = key
 
     def __on_btnNicknameClicked(self, source):
         self.__switchToNickInput()

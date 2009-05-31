@@ -14,7 +14,7 @@ class aMSNContactListManager:
 
     #TODO: sorting contacts & groups
 
-    def onContactPresenceChanged(self, papyon_contact):
+    def onContactChanged(self, papyon_contact):
         #1st/ update the aMSNContact object
         c = self.getContact(papyon_contact.id, papyon_contact)
         c.fill(self._core, papyon_contact)
@@ -24,7 +24,14 @@ class aMSNContactListManager:
 
         #TODO: update the group view
 
+    def onContactDPChanged(self, papyon_contact):
+        #TODO: add local cache for DPs
         #Request the DP...
+        c = self.getContact(papyon_contact.id, papyon_contact)
+        if ("Theme", "dp_nopic") in c.dp.imgs:
+            c.dp.load("Theme", "dp_loading")
+        elif papyon_contact is None:
+            c.dp.load("Theme", "dp_nopic")
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
                 self._core._profile.client._msn_object_store.request(papyon_contact.msn_object,
@@ -107,14 +114,16 @@ class aMSNContactListManager:
 class aMSNContact():
     def __init__(self, core, papyon_contact):
         self.uid = papyon_contact.id
+        self.dp = ImageView()
+        if papyon_contact.msn_object is None:
+            self.dp.load("Theme", "dp_nopic")
+        else:
+            self.dp.load("Theme", "dp_loading")
         self.fill(core, papyon_contact)
 
     def fill(self, core, papyon_contact):
         self.icon = ImageView()
         self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
-        self.dp = ImageView()
-        #TODO: for the moment, use default dp
-        self.dp.load("Theme", "dp_nopic")
         self.emblem = ImageView()
         self.emblem.load("Theme", "emblem_" + core.p2s[papyon_contact.presence])
         #TODO: PARSE ONLY ONCE

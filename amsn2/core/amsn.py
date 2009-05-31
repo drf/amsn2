@@ -160,7 +160,7 @@ class aMSNCore(object):
             profile.clwin.show()
             profile.login = None
 
-            self._personalinfo_manager.set_profile(profile)
+            self._personalinfo_manager.set_profile_connected(profile)
             self._contactlist_manager.onCLDownloaded(profile.client.address_book)
 
     def idlerAdd(self, func):

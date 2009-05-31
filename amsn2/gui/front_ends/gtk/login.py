@@ -90,11 +90,15 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         passbox.pack_start(self.password, False, False)
 
         # status list
+        self.status_values = {}
+        status_n = 0
         status_list = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
             _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
             if (name == 'offline'): continue
+            self.status_values[name] = status_n
+            status_n = status_n +1
             icon = gtk.gdk.pixbuf_new_from_file(path)
             name = string.capitalize(name)
             status_list.append([icon, name, key])
@@ -202,8 +206,11 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.current_profile.username = self.user.get_active_text()
         self.current_profile.email = self.user.get_active_text()
         self.current_profile.password = self.password.get_text()
-        i = self.statusCombo.get_active()
-        self.current_profile.presence = self._amsn_core.p2s.values()[i]
+        status = self.statusCombo.get_active()
+        for key in self.status_values:
+            if self.status_values[key] == status:
+                break
+        self.current_profile.presence = key
         self._amsn_core.signinToAccount(self, self.current_profile)
         self.timer = gobject.timeout_add(40, self.__animation)
 
