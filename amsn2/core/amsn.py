@@ -71,9 +71,11 @@ class aMSNCore(object):
                     papyon.Presence.INVISIBLE:"hidden",
                     papyon.Presence.OFFLINE:"offline"}
 
+        import logging
         if self._options.debug:
-            import logging
             logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.basicConfig(level=logging.WARNING)
 
     def run(self):
         self._main.show();
@@ -151,8 +153,8 @@ class aMSNCore(object):
             account.clwin.show()
             account.login = None
 
-            self._contactlist_manager.onCLDownloaded(account.client.address_book)
             self._personalinfo_manager.setAccount(account)
+            self._contactlist_manager.onCLDownloaded(account.client.address_book)
 
     def idlerAdd(self, func):
         self._loop.idlerAdd(func)

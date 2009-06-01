@@ -28,6 +28,14 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         import sys
         print >> sys.stderr, "Length is %d" % len(ch)
         print >> sys.stderr, "Received %s in Contact List" % ch.encode("UTF-8")
+        if ch == "KEY_UP":
+            self._clwidget.move(-1)
+        elif ch == "KEY_DOWN":
+            self._clwidget.move(1)
+        elif ch == "KEY_NPAGE":
+            self._clwidget.move(10)
+        elif ch == "KEY_PPAGE":
+            self._clwidget.move(-10)
 
 class aMSNContactListWidget(base.aMSNContactListWidget):
 
@@ -44,6 +52,14 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
         self._thread.daemon = True
         self._thread.setDaemon(True)
         self._thread.start()
+        self._selected = 1
+
+    def move(self, num):
+        self._selected += num
+        if self._selected < 1:
+            self._selected = 1
+        self.__repaint()
+
 
     def contactListUpdated(self, clView):
         # Acquire the lock to do modifications
@@ -122,7 +138,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                     cids.reverse()
                     for c in cids:
                         if self._contacts.has_key(c) and self._contacts[c]['cView'] is not None:
-                            if i == y - 3:
+                            if i == y - self._selected:
                                 self._win.bkgdset(curses.color_pair(1))
                             self._win.insstr(self._contacts[c]['cView'].name.toString())
                             self._win.bkgdset(curses.color_pair(0))
@@ -133,7 +149,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                             self._win.insertln()
                             self._win.bkgdset(curses.color_pair(0))
                             i += 1
-                    if i == y - 3:
+                    if i == y - self._selected:
                         self._win.bkgdset(curses.color_pair(1))
                     self._win.insstr(self._groups[g].name.toString())
                     self._win.bkgdset(curses.color_pair(0))

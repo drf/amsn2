@@ -30,4 +30,6 @@ class ImageView(object):
     def prependImageView(self, iv):
         self.imgs = iv.imgs[:].extend(self.imgs)
 
+    def reset(self):
+        self.imgs = []
 
