@@ -7,7 +7,7 @@ def rw_property(f):
 class PersonalInfoView(object):
     def __init__(self, personalinfo_manager):
         self._personalinfo_manager = personalinfo_manager
-        
+
         self._nickname = StringView()
         self._psm = StringView()
         self._current_media  = StringView()
@@ -59,15 +59,6 @@ class PersonalInfoView(object):
             return self._presence
         def fset(self, presence):
             self._personalinfo_manager._onPresenceChanged(presence)
-        return locals()
-
-    # custom presence
-    @rw_property
-    def presence_dp():
-        def fget(self):
-            return (self.presence, self.dp)
-        def fset(self, presence, dpv):
-            self._personalinfo_manager._onPresenceDPChanged(presence, dpv)
         return locals()
 
     @rw_property
