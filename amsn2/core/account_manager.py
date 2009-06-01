@@ -1,7 +1,13 @@
 import os
-from xml.etree.ElementTree import Element, SubElement, ElementTree
-import xml.parsers.expat
 import __builtin__
+"""ElementTree independent from the available distribution"""
+try:
+    from xml.etree.cElementTree import *
+except ImportError:
+    try:
+        from cElementTree import *
+    except ImportError:
+        from elementtree.ElementTree import *
 from views import AccountView
 from views import StringView
 
@@ -15,7 +21,8 @@ class aMSNAccount(object):
         self.view = accountview
         self.account_dir = account_dir
         self.do_save = accountview.save
-        self.backend_manager = core.backend_manager
+        self.backend_manager = core._backend_manager
+        #self.config = aMSNConfig()
 
         self.lock()
         #TODO
@@ -55,7 +62,7 @@ class aMSNAccount(object):
             #dp
             #TODO ask the backend
             dpElmt = SubElement(root_section, "dp",
-                                backend=self.dp_backend)
+                                backend='DefaultBackend')
             #TODO
 
             #TODO: save or not, preferred_ui
