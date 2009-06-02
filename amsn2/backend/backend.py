@@ -10,6 +10,8 @@ except ImportError:
 class aMSNBackendManager(object):
     def __init__(self):
         self.setBackendForFunc('setPassword', 'defaultbackend')
+        self.setBackendForFunc('saveConfig',  'defaultbackend')
+        self.setBackendForFunc('loadConfig',  'defaultbackend')
 
     def setBackendForFunc(self, funcname, backendname):
         try:

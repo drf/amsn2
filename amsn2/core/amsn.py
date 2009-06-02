@@ -126,7 +126,7 @@ class aMSNCore(object):
         self._account = self._account_manager.signinToAccount(accountview)
         self._account.login = login_window
         self._account.client = protocol.Client(self, self._account)
-        self._account.client.connect()
+        self._account.client.connect(accountview.email, accountview.password)
 
     def connectionStateChanged(self, account, state):
 
@@ -143,8 +143,6 @@ class aMSNCore(object):
         if state in status_str:
             account.login.onConnecting((state + 1)/ 7., status_str[state])
         elif state == papyon.event.ClientState.OPEN:
-            account.login.onConnecting((state + 1)/ 7., status_str[state])
-        elif state == pymsn.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
             clwin.account = account
             account.clwin = clwin

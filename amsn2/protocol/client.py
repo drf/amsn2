@@ -29,11 +29,11 @@ from events.profile import *
 from events.mailbox import *
 
 class Client(papyon.Client):
-    def __init__(self, amsn_core, profile):
-        self._amsn_profile = profile
+    def __init__(self, amsn_core, account):
+        self._amsn_account = account
         self._amsn_core = amsn_core
-        server = (self._amsn_profile.getConfigKey("ns_server", "messenger.hotmail.com"),
-                  self._amsn_profile.getConfigKey("ns_port", 1863))
+        server = (self._amsn_account.config.getKey("ns_server", "messenger.hotmail.com"),
+                  self._amsn_account.config.getKey("ns_port", 1863))
         papyon.Client.__init__(self, server)
 
         self._client_events_handler = ClientEvents(self, self._amsn_core)
@@ -44,8 +44,8 @@ class Client(papyon.Client):
         self._profile_events_handler = ProfileEvents(self, self._amsn_core._personalinfo_manager)
         self._mailbox_events_handler = MailboxEvents(self, self._amsn_core)
 
-    def connect(self):
-        self.login(self._amsn_profile.email, self._amsn_profile.password)
+    def connect(self, email, password):
+        self.login(email, password)
 
     def changeNick(self, nick):
         self.profile.display_name = nick.toString()

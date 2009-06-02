@@ -34,7 +34,7 @@ class aMSNContactListManager:
             c.dp.load("Theme", "dp_nopic")
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
-                self._core._profile.client._msn_object_store.request(papyon_contact.msn_object,
+                self._core._account.client._msn_object_store.request(papyon_contact.msn_object,
                                                                      (self.onDPdownloaded,
                                                                       papyon_contact.id))
 

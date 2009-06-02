@@ -9,7 +9,7 @@ class ClientEvents(papyon.event.ClientEventInterface):
         papyon.event.ClientEventInterface.__init__(self, client)
 
     def on_client_state_changed(self, state):
-        self._amsn_core.connectionStateChanged(self._client._amsn_profile, state)
+        self._amsn_core.connectionStateChanged(self._client._amsn_account, state)
 
     def on_client_error(self, error_type, error):
         print "ERROR :", error_type, " ->", error

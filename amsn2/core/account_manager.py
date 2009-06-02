@@ -22,7 +22,7 @@ class aMSNAccount(object):
         self.account_dir = account_dir
         self.do_save = accountview.save
         self.backend_manager = core._backend_manager
-        #self.config = aMSNConfig()
+        self.config = self.backend_manager.loadConfig('General')
 
         self.lock()
         #TODO
@@ -53,9 +53,9 @@ class aMSNAccount(object):
             nick = self.view.nick.toString()
             nickElmt = SubElement(root_section, "nick")
             nickElmt.text = nick
-            #status
-            statusElmt = SubElement(root_section, "status")
-            statusElmt.text = self.view.status
+            #presence
+            presenceElmt = SubElement(root_section, "presence")
+            presenceElmt.text = self.view.presence
             #password
             passwordElmt = self.backend_manager.setPassword(self.view.password, root_section)
             passwordElmt.text = self.view.password
@@ -98,7 +98,8 @@ class aMSNAccountManager(object):
         if options.account is not None:
             pv = [p for p in self.accountviews if p.email == options.account]
             if pv:
-                self.accountviews.remove(pv[0])
+                pv = pv[0]
+                self.accountviews.remove(pv)
             else:
                 pv = AccountView()
                 pv.email = options.account
@@ -127,21 +128,30 @@ class aMSNAccountManager(object):
         if account.tag == "aMSNAccount":
             accview = AccountView()
             #email
-            emailElt = account.find("email")
-            accview.email = emailElt.text
+            emailElmt = account.find("email")
+            if not emailElmt:
+                return None
+            accview.email = emailElmt.text
             #nick
             nickElmt = account.find("nick")
-            accview.nick.appendText(nickElmt.text)
+            if not nickElmt:
+                return None
+            if nickElmt.text:
+                accview.nick.appendText(nickElmt.text)
             #TODO: parse...
-            #status
-            statusElmt = account.find("status")
-            accview.status = statusElmt.text
+            #presence
+            presenceElmt = account.find("presence")
+            if not presenceElmt:
+                return None
+            accview.presence = presenceElmt.text
             #password
             passwordElmt = account.find("password")
+            if not passwordElmt:
+                return None
             accview.password = self.core._backend_manager.getPassword(passwordElmt)
             #TODO: use backend & all
             #dp
-            dpElt = account.find("dp")
+            dpElmt = account.find("dp")
             #TODO
 
             #TODO: preferred_ui ?

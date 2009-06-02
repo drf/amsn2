@@ -7,7 +7,7 @@ class MailboxEvents(papyon.event.MailboxEventInterface):
         self._amsn_core = amsn_core
         papyon.event.MailboxEventInterface.__init__(self, client)
 
-    def on_mailbox_unread_mail_count_changed(self, unread_mail_count, 
+    def on_mailbox_unread_mail_count_changed(self, unread_mail_count,
                                                    initial=False):
         """The number of unread mail messages"""
         pass

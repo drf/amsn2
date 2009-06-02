@@ -8,7 +8,7 @@ class AccountView:
         self.email = None
         self.password = None
         self.nick = StringView()
-        self.status = papyon.Presence.ONLINE
+        self.presence = papyon.Presence.ONLINE
         self.dp = ImageView()
 
         self.save = False

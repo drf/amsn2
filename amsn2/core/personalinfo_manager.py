@@ -14,23 +14,28 @@ class aMSNPersonalInfoManager:
         # could be overriden by the one set in the saved account
         # TODO: add setting display picture and saved personal message
         strv = StringView()
-        if amsn_account.username == amsn_account.email:
-            strv.appendText(self._papyon_profile.display_name)
+        nick = amsn_account.view.nick.toString()
+        if nick and nick != amsn_account.view.email:
+            strv.appendText(nick)
         else:
-            strv.appendText(amsn_account.username)
+            strv.appendText(self._papyon_profile.display_name)
         self._personalinfoview.nick = strv
 
         # set login presence, from this moment the client appears to the others
-        self._personalinfoview.presence = amsn_account.presence
+        self._personalinfoview.presence = amsn_account.view.presence
 
     """ Actions from ourselves """
     def _onNickChanged(self, new_nick):
         # TODO: parsing
-        self._papyon_profile.display_name = new_nick.toString()
+        str = new_nick.toString()
+        if str:
+            self._papyon_profile.display_name = str
 
     def _onPSMChanged(self, new_psm):
         # TODO: parsing
-        self._papyon_profile.personal_message = new_psm.toString()
+        str = new_psm.toString()
+        if str:
+            self._papyon_profile.personal_message = str
 
     def _onPresenceChanged(self, new_presence):
         # TODO: manage custom presence
