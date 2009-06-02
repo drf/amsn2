@@ -23,7 +23,7 @@ class aMSNBackendManager(object):
         self.__setattr__(funcname, f)
 
     def getPassword(self, passwdElmt):
-        backendname = password.Elmt["backend"]
+        backendname = passwdElmt.attrib['backend']
         try:
             m = __import__(backendname, globals(), locals(), [], -1)
         except ImportError:

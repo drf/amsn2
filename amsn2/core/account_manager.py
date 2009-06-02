@@ -72,7 +72,7 @@ class aMSNAccount(object):
                 os.makedirs(self.account_dir, 0700)
             accpath = os.path.join(self.account_dir, "account.xml")
             xml_tree = ElementTree(root_section)
-            xml_tree.write(accpath)
+            xml_tree.write(accpath, encoding='utf-8')
 
 
 class aMSNAccountManager(object):
@@ -112,19 +112,23 @@ class aMSNAccountManager(object):
             break
 
         for account_dir in account_dirs:
-            self.accountviews.append(self.loadAccount(account_dir))
+            accv = self.loadAccount(os.path.join(self._accounts_dir, account_dir))
+            if accv:
+                self.accountviews.append(accv)
 
 
     def loadAccount(self, dir):
         accview = None
         accpath = os.path.join(dir, "account.xml")
-        root_tree = parse(accpath)
-        account = root_tree.find("aMSNAccount")
-        if account is not None:
-            accview = Accountview()
+        accfile = file(accpath, "r")
+        root_tree = ElementTree(file=accfile)
+        accfile.close()
+        account = root_tree.getroot()
+        if account.tag == "aMSNAccount":
+            accview = AccountView()
             #email
             emailElt = account.find("email")
-            accview.email = text
+            accview.email = emailElt.text
             #nick
             nickElmt = account.find("nick")
             accview.nick.appendText(nickElmt.text)
@@ -134,7 +138,7 @@ class aMSNAccountManager(object):
             accview.status = statusElmt.text
             #password
             passwordElmt = account.find("password")
-            accview.password = passwordElmt.text
+            accview.password = self.core._backend_manager.getPassword(passwordElmt)
             #TODO: use backend & all
             #dp
             dpElt = account.find("dp")
