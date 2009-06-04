@@ -30,7 +30,7 @@ class aMSNContactListManager:
         c = self.getContact(papyon_contact.id, papyon_contact)
         if ("Theme", "dp_nopic") in c.dp.imgs:
             c.dp.load("Theme", "dp_loading")
-        elif papyon_contact is None:
+        elif papyon_contact.msn_object is None:
             c.dp.load("Theme", "dp_nopic")
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
