@@ -32,6 +32,11 @@ class aMSNContactListManager:
             c.dp.load("Theme", "dp_loading")
         elif papyon_contact.msn_object is None:
             c.dp.load("Theme", "dp_nopic")
+            self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
+            cv = ContactView(self._core, c)
+            self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
+            return
+
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
                 self._core._profile.client._msn_object_store.request(papyon_contact.msn_object,
