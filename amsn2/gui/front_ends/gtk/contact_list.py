@@ -361,10 +361,8 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         citer = self.__search_by_id(contactview.uid)
         if citer is None: return
 
-        # TODO: Verify if DP exist
-        #img = Image(self._cwin._theme_manager, contactview.dp)
-        #dp = img.to_pixbuf(28, 28)
-        img = Image(self._cwin._theme_manager, contactview.icon)
+        img = Image(self._cwin._theme_manager, contactview.dp)
+        #img = Image(self._cwin._theme_manager, contactview.icon)
         dp = img.to_pixbuf(28, 28)
 
         self._model.set_value(citer, 0, dp)
