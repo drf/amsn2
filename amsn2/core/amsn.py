@@ -200,6 +200,11 @@ class aMSNCore(object):
             self._account.signOut()
         self._loop.quit()
 
+    def addContact(self):
+        # open a window, get the infos and let the contactlist manager work
+        account  = raw_input('Contact to add: ')
+        self._contactlist_manager.addContact(account, invite_message='hola')
+
     def createMainMenuView(self):
         menu = MenuView()
         quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
@@ -210,6 +215,16 @@ class aMSNCore(object):
         mainMenu.addItem(logOutMenuItem)
         mainMenu.addItem(quitMenuItem)
 
+        addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact", command=self.addContact)
+        # only for test purpose, will be called by the contact list
+        removeContact = MenuItemView(MenuItemView.COMMAND, label='remove contact', command=lambda *args: self._contactlist_manager.removeContact())
+
+        contactsMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Contacts")
+        contactsMenu.addItem(addContactItem)
+        contactsMenu.addItem(removeContact)
+
         menu.addItem(mainMenu)
+        menu.addItem(contactsMenu)
 
         return menu
+

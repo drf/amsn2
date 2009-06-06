@@ -18,6 +18,8 @@ class aMSNContactListManager:
 
     #TODO: sorting contacts & groups
 
+    ''' normal changes of a contact '''
+
     def onContactChanged(self, papyon_contact):
         """ Called when a contact changes either its presence, nick, psm or current media."""
 
@@ -50,6 +52,43 @@ class aMSNContactListManager:
                 self._core._account.client._msn_object_store.request(papyon_contact.msn_object,
                                                                      (self.onDPdownloaded,
                                                                       papyon_contact.id))
+
+    def onDPdownloaded(self, msn_object, uid):
+        #1st/ update the aMSNContact object
+        c = self.getContact(uid)
+        ##c.dp.load("FileObject", msn_object._data)
+        (fno, tf) = tempfile.mkstemp()
+        f = os.fdopen(fno, 'w+b')
+        f.write(msn_object._data.read())
+        f.close()
+        c.dp.load("Filename", tf)
+        self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
+        #2nd/ update the ContactView
+        cv = ContactView(self._core, c)
+        self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
+
+    ''' changes to the address book '''
+
+# actions from user: accept/decline contact invitation - add/remove contact - block/unblock contact - add/remove/rename group - add/remove contact to/from group
+
+    def addContact(self, account, invite_display_name='', 
+            invite_message='', groups=[]):
+        
+        self._papyon_addressbook.add_messenger_contact(self, account)
+
+    def onContactAdded(self, contact):
+        print 'contact added! %s' % contact
+
+    def removeContact(self, account=''):
+        account = raw_input('Contact to remove: ')
+        print account
+        self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
+                                                 search_by('account', account)[0])
+
+    def onContactDeleted(self, contact):
+        print 'contact removed! %s' % contact
+
+    ''' additional methods '''
 
     def onCLDownloaded(self, address_book):
         self._papyon_addressbook = address_book
@@ -91,21 +130,6 @@ class aMSNContactListManager:
         for c in cviews:
             self._em.emit(self._em.events.CONTACTVIEW_UPDATED, c)
 
-    def onDPdownloaded(self, msn_object, uid):
-        #1st/ update the aMSNContact object
-        c = self.getContact(uid)
-        ##c.dp.load("FileObject", msn_object._data)
-        (fno, tf) = tempfile.mkstemp()
-        f = os.fdopen(fno, 'w+b')
-        f.write(msn_object._data.read())
-        f.close()
-        c.dp.load("Filename", tf)
-        self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
-        #2nd/ update the ContactView
-        cv = ContactView(self._core, c)
-        self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
-
-
     def getContact(self, uid, papyon_contact=None):
         """
         @param uid: uid of the contact
@@ -115,7 +139,6 @@ class aMSNContactListManager:
         @return: aMSNContact of that contact
         @rtype: aMSNContact
         """
-
         #TODO: should raise UnknownContact or sthg like that
         try:
             return self._contacts[uid]
@@ -170,6 +193,14 @@ class aMSNContact():
         self.current_media.appendText(papyon_contact.current_media)
         self.status = StringView()
         self.status.appendText(core.p2s[papyon_contact.presence])
+
+        # ro, can be changed indirectly with addressbook's actions
+        self.memberships = papyon_contact.memberships
+        self.contact_type = papyon_contact.contact_type
+        self.groups = papyon_contact.groups.copy()
+        # ro
+        self.capabilities = papyon_contact.client_capabilities
+        self.infos = papyon_contact.infos.copy()
         #for the moment, we store the papyon_contact object, but we shouldn't have to
 
         #TODO: getPapyonContact(self, core...) or _papyon_contact?

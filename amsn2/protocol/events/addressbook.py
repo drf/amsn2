@@ -24,13 +24,14 @@ import papyon.event
 class AddressBookEvents(papyon.event.AddressBookEventInterface):
     def __init__(self, client, amsn_core):
         self._amsn_core = amsn_core
+        self._contactlist_manager = amsn_core._contactlist_manager
         papyon.event.AddressBookEventInterface.__init__(self, client)
 
     def on_addressbook_messenger_contact_added(self, contact):
-        pass
+        self._contactlist_manager.onContactAdded(contact)
 
     def on_addressbook_contact_deleted(self, contact):
-        pass
+        self._contactlist_manager.onContactDeleted(contact)
 
     def on_addressbook_contact_blocked(self, contact):
         pass
