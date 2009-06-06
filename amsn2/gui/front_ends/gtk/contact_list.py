@@ -193,10 +193,10 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         # TODO: image, ...
         self._myview = view
         nk = view.nick
-        self.nicklabel.set_markup(nk.toString())
+        self.nicklabel.set_markup(str(nk))
         psm = view.psm
         cm = view.current_media
-        message = psm.toString()+' '+cm.toString()
+        message = str(psm)+' '+str(cm)
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
 
@@ -335,7 +335,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         giter = self.__search_by_id(groupview.uid)
         self._model.set_value(giter, 1, groupview)
         self._model.set_value(giter, 2, '<b>%s</b>' % common.escape_pango(
-            groupview.name.toString()))
+            str(groupview.name)))
 
         try:
             cuids = self.contacts[groupview.uid]
@@ -370,7 +370,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         self._model.set_value(citer, 0, dp)
         self._model.set_value(citer, 1, contactview)
         self._model.set_value(citer, 2, common.escape_pango(
-            contactview.name.toString()))
+            str(contactview.name)))
         del dp
         gc.collect()
 

@@ -89,7 +89,7 @@ class aMSNConversation:
         # for the moment, no formatting, no smiley substitution... (TODO)
         # peacey: Added formatting of styles
         self.onMessageReceived(msg, formatting=formatting)
-        message = papyon.ConversationMessage(msg.toString(), formatting)
+        message = papyon.ConversationMessage(str(msg), formatting)
         self._conv.send_text_message(message)
 
     def sendNudge(self):

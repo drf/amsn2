@@ -143,24 +143,24 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
 
     def onUserJoined(self, contact):
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.name.toString())+" "+self.tr("has joined the conversation")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(contact.name))+" "+self.tr("has joined the conversation")+("</b>")))
         pass
 
     def onUserLeft(self, contact):
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.name.toString())+" "+self.tr("has left the conversation")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(contact.name))+" "+self.tr("has left the conversation")+("</b>")))
         pass
 
     def onUserTyping(self, contact):
-        self._statusBar.showMessage(unicode(QString.fromUtf8(contact.name.toString()) + " is typing"), 7000)
+        self._statusBar.showMessage(unicode(QString.fromUtf8(str(contact.name)) + " is typing"), 7000)
 
     def onMessageReceived(self, sender, message):
         print "Ding!"
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(sender.name.toString())+" "+self.tr("writes:")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(sender.name))+" "+self.tr("writes:")+("</b>")))
         self.ui.textEdit.append(unicode(message.toHtmlString()))
         pass
 
     def onNudgeReceived(self, sender):
-        self.ui.textEdit.append(unicode("<b>"+sender.name.toString()+" "+self.tr("sent you a nudge!")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+str(sender.name)+" "+self.tr("sent you a nudge!")+("</b>")))
         pass
 
 
