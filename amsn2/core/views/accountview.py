@@ -1,7 +1,6 @@
 
 from imageview import *
 from stringview import *
-import papyon
 
 class AccountView:
     def __init__(self):
@@ -16,3 +15,4 @@ class AccountView:
         self.autologin = False
 
         self.preferred_ui = None
+

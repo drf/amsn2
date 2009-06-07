@@ -26,7 +26,8 @@ class aMSNAccount(object):
         self.load()
 
     def signOut(self):
-        self.save()
+        if self.do_save:
+            self.save()
         self.unlock()
 
     def lock(self):
@@ -39,10 +40,10 @@ class aMSNAccount(object):
 
     def load(self):
         #TODO:
-        self.config = self.backend_manager.loadConfig(self, 'General')
+        self.config = self.backend_manager.loadConfig(self)
 
     def save(self):
-        self.backend_manager.saveConfig(self, self.config, 'General')
+        self.backend_manager.saveConfig(self, self.config)
         #TODO: integrate with personnalinfo
         if self.view is not None and self.view.email is not None:
             root_section = Element("aMSNAccount")
@@ -80,7 +81,7 @@ class aMSNAccountManager(object):
     and retreiving all the account.
     """
     def __init__(self, core, options):
-        self.core = core
+        self._core = core
         if os.name == "posix":
             self._accounts_dir = os.path.join(os.environ['HOME'], ".amsn2")
         elif os.name == "nt":
@@ -167,9 +168,16 @@ class aMSNAccountManager(object):
         return [v for v in self.accountviews if not self.isAccountLocked(v)]
 
     def signinToAccount(self, accountview):
-        accdir = os.path.join(self._accounts_dir,
-                              accountNameToDirName(accountview.email))
-        acc = aMSNAccount(self.core, accountview, accdir)
+        if accountview.save:
+            # save the backend type in the account?
+            self._core._backend_manager.switchToBackend('defaultbackend')
+            accdir = os.path.join(self._accounts_dir,
+                                  accountNameToDirName(accountview.email))
+        else:
+            # fake dir, fix it
+            accdir = ""
+        acc = aMSNAccount(self._core, accountview, accdir)
+        acc.lock()
         return acc
 
     def isAccountLocked(self, accountview):
