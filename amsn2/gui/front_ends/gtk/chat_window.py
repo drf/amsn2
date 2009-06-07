@@ -299,7 +299,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         nick, msg = text.split('\n', 1)
         nick = str(nick.replace('\n', '<br/>'))
         msg = str(msg.replace('\n', '<br/>'))
-        sender = messageview.sender.toString()
+        sender = str(messageview.sender)
 
         # peacey: Check formatting of styles and perform the required changes
         if formatting:

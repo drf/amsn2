@@ -21,6 +21,12 @@ class ContactEvents(papyon.event.ContactEventInterface):
         self._contact_manager.onContactChanged(contact)
 
     def on_contact_msn_object_changed(self, contact):
+        # if the msnobject has been removed, just remove the buddy's DP
+        print 'hhhhh %s' % contact.msn_object
+        if contact.msn_object is None: 
+            self._contact_manager.onContactDPChanged(contact)
+            return
+
         # TODO: filter objects
         if contact.msn_object._type is papyon.p2p.MSNObjectType.DISPLAY_PICTURE:
             self._contact_manager.onContactDPChanged(contact)

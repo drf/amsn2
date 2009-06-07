@@ -102,7 +102,7 @@ class ContactHolder(evas.SmartObject):
             c = self.contacts_dict[contactview.uid]
         except KeyError:
             return
-        c.part_text_set("contact_data", contactview.name.toString())
+        c.part_text_set("contact_data", str(contactview.name))
 
         if DP_IN_CL:
             # add the dp
@@ -238,7 +238,7 @@ class GroupItem(edje.Edje):
             return self.contact_holder.num_contacts()
 
     def group_updated(self, groupview):
-        self.part_text_set("group_name", groupview.name.toString())
+        self.part_text_set("group_name", str(groupview.name))
         self.contact_holder.groupViewUpdated(groupview)
 
     # Private methods

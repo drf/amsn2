@@ -98,12 +98,12 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
 
     def contactUpdated(self, contact):
-        print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))
+        print unicode("Contact Updated: " + QString.fromUtf8(str(contact.name)))
         l = self._model.findItems("*", Qt.MatchWildcard | Qt.MatchRecursive)
 
         for itm in l:
-            if itm.data(40).toString() == contact.uid:
-                itm.setText(QString.fromUtf8(contact.name.toString()))
+            if str(itm.data(40)) == contact.uid:
+                itm.setText(QString.fromUtf8(str(contact.name)))
                 break
 
     def groupUpdated(self, group):
@@ -112,22 +112,22 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
 
         for itm in l:
 
-            if itm.data(40).toString() == group.uid:
+            if str(itm.data(40)) == group.uid:
 
-                itm.setText(QString.fromUtf8(group.name.toString()))
+                itm.setText(QString.fromUtf8(str(group.name)))
 
                 for contact in group.contacts:
 
                     for ent in l:
 
-                        if ent.data(40).toString() == contact.uid:
-                            itm.setText(QString.fromUtf8(contact.name.toString()))
+                        if str(ent.data(40)) == contact.uid:
+                            itm.setText(QString.fromUtf8(str(contact.name)))
                             continue
 
-                    print "  * " + contact.name.toString()
+                    print "  * " + contact.name
 
                     contactItem = ContactItem()
-                    contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
+                    contactItem.setContactName(QString.fromUtf8(str(contact.name)))
                     contactItem.setData(QVariant(contact.uid), 40)
 
                     itm.appendRow(contactItem)
@@ -159,7 +159,7 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
                          self.__slotContactCallback)
 
     def __slotContactCallback(self, index):
-        data = str(index.data(40).toString())
+        data = str(str(index.data(40)))
         if self._callback is not None:
             self._callback(self._contactDict[data])
 
@@ -168,22 +168,22 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
 
     def groupAdded(self, group):
-        print group.name.toString()
+        print group.name
 
         pi = self._model.invisibleRootItem();
 
         # Adding Group Item
 
         groupItem = QStandardItem()
-        groupItem.setText(QString.fromUtf8(group.name.toString()))
+        groupItem.setText(QString.fromUtf8(str(group.name)))
         groupItem.setData(QVariant(group.uid), 40)
         pi.appendRow(groupItem)
 
         for contact in group.contacts:
-            print "  * " + contact.name.toString()
+            print "  * " + contact.name
 
             contactItem = ContactItem()
-            contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
+            contactItem.setContactName(QString.fromUtf8(str(contact.name)))
             contactItem.setData(QVariant(contact.uid), 40)
 
             groupItem.appendRow(contactItem)

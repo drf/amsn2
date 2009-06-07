@@ -79,9 +79,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnNickname.set_alignment(0,0)
         self.btnNickname.connect("clicked",self.__on_btnNicknameClicked)
 
-        self.psm = gtk.Entry()
-
         self.psmlabel = gtk.Label()
+        self.psmlabel.set_alignment(0, 0)
         self.psmlabel.set_use_markup(True)
         self.psmlabel.set_ellipsize(pango.ELLIPSIZE_END)
         self.psmlabel.set_markup('<i>&lt;Personal message&gt;</i>')
@@ -90,6 +89,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnPsm.add(self.psmlabel)
         self.btnPsm.set_relief(gtk.RELIEF_NONE)
         self.btnPsm.set_alignment(0,0)
+        self.btnPsm.connect("clicked", self.__on_btnPsmClicked)
 
         # status list
         self.status_values = {}
@@ -136,7 +136,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
 
         boxPsm = gtk.HBox(False, 0)
         boxPsm.pack_start(self.btnPsm, True, True)
-        boxPsm.pack_start(self.psm, True, True)
 
         headerRight = gtk.VBox(False, 0)
         headerRight.pack_start(boxNick, False, False)
@@ -160,9 +159,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.pack_start(bottom, False, False, 2)
 
     def __setup_window(self):
-        self.psm.hide()
-        self.btnPsm.show()
-
         _, filename = self._theme_manager.get_dp('dp_nopic')
         pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 64, 64)
         self.display.set_from_pixbuf(pixbuf)
@@ -193,10 +189,10 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         # TODO: image, ...
         self._myview = view
         nk = view.nick
-        self.nicklabel.set_markup(nk.toString())
+        self.nicklabel.set_markup(str(nk))
         psm = view.psm
         cm = view.current_media
-        message = psm.toString()+' '+cm.toString()
+        message = str(psm)+' '+str(cm)
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
 
@@ -219,9 +215,11 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         #label = self.btnNickname.get_child()
         self.btnNickname.get_child().destroy()
         entry = gtk.Entry()
+        entry.set_text(str(self._myview.nick))
         self.btnNickname.add(entry)
         entry.show()
         entry.connect("activate", self.__switchFromNickInput)
+        #TODO: If user press ESC then destroy gtk.Entry
 
     def __switchFromNickInput(self, source):
         """ When in the editing state of nickname, change back to the uneditable
@@ -233,6 +231,32 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.btnNickname.get_child().destroy()
         entry = self.nicklabel
         self.btnNickname.add(entry)
+        entry.show()
+
+    def __on_btnPsmClicked(self, source):
+        self.__switchToPsmInput()
+
+    def __switchToPsmInput(self):
+        """ Switches the psm button into a text area for editing of the psm."""
+
+        self.btnPsm.get_child().destroy()
+        entry = gtk.Entry()
+        entry.set_text(str(self._myview.psm))
+        self.btnPsm.add(entry)
+        entry.show()
+        entry.connect("activate", self.__switchFromPsmInput)
+        #TODO: If user press ESC then destroy gtk.Entry
+
+    def __switchFromPsmInput(self, source):
+        """ When in the editing state of psm, change back to the uneditable
+        label state.
+        """
+        strv = StringView()
+        strv.appendText(source.get_text())
+        self._myview.psm = strv
+        self.btnPsm.get_child().destroy()
+        entry = self.psmlabel
+        self.btnPsm.add(entry)
         entry.show()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
@@ -335,7 +359,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         giter = self.__search_by_id(groupview.uid)
         self._model.set_value(giter, 1, groupview)
         self._model.set_value(giter, 2, '<b>%s</b>' % common.escape_pango(
-            groupview.name.toString()))
+            str(groupview.name)))
 
         try:
             cuids = self.contacts[groupview.uid]
@@ -361,16 +385,14 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
         citer = self.__search_by_id(contactview.uid)
         if citer is None: return
 
-        # TODO: Verify if DP exist
-        #img = Image(self._cwin._theme_manager, contactview.dp)
-        #dp = img.to_pixbuf(28, 28)
-        img = Image(self._cwin._theme_manager, contactview.icon)
+        img = Image(self._cwin._theme_manager, contactview.dp)
+        #img = Image(self._cwin._theme_manager, contactview.icon)
         dp = img.to_pixbuf(28, 28)
 
         self._model.set_value(citer, 0, dp)
         self._model.set_value(citer, 1, contactview)
         self._model.set_value(citer, 2, common.escape_pango(
-            contactview.name.toString()))
+            str(contactview.name)))
         del dp
         gc.collect()
 

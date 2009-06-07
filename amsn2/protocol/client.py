@@ -48,7 +48,7 @@ class Client(papyon.Client):
         self.login(email, password)
 
     def changeNick(self, nick):
-        self.profile.display_name = nick.toString()
+        self.profile.display_name = str(nick)
 
     def changeMessage(self, message):
-        self.profile.personal_message = message.toString()
+        self.profile.personal_message = str(message)

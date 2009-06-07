@@ -140,7 +140,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                         if self._contacts.has_key(c) and self._contacts[c]['cView'] is not None:
                             if i == y - self._selected:
                                 self._win.bkgdset(curses.color_pair(1))
-                            self._win.insstr(self._contacts[c]['cView'].name.toString())
+                            self._win.insstr(str(self._contacts[c]['cView'].name))
                             self._win.bkgdset(curses.color_pair(0))
                             self._win.insch(' ')
                             self._win.insch(curses.ACS_HLINE)
@@ -151,7 +151,7 @@ class aMSNContactListWidget(base.aMSNContactListWidget):
                             i += 1
                     if i == y - self._selected:
                         self._win.bkgdset(curses.color_pair(1))
-                    self._win.insstr(self._groups[g].name.toString())
+                    self._win.insstr(str(self._groups[g].name))
                     self._win.bkgdset(curses.color_pair(0))
                     self._win.insch(' ')
                     self._win.insch(curses.ACS_LLCORNER)

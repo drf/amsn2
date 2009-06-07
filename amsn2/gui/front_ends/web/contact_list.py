@@ -46,7 +46,7 @@ class aMSNContactListWindow(object):
         ourself, such as DP, nick, psm, the current media being played,...
         @view: the contactView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
-        self._main.send("myInfoUpdated",[view.name.toString()])
+        self._main.send("myInfoUpdated",[str(view.name)])
         pass
 
 class aMSNContactListWidget(object):
@@ -101,7 +101,7 @@ class aMSNContactListWidget(object):
         A contact can also be added or removed from a group using this method
         """
         self.groups[groupView.uid]=groupView
-        self._main.send("groupUpdated",[groupView.uid,",".join(groupView.contact_ids),groupView.name.toString()])
+        self._main.send("groupUpdated",[groupView.uid,",".join(groupView.contact_ids),str(groupView.name)])
         pass
 
     def contactUpdated(self, contactView):
@@ -115,6 +115,6 @@ class aMSNContactListWidget(object):
         in the affects groups.
         """
         self.contacts[contactView.uid]=contactView
-        self._main.send("contactUpdated",[contactView.uid,contactView.name.toString()])
+        self._main.send("contactUpdated", [contactView.uid, str(contactView.name)])
         pass
 

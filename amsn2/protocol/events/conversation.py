@@ -50,10 +50,10 @@ class ConversationEvents(papyon.event.ConversationEventInterface):
         them into the stringview """
         #TODO: have Smiley object in the stringView to keep image+trigger
         strv = StringView()
-        if message.msn_objects.keys().__contains__(message.content) == True:
+        if message.content in message.msn_objects.keys():
             print "single emoticon"
             strv.appendImage(message.msn_objects[message.content]._location)
-            self._amsn_conversation.onMessageReceived(sender.id, strv)
+            self._amsn_conversation.onMessageReceived(strv, sender.id)
             return
 
         strlist = [message.content]
@@ -70,7 +70,7 @@ class ConversationEvents(papyon.event.ConversationEventInterface):
             strlist = newlist
 
         for str in strlist:
-            if message.msn_objects.keys().__contains__(str) == True:
+            if str in message.msn_objects.keys():
                 strv.appendImage(str)
             else:
                 strv.appendText(str)

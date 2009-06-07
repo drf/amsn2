@@ -71,8 +71,7 @@ class aMSNConversation:
         #TODO: messageView
         mv = MessageView()
         if sender_uid is None:
-            #TODO
-            mv.sender.appendText("/me")
+            mv.sender.appendStringView(self._core._personalinfo_manager._personalinfoview.nick)
         else:
             c = self._core._contactlist_manager.getContact(sender_uid)
             mv.sender_icon = c.icon
@@ -90,7 +89,7 @@ class aMSNConversation:
         # for the moment, no formatting, no smiley substitution... (TODO)
         # peacey: Added formatting of styles
         self.onMessageReceived(msg, formatting=formatting)
-        message = papyon.ConversationMessage(msg.toString(), formatting)
+        message = papyon.ConversationMessage(str(msg), formatting)
         self._conv.send_text_message(message)
 
     def sendNudge(self):
