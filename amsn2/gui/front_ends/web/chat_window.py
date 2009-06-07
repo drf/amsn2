@@ -75,7 +75,7 @@ class aMSNChatWidget(object):
     def onMessageReceived(self, messageview):
         """ Called for incoming and outgoing messages
             message: a MessageView of the message"""
-        self._main.send("onMessageReceivedChatWidget",[self._uid,messageview.toStringView().toString()])
+        self._main.send("onMessageReceivedChatWidget", [self._uid, str(messageview.toStringView())])
 
     def nudge(self):
         self._main.send("nudgeChatWidget",[self._uid])

@@ -27,11 +27,11 @@ class aMSNPersonalInfoManager:
     """ Actions from ourselves """
     def _onNickChanged(self, new_nick):
         # TODO: parsing
-        self._papyon_profile.display_name = new_nick.toString()
+        self._papyon_profile.display_name = str(new_nick)
 
     def _onPSMChanged(self, new_psm):
         # TODO: parsing
-        self._papyon_profile.personal_message = new_psm.toString()
+        self._papyon_profile.personal_message = str(new_psm)
 
     def _onPresenceChanged(self, new_presence):
         # TODO: manage custom presence
