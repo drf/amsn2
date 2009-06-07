@@ -22,10 +22,8 @@ class aMSNAccount(object):
         self.account_dir = account_dir
         self.do_save = accountview.save
         self.backend_manager = core._backend_manager
-        self.config = self.backend_manager.loadConfig('General')
-
         self.lock()
-        #TODO
+        self.load()
 
     def signOut(self):
         self.save()
@@ -40,10 +38,13 @@ class aMSNAccount(object):
         pass
 
     def load(self):
-        #TODO
+        #TODO:
+        self.config = self.backend_manager.loadConfig(self, 'General')
         pass
 
     def save(self):
+        self.backend_manager.saveConfig(self, self.config, 'General')
+        #TODO: integrate with personnalinfo
         if self.view is not None and self.view.email is not None:
             root_section = Element("aMSNAccount")
             #email
