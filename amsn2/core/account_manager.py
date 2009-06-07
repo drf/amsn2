@@ -50,7 +50,7 @@ class aMSNAccount(object):
             emailElmt = SubElement(root_section, "email")
             emailElmt.text = self.view.email
             #nick
-            nick = self.view.nick.toString()
+            nick = str(self.view.nick)
             nickElmt = SubElement(root_section, "nick")
             nickElmt.text = nick
             #presence
@@ -111,7 +111,6 @@ class aMSNAccountManager(object):
         for root, dirs, files in os.walk(self._accounts_dir):
             account_dirs = dirs
             break
-
         for account_dir in account_dirs:
             accv = self.loadAccount(os.path.join(self._accounts_dir, account_dir))
             if accv:
@@ -129,24 +128,24 @@ class aMSNAccountManager(object):
             accview = AccountView()
             #email
             emailElmt = account.find("email")
-            if not emailElmt:
+            if emailElmt is None:
                 return None
             accview.email = emailElmt.text
             #nick
             nickElmt = account.find("nick")
-            if not nickElmt:
+            if nickElmt is None:
                 return None
             if nickElmt.text:
                 accview.nick.appendText(nickElmt.text)
             #TODO: parse...
             #presence
             presenceElmt = account.find("presence")
-            if not presenceElmt:
+            if presenceElmt is None:
                 return None
             accview.presence = presenceElmt.text
             #password
             passwordElmt = account.find("password")
-            if not passwordElmt:
+            if passwordElmt is None:
                 return None
             accview.password = self.core._backend_manager.getPassword(passwordElmt)
             #TODO: use backend & all
