@@ -36,7 +36,6 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         gtk.VBox.__init__(self, spacing=10)
 
         self._amsn_core = amsn_core
-        #self.switch_to_profile(None)
         self._main_win = parent
         self._skin = amsn_core._skin_manager.skin
         self._theme_manager = self._amsn_core._theme_manager
@@ -74,7 +73,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         userCompletion.add_attribute(userPixbufCell, 'pixbuf', 1)
         userCompletion.set_text_column(0)
         #userCompletion.connect('match-selected', self.matchSelected)
-        #self.user.connect("changed", self.on_comboxEntry_changed)
+        self.user.connect("changed", self.on_comboxEntry_changed)
         #self.user.connect("key-release-event", self.on_comboxEntry_keyrelease)
         userbox.pack_start(userlabel, False, False)
         userbox.pack_start(self.user, False, False)
@@ -164,7 +163,6 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.show_all()
         self._main_win.set_view(self)
         self.user.grab_focus()
-        #self.switch_to_profile(None)
 
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
@@ -194,27 +192,48 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         if (self.timer is not None):
             gobject.source_remove(self.timer)
 
-    def switch_to_profile(self, profile):
-        self.current_profile = profile
-        if profile is not None:
-            self._username = self.current_profile.username
-            self.user.get_children()[0].set_text(self._username)
-            self._password = self.current_profile.password
-            self.password.set_text(self._password)
+    def __switch_to_account(self, email):
+        accv = [accv for accv in self._account_views if accv.email == email]
+        if not accv:
+            accv = AccountView()
+            accv.email = email
+        else:
+            accv = accv[0]
+
+        self.user.get_children()[0].set_text(accv.email)
+        if accv.password:
+            self.password.set_text(accv.password)
+
+    def setAccounts(self, accountviews):
+        self._account_views = accountviews
+        if len(accountviews)>0 :
+            # first in the list, default
+            self.__switch_to_account(self._account_views[0].email)
+            
 
     def signin(self):
-        self.current_profile.username = self.user.get_active_text()
-        self.current_profile.email = self.user.get_active_text()
-        self.current_profile.password = self.password.get_text()
+        email = self.user.get_active_text()
+        accv = [accv for accv in self._account_views if accv.email == email]
+        if not accv:
+            accv = AccountView()
+            accv.email = email
+        else:
+            accv = accv[0]
+
+        accv.password = self.password.get_text()
         status = self.statusCombo.get_active()
         for key in self.status_values:
             if self.status_values[key] == status:
                 break
-        self.current_profile.presence = key
-        self._amsn_core.signinToAccount(self, self.current_profile)
+        accv.presence = key
+
+        self._amsn_core.signinToAccount(self, accv)
         self.timer = gobject.timeout_add(40, self.__animation)
 
     def onConnecting(self, progress, message):
         self.status.set_text(message)
         self.pgbar.set_fraction(progress)
+
+    def on_comboxEntry_changed(self, entry):
+        pass
 

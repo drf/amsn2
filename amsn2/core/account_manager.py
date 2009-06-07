@@ -40,7 +40,6 @@ class aMSNAccount(object):
     def load(self):
         #TODO:
         self.config = self.backend_manager.loadConfig(self, 'General')
-        pass
 
     def save(self):
         self.backend_manager.saveConfig(self, self.config, 'General')
@@ -167,7 +166,6 @@ class aMSNAccountManager(object):
 
     def getAvailableAccountViews(self):
         return [v for v in self.accountviews if not self.isAccountLocked(v)]
-        pass
 
     def signinToAccount(self, accountview):
         accdir = os.path.join(self._accounts_dir,

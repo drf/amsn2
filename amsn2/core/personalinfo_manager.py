@@ -14,7 +14,7 @@ class aMSNPersonalInfoManager:
         # could be overriden by the one set in the saved account
         # TODO: add setting display picture and saved personal message
         strv = StringView()
-        nick = amsn_account.view.nick.toString()
+        nick = str(amsn_account.view.nick)
         if nick and nick != amsn_account.view.email:
             strv.appendText(nick)
         else:
