@@ -14,7 +14,7 @@ class ProfileEvents(papyon.event.ProfileEventInterface):
         self._personalinfo_manager.onNickUpdated(self._client.profile.display_name)
 
     def on_profile_personal_message_changed(self):
-        self._personalinfo_manager.onPMUpdated(self._client.profile.personal_message)
+        self._personalinfo_manager.onPSMUpdated(self._client.profile.personal_message)
 
     def on_profile_current_media_changed(self):
         self._personalinfo_manager.onCMUpdated(self._client.profile.current_media)
