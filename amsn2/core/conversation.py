@@ -36,7 +36,7 @@ class aMSNConversation:
             papyon_contacts = [core._contactlist_manager.getContact(uid) for uid in contacts_uid]
             papyon_contacts = [c._papyon_contact for c in papyon_contacts if c is not None]
             #if c was None.... wtf?
-            self._conv = papyon.Conversation(self._core._profile.client, papyon_contacts)
+            self._conv = papyon.Conversation(self._core._account.client, papyon_contacts)
         else:
             #From an existing conversation
             self._conv = conv

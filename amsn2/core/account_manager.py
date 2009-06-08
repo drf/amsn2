@@ -42,6 +42,8 @@ class aMSNAccount(object):
         self.config = self.backend_manager.loadConfig(self, 'General')
 
     def save(self):
+        if not os.path.isdir(self.account_dir):
+             os.makedirs(self.account_dir, 0700)
         self.backend_manager.saveConfig(self, self.config, 'General')
         #TODO: integrate with personnalinfo
         if self.view is not None and self.view.email is not None:
@@ -68,8 +70,6 @@ class aMSNAccount(object):
             #TODO: save or not, preferred_ui
             #TODO: backend for config/logs/...
 
-            if not os.path.isdir(self.account_dir):
-                os.makedirs(self.account_dir, 0700)
             accpath = os.path.join(self.account_dir, "account.xml")
             xml_tree = ElementTree(root_section)
             xml_tree.write(accpath, encoding='utf-8')

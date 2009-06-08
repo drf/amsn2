@@ -19,17 +19,15 @@ class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
         self._parent = parent
         self._skin = amsn_core._skin_manager.skin
         elementary.Box.__init__(self, parent)
-        self._clwidget = aMSNContactListWidget(amsn_core, self)
         self._parent.resize_object_add(self)
         self.size_hint_weight_set(1.0, 1.0)
+        self.show()
+
+        self._clwidget = aMSNContactListWidget(amsn_core, self._parent)
         self.pack_start(self._clwidget)
+        self._parent.resize_object_add(self._clwidget)
+        self._parent.resize_object_add(self._clwidget._edje)
         self._clwidget.show()
-
-    def show(self):
-        self._clwidget.show()
-
-    def hide(self):
-        self._clwidget.hide()
 
     def setTitle(self, text):
         self._parent.setTitle(text)
@@ -46,28 +44,24 @@ class aMSNContactListWidget(elementary.Scroller, base.aMSNContactListWidget):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
         self._core = amsn_core
         self._evas = parent._evas
-        self._skin = parent._skin
+        self._skin = amsn_core._skin_manager.skin
         elementary.Scroller.__init__(self, parent)
+        self.size_hint_weight_set(1.0, 1.0)
 
-        edje.frametime_set(1.0 / 30)
-        try:
-            self._edje = edje.Edje(self._evas, file=THEME_FILE,
-                                group="contact_list")
-        except edje.EdjeLoadError, e:
-            raise SystemExit("error loading %s: %s" % (THEME_FILE, e))
-
-
-        self.group_holder = GroupHolder(self._evas, self)
+        self._edje = elementary.Layout(self)
+        self._edje.file_set(filename=THEME_FILE,
+                            group="contact_list")
+        self.group_holder = GroupHolder(self._evas, self._edje, self._skin)
 
 
-        self._edje.part_swallow("groups", self.group_holder);
-        #elementary.Scroller.resize_object_add(self._edje)
+        self._edje.content_set("groups", self.group_holder);
         self._edje.size_hint_weight_set(1.0, 1.0)
-        self.content_set(self._edje)
         self._edje.show()
+        self.content_set(self._edje)
 
 
     def contactUpdated(self, contact):
+        print contact
         for gi in self.group_holder.group_items_list:
             if contact.uid in gi.contact_holder.contacts_dict:
                 gi.contact_holder.contact_updated(contact)
@@ -79,11 +73,6 @@ class aMSNContactListWidget(elementary.Scroller, base.aMSNContactListWidget):
 
     def contactListUpdated(self, clview):
         self.group_holder.viewUpdated(clview)
-
-
-
-    def size_request_set(self, w,h):
-       self.size_hint_request_set(w,h)
 
 
 class ContactHolder(evas.SmartObject):
@@ -266,13 +255,13 @@ class GroupItem(edje.Edje):
 
 class GroupHolder(evas.SmartObject):
 
-    def __init__(self, ecanvas, parent):
+    def __init__(self, ecanvas, parent, skin):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
         self.group_items_list = []
         self.group_items_dict = {}
         self._parent = parent
-        self._skin = parent._skin
+        self._skin = skin
 
     def add_group(self, uid):
         new_group = GroupItem(self, self.evas_obj, uid)
@@ -297,13 +286,14 @@ class GroupHolder(evas.SmartObject):
         self.update_widget(w, h)
 
     def show(self):
+        """
         #FIXME:
         #ugly fix to get the correct clip
-        self.clip_set(self._parent._edje.clip_get())
+        self.clip_set(self._parent.clip_get())
         self.update_widget(self.size[0], self.size[1])
+        """
         for g in self.group_items_list:
             g.show()
-
     def hide(self):
         for g in self.group_items_list:
             g.hide()
@@ -338,7 +328,7 @@ class GroupHolder(evas.SmartObject):
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
-        self._parent.size_request_set(w,y)
+        self._parent.size_hint_request_set(w,y)
 
     def clip_set(self, obj):
         for g in self.group_items_list:

@@ -40,7 +40,10 @@ def loadConfig(account, name):
                      "ns_port":1863,
                     }
         configpath = os.path.join(account.account_dir, "config.xml")
-        configfile = file(configpath, "r")
+        try:
+            configfile = file(configpath, "r")
+        except IOError:
+            return c
         root_tree = ElementTree(file=configfile)
         configfile.close()
         config = root_tree.getroot()
