@@ -1,6 +1,6 @@
 import os.path
 
-class Skin(object):
+class Skin(base.Skin):
     def __init__(self, core, path):
         self._path = path
         pass
@@ -13,7 +13,7 @@ class Skin(object):
 
 
 
-class SkinManager(object):
+class SkinManager(base.SkinManager):
     def __init__(self, core):
         self._core = core
         self.skin = Skin(core, "skins")

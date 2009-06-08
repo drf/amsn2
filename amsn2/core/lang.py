@@ -18,13 +18,13 @@ class aMSNLang(object):
             # Don't reload the same lang unless forced.
             return
 
-        hasVariant = bool(self.langRe.match(lang_code) is not None)
+        hasVariant = (self.langRe.match(lang_code) is not None)
 
         # Check for lang variants.
-        if hasVariant is True:
+        if hasVariant:
             root = str(self.langRe.split(lang_code)[1])
         else:
-            root = str(lang_code)
+            root = lang_code
 
         if lang_code is self.base_lang:
             # Clear the keys if we're loading the base lang.
@@ -34,7 +34,7 @@ class aMSNLang(object):
             # If it's not the default lang, load the base first.
             self.loadLang(self.base_lang)
 
-        if hasVariant is True:
+        if hasVariant:
             # Then we have a variant, so load the root.
             self.loadLang(root)
 
@@ -60,8 +60,8 @@ class aMSNLang(object):
             f.close()
 
         # If we've loaded a lang file, set the new lang code.
-        if fileWasLoaded is True:
-            self.lang_code = str(lang_code)
+        if fileWasLoaded:
+            self.lang_code = lang_code
 
     def addLangDir(self, lang_dir):
         self.lang_dirs.append(str(lang_dir))
@@ -99,7 +99,7 @@ class aMSNLang(object):
             return key
 
         # Perform any replacements necessary.
-        if self._isDict(replacements):
+        if type(replacements) is dict:
             # Replace from a dictionary.
             for key, val in replacements.iteritems():
                 r = r.replace(key, val)
@@ -111,13 +111,6 @@ class aMSNLang(object):
                 i += 1
 
         return r
-
-    def _isDict(self, test):
-        try:
-            test.keys()
-            return True
-        except AttributeError:
-            return False
 
     def clearKeys(self):
         self.lang_keys = {}

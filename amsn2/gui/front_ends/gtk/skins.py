@@ -23,7 +23,7 @@
 
 import os
 
-class Skin(object):
+class Skin(base.Skin):
     def __init__(self, core, path):
         self._path = path
         self._dict = {}
@@ -76,7 +76,7 @@ class Skin(object):
         self._dict[key] = value
 
 
-class SkinManager(object):
+class SkinManager(base.SkinManager):
     def __init__(self, core):
         self._core = core
         self.skin = Skin(core, "skins")
