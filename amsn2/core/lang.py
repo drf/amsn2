@@ -99,7 +99,7 @@ class aMSNLang(object):
             return key
 
         # Perform any replacements necessary.
-        if self._isDict(replacements):
+        if type(replacements) is dict:
             # Replace from a dictionary.
             for key, val in replacements.iteritems():
                 r = r.replace(key, val)
@@ -111,13 +111,6 @@ class aMSNLang(object):
                 i += 1
 
         return r
-
-    def _isDict(self, test):
-        try:
-            test.keys()
-            return True
-        except AttributeError:
-            return False
 
     def clearKeys(self):
         self.lang_keys = {}
