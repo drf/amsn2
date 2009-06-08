@@ -37,7 +37,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
 
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
-        @menu : a MenuView
+        @type menu: MenuView
         """
         chldn = self.main_menu.get_children()
         if len(chldn) is not 0:

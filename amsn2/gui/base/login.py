@@ -16,7 +16,8 @@ class aMSNLoginWindow(object):
     def setAccounts(self, accountviews):
         """ This method will be called when the core needs the login window to
         let the user select among some accounts.
-        @accountviews: list of accountviews describing accounts
+
+        @param accountviews: list of accountviews describing accounts
         The first one in the list
         should be considered as default. """
         raise NotImplementedError
@@ -27,9 +28,11 @@ class aMSNLoginWindow(object):
 
     def onConnecting(self, progress, message):
         """ This method will be called to notify the UI that we are connecting.
-        @progress: the current progress (as float) of the connexion (to be
+
+        @type progress: float
+        @param progress: the current progress of the connexion (to be
         exploited as a progress bar, for example)
-        @message: the message to show while loging in """
+        @param message: the message to show while loging in """
         raise NotImplementedError
 
 

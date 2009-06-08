@@ -12,6 +12,11 @@ class GUIManager(object):
     front_ends = {}
 
     def __init__(self, core, gui_name):
+        """
+        @type core: aMSNCore
+        @type gui_name: str
+        """
+
         self._core = core
         self._name = gui_name
    		

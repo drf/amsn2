@@ -82,6 +82,11 @@ class aMSNCore(object):
         self._loop.run();
 
     def loadUI(self, ui_name):
+        """
+        @type ui_name: str
+        @param ui_name: The name of the User Interface
+        """
+
         self._gui_name = ui_name
         self._gui = gui.GUIManager(self, self._gui_name)
         self._loop = self._gui.gui.aMSNMainLoop(self)
@@ -89,6 +94,11 @@ class aMSNCore(object):
         self._skin_manager = self._gui.gui.SkinManager(self)
 
     def switchToUI(self, ui_name):
+        """
+        @type ui_name: str
+        @param ui_name: The name of the User Interface
+        """
+
         #TODO: unloadUI + stop loops??? + loadUI + run
         pass
 
@@ -122,6 +132,11 @@ class aMSNCore(object):
         return self._main
 
     def signinToAccount(self, login_window, accountview):
+        """
+        @type login_window: aMSNLoginWindow
+        @type accountview: AccountView
+        """
+
         print "Signing in to account %s" % (accountview.email)
         self._account = self._account_manager.signinToAccount(accountview)
         self._account.login = login_window
@@ -129,6 +144,11 @@ class aMSNCore(object):
         self._account.client.connect(accountview.email, accountview.password)
 
     def connectionStateChanged(self, account, state):
+        """
+        @type account: aMSNAccount
+        @type state: L{papyon.event.ClientState}
+        @param state: New state of the Client.
+        """
 
         status_str = \
         {
@@ -155,9 +175,19 @@ class aMSNCore(object):
             self._contactlist_manager.onCLDownloaded(account.client.address_book)
 
     def idlerAdd(self, func):
+        """
+        @type func: function
+        """
+
         self._loop.idlerAdd(func)
 
     def timerAdd(self, delay, func):
+        """
+        @type delay: int
+        @param delay: delay in seconds?
+        @type func: function
+        """
+
         self._loop.timerAdd(delay, func)
 
     def quit(self):

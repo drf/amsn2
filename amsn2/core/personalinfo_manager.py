@@ -2,6 +2,10 @@ from views import *
 
 class aMSNPersonalInfoManager:
     def __init__(self, core):
+        """
+        @type core: aMSNCore
+        """
+
         self._core = core
         self._em = core._event_manager
         self._personalinfoview = PersonalInfoView(self)

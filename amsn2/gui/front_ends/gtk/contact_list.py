@@ -177,15 +177,16 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
 
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
-        @menu : a MenuView
+        @type menu: MenuView
         """
         pass
 
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
-        currentMedia,...)"""
+        @type view: PersonalInfoView
+        @param view: ourself (contains DP, nick, psm, currentMedia,...)
+        """
         # TODO: image, ...
         self._myview = view
         nk = view.nick

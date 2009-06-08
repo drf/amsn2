@@ -25,6 +25,13 @@ import papyon
 
 class aMSNConversation:
     def __init__(self, core, conv_manager, conv = None, contacts_uid = None):
+        """
+        @type core: aMSNCore
+        @type conv_manager: aMSNConversationManager
+        @type conv:
+        @type contacts_uid:
+        """
+
         if (contacts_uid is None):
             raise ValueError, InvalidArgument
 
