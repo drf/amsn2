@@ -1,4 +1,5 @@
 import os.path
+from amsn2.gui import base
 
 class Skin(base.Skin):
     def __init__(self, core, path):
