@@ -21,6 +21,8 @@
 #
 #===================================================
 
+from amsn2.gui import base
+
 import os
 
 class Skin(base.Skin):
