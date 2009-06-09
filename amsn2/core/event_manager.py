@@ -9,6 +9,10 @@ class aMSNEvents:
 
 class aMSNEventManager:
     def __init__(self, core):
+        """
+        @type core: aMSNCore
+        """
+
         self._core = core
         self._events_cbs = [ [[], []] for e in dir(aMSNEvents) if e.isupper()]
         self._events_tree = [aMSNEventTree(None) for e in dir(aMSNEvents) if e.isupper()]

@@ -10,18 +10,20 @@ class MenuItemView(object):
     def __init__(self, type, label = None, icon = None, accelerator = None,
                  radio_value = None, checkbox_value = False, disabled = False,  command = None):
         """ Create a new MenuItemView
-        @type : the type of item, can be cascade, checkbutton, radiobutton,
+        @param type: the type of item, can be cascade, checkbutton, radiobutton,
         radiogroup, separator or command
-        @label : the label for the item, unused for separator items
-        @accelerator : the accelerator (KeyBindingView) to access this item.
+        @param label: the label for the item, unused for separator items
+        @param icon: an optional icon to show next to the menu item, unused for separator items
+        @param accelerator: the accelerator (KeyBindingView) to access this item.
                        If None, an '&' preceding a character of the menu label will set that key with Ctrl- as an accelerator
-        @icon : an optional icon to show next to the menu item, unused for separator items
-        @radio_value : the value to set when the radiobutton is enabled
-        @checkbox_value : whether the checkbox/radiobutton is set or not
-        @disabled : true if the item's state should be disabled
-        @command : the command to call for setting the value for checkbutton and radiobutton items, or the command in case of a 'command' item
+        @param radio_value: the value to set when the radiobutton is enabled
+        @type checkbox_value: bool
+        @param checkbox_value: whether the checkbox/radiobutton is set or not
+        @type disabled: bool
+        @param disabled: true if the item's state should be disabled
+        @param command: the command to call for setting the value for checkbutton and radiobutton items, or the command in case of a 'command' item
 
-        TODO: dynamic menus (use 'command' in CASCADE_MENU)
+        @todo: dynamic menus (use 'command' in CASCADE_MENU)
         """
 
         if ((type is MenuItemView.SEPARATOR and

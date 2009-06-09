@@ -26,20 +26,21 @@ class aMSNContactListWindow(object):
 
     def setTitle(self, text):
         """ This will allow the core to change the current window's title
-        @text : a string
+        @type text: str
         """
         raise NotImplementedError
 
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
-        @menu : a MenuView
+        @type menu: MenuView
         """
         raise NotImplementedError
 
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the PersonalInfoView of the ourself (contains DP, nick, psm,
+        @type view: PersonalInfoView
+        @param view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
@@ -66,7 +67,9 @@ class aMSNContactListWidget(object):
         It will be called initially to feed the contact list with the groups
         that the CL should contain.
         It will also be called to remove any group that needs to be removed.
-        @cl : a ContactListView containing the list of groups contained in
+
+        @type clView: ContactListView
+        @param clView : contains the list of groups contained in
         the contact list which will contain the list of ContactViews
         for all the contacts to show in the group."""
         raise NotImplementedError

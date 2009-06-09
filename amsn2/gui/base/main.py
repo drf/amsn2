@@ -6,6 +6,10 @@ class aMSNMainWindow(object):
     """
 
     def __init__(self, amsn_core):
+        """
+        @type amsn_core: aMSNCore
+        """
+
         pass
 
     def show(self):

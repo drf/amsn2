@@ -18,6 +18,12 @@ class aMSNAccount(object):
     """
     #TODO: use the personnal info stuff instead of the view
     def __init__(self, core, accountview, account_dir):
+        """
+        @type core: aMSNCore
+        @type accountview: AccountView
+        @type account_dir: str
+        """
+
         self.view = accountview
         self.account_dir = account_dir
         self.do_save = accountview.save
@@ -167,16 +173,34 @@ class aMSNAccountManager(object):
         return [v for v in self.accountviews if not self.isAccountLocked(v)]
 
     def signinToAccount(self, accountview):
+        """
+        @type accountview: AccountView
+        @rtype: aMSNAccount
+        """
+
         accdir = os.path.join(self._accounts_dir,
                               accountNameToDirName(accountview.email))
         acc = aMSNAccount(self.core, accountview, accdir)
         return acc
 
     def isAccountLocked(self, accountview):
+        """
+        @type accountview: AccountView
+        @rtype: bool
+        @return: True if accountview is locked
+        """
+
         #TODO
         return False
 
 def accountNameToDirName(acc):
+    """
+    @type acc: str
+    @param acc: account email
+    @rtype: str
+    @return: account email parsed to use as dir name
+    """
+
     #Having to do that just sucks
     return acc.lower().strip().replace("@","_at_")
 
