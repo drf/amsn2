@@ -38,7 +38,6 @@ class ContactView:
         #TODO: apply emblem on dp
         self.dp = amsn_contact.dp.clone()
         self.dp.appendImageView(amsn_contact.emblem)
-        self.name = StringView
         self.name = StringView() # TODO : default colors
         self.name.openTag("nickname")
         self.name.appendStringView(amsn_contact.nickname) # TODO parse
