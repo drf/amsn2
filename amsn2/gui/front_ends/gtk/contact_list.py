@@ -383,6 +383,10 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
 
 
     def contactUpdated(self, contactview):
+        """
+        @type contactview: ContactView
+        """
+
         citer = self.__search_by_id(contactview.uid)
         if citer is None: return
 

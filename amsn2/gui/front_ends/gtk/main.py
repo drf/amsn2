@@ -6,6 +6,10 @@ import skins
 import gtk
 
 class aMSNMainWindow(base.aMSNMainWindow):
+    """
+    @ivar main_win:
+    @type main_win: gtk.Window
+    """
     main_win = None
 
     def __init__(self, amsn_core):
