@@ -220,8 +220,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         self.__switchToInput(source)
         
     def __switchToInput(self, source):
-        """ Switches the nick button into a text area for editing of the nick
-        name."""
+        """ Switches the nick and psm buttons into a text area for editing them."""
         #label = self.btnNickname.get_child()
         source.remove(source.get_child())
         entry = gtk.Entry()
@@ -235,15 +234,15 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         
     def __handleInput(self, source, event):
         """ Handle various inputs from the nicknameEntry-box """
-        if(event.type == gtk.gdk.FOCUS_CHANGE): #user clickd outside textfield
-            self.__switchFromInput(source, False)
+        if(event.type == gtk.gdk.FOCUS_CHANGE): #user clicked outside textfield
+            self.__switchFromInput(source, True)
         elif (event.type == gtk.gdk.KEY_PRESS): #user wrote something, esc perhaps?
             if event.keyval == gtk.keysyms.Escape:
                 self.__switchFromInput(source, False)
 
     def __switchFromInput(self, source, isNew):
-        """ When in the editing state of nickname, change back to the uneditable
-        label state.
+        """ When in the editing state of nickname and psm, change back
+        to the uneditable label state.
         """
         if(isNew):
             if(source == self.btnNickname.get_child()): 
@@ -259,7 +258,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         else:
             if(source == self.btnNickname.get_child()): # User discards input
                 newText = self.nicklabel.get_text() # Old nickname
-            if(source == self.btnPsm.get_child()):
+            elif(source == self.btnPsm.get_child()):
                 newText = self.psmlabel.get_text()
 
         parentWidget = source.get_parent()
