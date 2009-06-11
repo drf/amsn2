@@ -145,6 +145,7 @@ class aMSNContact():
         self.status = StringView()
         self.status.appendText(core.p2s[papyon_contact.presence])
         #for the moment, we store the papyon_contact object, but we shouldn't have to
+
         #TODO: getPapyonContact(self, core...) or _papyon_contact?
         self._papyon_contact = papyon_contact
 
