@@ -31,6 +31,10 @@ class GroupView:
 """ a view of a contact on the contact list """
 class ContactView:
     def __init__(self, core, amsn_contact):
+        """
+        @type core: aMSNCore
+        @type amsn_contact: aMSNContact
+        """
 
         self.uid = amsn_contact.uid
 

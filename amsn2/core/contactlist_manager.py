@@ -12,13 +12,15 @@ class aMSNContactListManager:
 
         self._core = core
         self._em = core._event_manager
-        self._contacts = {}
+        self._contacts = {} #Dictionary where every contact_uid has an associated aMSNContact
         self._groups = {}
         self._papyon_addressbook = None
 
     #TODO: sorting contacts & groups
 
     def onContactChanged(self, papyon_contact):
+        """ Called when a contact changes either its presence, nick, psm or current media."""
+
         #1st/ update the aMSNContact object
         c = self.getContact(papyon_contact.id, papyon_contact)
         c.fill(self._core, papyon_contact)
@@ -29,6 +31,8 @@ class aMSNContactListManager:
         #TODO: update the group view
 
     def onContactDPChanged(self, papyon_contact):
+    """ Called when a contact changes its Display Picture. """
+
         #TODO: add local cache for DPs
         #Request the DP...
         c = self.getContact(papyon_contact.id, papyon_contact)
@@ -102,14 +106,23 @@ class aMSNContactListManager:
         self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
 
 
-    def getContact(self, cid, papyon_contact=None):
+    def getContact(self, uid, papyon_contact=None):
+        """
+        @param uid: uid of the contact
+        @type uid: str
+        @param papyon_contact:
+        @type papyon_contact:
+        @return: aMSNContact of that contact
+        @rtype: aMSNContact
+        """
+
         #TODO: should raise UnknownContact or sthg like that
         try:
-            return self._contacts[cid]
+            return self._contacts[uid]
         except KeyError:
             if papyon_contact is not None:
                 c = aMSNContact(self._core, papyon_contact)
-                self._contacts[cid] = c
+                self._contacts[uid] = c
                 self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
                 return c
             else:
@@ -122,6 +135,12 @@ class aMSNContactListManager:
 """
 class aMSNContact():
     def __init__(self, core, papyon_contact):
+        """
+        @type core: aMSNCore
+        @param papyon_contact:
+        @type papyon_contact: papyon.profile.Contact
+        """
+
         self.uid = papyon_contact.id
         self.dp = ImageView()
         if papyon_contact.msn_object is None:
@@ -131,6 +150,13 @@ class aMSNContact():
         self.fill(core, papyon_contact)
 
     def fill(self, core, papyon_contact):
+        """
+        Fills the aMSNContact structure.
+
+        @type core: aMSNCore
+        @type papyon_contact: papyon.profile.Contact
+        """
+
         self.icon = ImageView()
         self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
         self.emblem = ImageView()
