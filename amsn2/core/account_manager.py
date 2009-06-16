@@ -65,8 +65,9 @@ class aMSNAccount(object):
             presenceElmt = SubElement(root_section, "presence")
             presenceElmt.text = self.view.presence
             #password
-            passwordElmt = self.backend_manager.setPassword(self.view.password, root_section)
-            passwordElmt.text = self.view.password
+            if self.view.save_password:
+                passwordElmt = self.backend_manager.setPassword(self.view.password, root_section)
+                passwordElmt.text = self.view.password
             #dp
             #TODO ask the backend
             dpElmt = SubElement(root_section, "dp",
@@ -74,6 +75,13 @@ class aMSNAccount(object):
             #TODO
 
             #TODO: save or not, preferred_ui
+            #
+            #save password
+            savePassElmt = SubElement(root_section, "save_password")
+            savePassElmt.text = str(self.view.save_password)
+            #autologin
+            autologinElmt = SubElement(root_section, "autoconnect")
+            autologinElmt.text = str(self.view.autologin)
             #TODO: backend for config/logs/...
 
             accpath = os.path.join(self.account_dir, "account.xml")
@@ -152,8 +160,21 @@ class aMSNAccountManager(object):
             #password
             passwordElmt = account.find("password")
             if passwordElmt is None:
-                return None
-            accview.password = self.core._backend_manager.getPassword(passwordElmt)
+                accview.password = None
+            else:
+                accview.password = self.core._backend_manager.getPassword(passwordElmt)
+            #save_password
+            savePassElmt = account.find("save_password")
+            if savePassElmt.text == "False":
+                accview.save_password = False
+            else:
+                accview.save_password = True
+            #autoconnect
+            saveAutoConnect = account.find("autoconnect")
+            if saveAutoConnect == "False":
+                accview.autologin = False
+            else:
+                accview.autologin = True
             #TODO: use backend & all
             #dp
             dpElmt = account.find("dp")
