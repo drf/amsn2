@@ -2,6 +2,7 @@
 import sys
 import os
 import optparse
+os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
 sys.path.insert(0, "./papyon")
 import locale
 locale.setlocale(locale.LC_ALL, '')
