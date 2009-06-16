@@ -27,7 +27,7 @@ import gobject
 import string
 
 from image import *
-from amsn2.core.views import ImageView
+from amsn2.core.views import AccountView, ImageView
 
 class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
