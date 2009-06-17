@@ -215,7 +215,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
 
     def __on_btnNicknameClicked(self, source):
         self.__switchToInput(source)
-        
+
     def __on_btnPsmClicked(self, source):
         self.__switchToInput(source)
         
@@ -224,6 +224,12 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         #label = self.btnNickname.get_child()
         source.remove(source.get_child())
         entry = gtk.Entry()
+
+        if source is self.btnNickname:
+            entry.set_text(str(self._myview.nick))
+        elif source is self.btnPsm:
+            entry.set_text(str(self._myview.psm))
+
         source.add(entry)
         entry.show()
         entry.grab_focus()
@@ -245,30 +251,30 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         to the uneditable label state.
         """
         if(isNew):
-            if(source == self.btnNickname.get_child()): 
+            if source is self.btnNickname.get_child():
                 newText = source.get_text()
                 strv = StringView()
                 strv.appendText(newText)
                 self._myview.nick = strv
-            elif (source == self.btnPsm.get_child()):
+            elif source is self.btnPsm.get_child():
                 newText = source.get_text()
                 strv = StringView()
                 strv.appendText(newText)
                 self._myview.psm = strv
         else:
-            if(source == self.btnNickname.get_child()): # User discards input
+            if source is self.btnNickname.get_child(): # User discards input
                 newText = self.nicklabel.get_text() # Old nickname
-            elif(source == self.btnPsm.get_child()):
+            elif source is self.btnPsm.get_child():
                 newText = self.psmlabel.get_text()
 
         parentWidget = source.get_parent()
         currWidget = parentWidget.get_child()
         currWidget.disconnect(self.focusOutId) # Else we trigger focus-out-event; segfault.
-        
+
         parentWidget.remove(currWidget)
         entry = gtk.Label()
         entry.set_markup(newText)
-        
+
         parentWidget.add(entry)
         entry.show()
         parentWidget.set_relief(gtk.RELIEF_NONE) # remove cool elevated effect
@@ -295,32 +301,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
             pass
         chooser.destroy()
 
-
-    def __on_btnPsmClicked(self, source):
-        self.__switchToPsmInput()
-
-    def __switchToPsmInput(self):
-        """ Switches the psm button into a text area for editing of the psm."""
-
-        self.btnPsm.get_child().destroy()
-        entry = gtk.Entry()
-        entry.set_text(str(self._myview.psm))
-        self.btnPsm.add(entry)
-        entry.show()
-        entry.connect("activate", self.__switchFromPsmInput)
-        #TODO: If user press ESC then destroy gtk.Entry
-
-    def __switchFromPsmInput(self, source):
-        """ When in the editing state of psm, change back to the uneditable
-        label state.
-        """
-        strv = StringView()
-        strv.appendText(source.get_text())
-        self._myview.psm = strv
-        self.btnPsm.get_child().destroy()
-        entry = self.psmlabel
-        self.btnPsm.add(entry)
-        entry.show()
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):
