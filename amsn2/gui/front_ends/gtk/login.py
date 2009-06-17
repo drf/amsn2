@@ -167,9 +167,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.pack_start(checkAlign, True, False)
         self.pack_start(button_box, True, False)
 
-        self.show_all()
         self._main_win.set_view(self)
-        self.user.grab_focus()
 
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
@@ -193,6 +191,11 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.signin()
 
     def show(self):
+        if self.user.get_active_text() == "":
+            self.user.grab_focus()
+        elif self.password.get_text() == "":
+            self.password.grab_focus()
+
         self.show_all()
 
     def hide(self):
@@ -232,6 +235,14 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
                 self.signin()
 
     def signin(self):
+
+        if self.user.get_active_text() == "":
+            self.user.grab_focus()
+            return
+        elif self.password.get_text() == "":
+            self.password.grab_focus()
+            return
+
         email = self.user.get_active_text()
         accv = [accv for accv in self._account_views if accv.email == email]
         if not accv:
