@@ -171,7 +171,7 @@ class aMSNAccountManager(object):
                 accview.save_password = True
             #autoconnect
             saveAutoConnect = account.find("autoconnect")
-            if saveAutoConnect == "False":
+            if saveAutoConnect.text == "False":
                 accview.autologin = False
             else:
                 accview.autologin = True
