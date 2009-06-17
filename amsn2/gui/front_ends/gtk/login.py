@@ -205,13 +205,11 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
     def __switch_to_account(self, email):
         print "Switching to account", email
 
-        accv = [accv for accv in self._account_views if accv.email == email]
+        accv = self.getAccountViewFromEmail(email)
 
-        if not accv:
+        if accv is None:
             accv = AccountView()
             accv.email = email
-        else:
-            accv = accv[0]
 
         self.user.get_children()[0].set_text(accv.email)
         if accv.password:
@@ -244,12 +242,11 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             return
 
         email = self.user.get_active_text()
-        accv = [accv for accv in self._account_views if accv.email == email]
-        if not accv:
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
             accv = AccountView()
             accv.email = email
-        else:
-            accv = accv[0]
 
         accv.password = self.password.get_text()
         status = self.statusCombo.get_active()
@@ -280,13 +277,12 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
     def __on_toggled_cb(self, source):
 
-        accv = [accv for accv in self._account_views if accv.email == self.user.get_active_text()]
+        email = self.user.get_active_text()
+        accv = self.getAccountViewFromEmail(email)
 
-        if not accv:
+        if accv is None:
             accv = AccountView()
-            accv.email = self.user.get_active_text()
-        else:
-            accv = accv[0]
+            accv.email = email
 
         if source is self.rememberMe:
             accv.save = source.get_active()
@@ -297,3 +293,21 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             self.autoLogin.set_sensitive(source.get_active())
         elif source is self.autoLogin:
             accv.autologin = source.get_active()
+
+
+    def getAccountViewFromEmail(self, email):
+        """
+        Search in the list of account views and return the view of the given email
+
+        @type email: str
+        @param email: email to find
+        @rtype: AccountView
+        @return: Returns AccountView if it was found, otherwise return None
+        """
+
+        accv = [accv for accv in self._account_views if accv.email == email]
+
+        if len(accv) == 0:
+            return None
+        else:
+            return accv[0]
