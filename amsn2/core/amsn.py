@@ -61,6 +61,7 @@ class aMSNCore(object):
         self._conversation_manager = aMSNConversationManager(self)
         self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
+
         self.p2s = {papyon.Presence.ONLINE:"online",
                     papyon.Presence.BUSY:"busy",
                     papyon.Presence.IDLE:"idle",

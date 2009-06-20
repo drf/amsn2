@@ -27,7 +27,7 @@ import gobject
 import string
 
 from image import *
-from amsn2.core.views import ImageView
+from amsn2.core.views import AccountView, ImageView
 
 class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
@@ -73,7 +73,9 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         userCompletion.add_attribute(userPixbufCell, 'pixbuf', 1)
         userCompletion.set_text_column(0)
         #userCompletion.connect('match-selected', self.matchSelected)
-        self.user.connect("changed", self.on_comboxEntry_changed)
+        self.user.connect("key-press-event", self.__on_user_comboxEntry_changed)
+        #FIXME: focus-out-event not working, i don't know why
+        self.user.connect("focus-out-event", self.__on_user_comboxEntry_changed)
         #self.user.connect("key-release-event", self.on_comboxEntry_keyrelease)
         userbox.pack_start(userlabel, False, False)
         userbox.pack_start(self.user, False, False)
@@ -85,6 +87,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.password = gtk.Entry(128)
         self.password.set_visibility(False)
         self.password.connect('activate' , self.__login_clicked)
+        self.password.connect("changed", self.__on_passwd_comboxEntry_changed)
         passbox.pack_start(passlabel, False, False)
         passbox.pack_start(self.password, False, False)
 
@@ -139,6 +142,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.rememberPass = gtk.CheckButton('Remember password', True)
         self.autoLogin = gtk.CheckButton('Auto-Login', True)
 
+        self.rememberMe.connect("toggled", self.__on_toggled_cb)
+        self.rememberPass.connect("toggled", self.__on_toggled_cb)
+        self.autoLogin.connect("toggled", self.__on_toggled_cb)
+
         checkboxes.pack_start(self.rememberMe, False, False)
         checkboxes.pack_start(self.rememberPass, False, False)
         checkboxes.pack_start(self.autoLogin, False, False)
@@ -160,9 +167,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.pack_start(checkAlign, True, False)
         self.pack_start(button_box, True, False)
 
-        self.show_all()
         self._main_win.set_view(self)
-        self.user.grab_focus()
 
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
@@ -186,6 +191,11 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.signin()
 
     def show(self):
+        if self.user.get_active_text() == "":
+            self.user.grab_focus()
+        elif self.password.get_text() == "":
+            self.password.grab_focus()
+
         self.show_all()
 
     def hide(self):
@@ -193,32 +203,50 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             gobject.source_remove(self.timer)
 
     def __switch_to_account(self, email):
-        accv = [accv for accv in self._account_views if accv.email == email]
-        if not accv:
+        print "Switching to account", email
+
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
             accv = AccountView()
             accv.email = email
-        else:
-            accv = accv[0]
 
         self.user.get_children()[0].set_text(accv.email)
         if accv.password:
             self.password.set_text(accv.password)
 
+        self.rememberMe.set_active(accv.save)
+        self.rememberPass.set_active(accv.save_password)
+        self.autoLogin.set_active(accv.autologin)
+
     def setAccounts(self, accountviews):
         self._account_views = accountviews
+
+        for accv in self._account_views:
+            self.user.append_text(accv.email)
+
         if len(accountviews)>0 :
             # first in the list, default
             self.__switch_to_account(self._account_views[0].email)
-            
+
+            if self._account_views[0].autologin:
+                self.signin()
 
     def signin(self):
+
+        if self.user.get_active_text() == "":
+            self.user.grab_focus()
+            return
+        elif self.password.get_text() == "":
+            self.password.grab_focus()
+            return
+
         email = self.user.get_active_text()
-        accv = [accv for accv in self._account_views if accv.email == email]
-        if not accv:
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
             accv = AccountView()
             accv.email = email
-        else:
-            accv = accv[0]
 
         accv.password = self.password.get_text()
         status = self.statusCombo.get_active()
@@ -234,6 +262,52 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.status.set_text(message)
         self.pgbar.set_fraction(progress)
 
-    def on_comboxEntry_changed(self, entry):
-        pass
+    def __on_user_comboxEntry_changed(self, entry, event):
+        if event.type == gtk.gdk.FOCUS_CHANGE or \
+            (event.type == gtk.gdk.KEY_PRESS and event.keyval == gtk.keysyms.Tab):
+            self.__switch_to_account(entry.get_active_text())
 
+    def __on_passwd_comboxEntry_changed(self, entry):
+        if len(entry.get_text()) == 0:
+            self.rememberPass.set_sensitive(False)
+            self.autoLogin.set_sensitive(False)
+        else:
+            self.rememberPass.set_sensitive(True)
+            self.autoLogin.set_sensitive(True)
+
+    def __on_toggled_cb(self, source):
+
+        email = self.user.get_active_text()
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
+            accv = AccountView()
+            accv.email = email
+
+        if source is self.rememberMe:
+            accv.save = source.get_active()
+            self.rememberPass.set_sensitive(source.get_active())
+            self.autoLogin.set_sensitive(source.get_active())
+        elif source is self.rememberPass:
+            accv.save_password = source.get_active()
+            self.autoLogin.set_sensitive(source.get_active())
+        elif source is self.autoLogin:
+            accv.autologin = source.get_active()
+
+
+    def getAccountViewFromEmail(self, email):
+        """
+        Search in the list of account views and return the view of the given email
+
+        @type email: str
+        @param email: email to find
+        @rtype: AccountView
+        @return: Returns AccountView if it was found, otherwise return None
+        """
+
+        accv = [accv for accv in self._account_views if accv.email == email]
+
+        if len(accv) == 0:
+            return None
+        else:
+            return accv[0]

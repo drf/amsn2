@@ -66,7 +66,13 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         # Main Controls
         self.display = gtk.Image()
         self.display.set_size_request(64,64)
-
+        
+        self.btnDisplay = gtk.Button()
+        self.btnDisplay.set_relief(gtk.RELIEF_NONE)
+        self.btnDisplay.add(self.display)
+        self.btnDisplay.set_alignment(0,0)
+        self.btnDisplay.connect("clicked", self.__onDisplayClicked)
+        
         self.nicklabel = gtk.Label()
         self.nicklabel.set_alignment(0, 0)
         self.nicklabel.set_use_markup(True)
@@ -123,7 +129,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
 
     def __create_box(self):
         frameDisplay = gtk.Frame()
-        frameDisplay.add(self.display)
+        frameDisplay.add(self.btnDisplay)
         self.evdisplay = gtk.EventBox()
         self.evdisplay.add(frameDisplay)
 
@@ -208,57 +214,93 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
             self._myview.presence = key
 
     def __on_btnNicknameClicked(self, source):
-        self.__switchToNickInput()
-
-    def __switchToNickInput(self):
-        """ Switches the nick button into a text area for editing of the nick
-        name."""
-        #label = self.btnNickname.get_child()
-        self.btnNickname.get_child().destroy()
-        entry = gtk.Entry()
-        entry.set_text(str(self._myview.nick))
-        self.btnNickname.add(entry)
-        entry.show()
-        entry.connect("activate", self.__switchFromNickInput)
-        #TODO: If user press ESC then destroy gtk.Entry
-
-    def __switchFromNickInput(self, source):
-        """ When in the editing state of nickname, change back to the uneditable
-        label state.
-        """
-        strv = StringView()
-        strv.appendText(source.get_text())
-        self._myview.nick = strv
-        self.btnNickname.get_child().destroy()
-        entry = self.nicklabel
-        self.btnNickname.add(entry)
-        entry.show()
+        self.__switchToInput(source)
 
     def __on_btnPsmClicked(self, source):
-        self.__switchToPsmInput()
-
-    def __switchToPsmInput(self):
-        """ Switches the psm button into a text area for editing of the psm."""
-
-        self.btnPsm.get_child().destroy()
+        self.__switchToInput(source)
+        
+    def __switchToInput(self, source):
+        """ Switches the nick and psm buttons into a text area for editing them."""
+        #label = self.btnNickname.get_child()
+        source.remove(source.get_child())
         entry = gtk.Entry()
-        entry.set_text(str(self._myview.psm))
-        self.btnPsm.add(entry)
-        entry.show()
-        entry.connect("activate", self.__switchFromPsmInput)
-        #TODO: If user press ESC then destroy gtk.Entry
 
-    def __switchFromPsmInput(self, source):
-        """ When in the editing state of psm, change back to the uneditable
-        label state.
-        """
-        strv = StringView()
-        strv.appendText(source.get_text())
-        self._myview.psm = strv
-        self.btnPsm.get_child().destroy()
-        entry = self.psmlabel
-        self.btnPsm.add(entry)
+        if source is self.btnNickname:
+            entry.set_text(str(self._myview.nick))
+        elif source is self.btnPsm:
+            entry.set_text(str(self._myview.psm))
+
+        source.add(entry)
         entry.show()
+        entry.grab_focus()
+        source.set_relief(gtk.RELIEF_NORMAL) # Add cool elevated effect
+        entry.connect("activate", self.__switchFromInput, True)
+        entry.connect("key-press-event", self.__handleInput)
+        self.focusOutId = entry.connect("focus-out-event", self.__handleInput)
+        
+    def __handleInput(self, source, event):
+        """ Handle various inputs from the nicknameEntry-box """
+        if(event.type == gtk.gdk.FOCUS_CHANGE): #user clicked outside textfield
+            self.__switchFromInput(source, True)
+        elif (event.type == gtk.gdk.KEY_PRESS): #user wrote something, esc perhaps?
+            if event.keyval == gtk.keysyms.Escape:
+                self.__switchFromInput(source, False)
+
+    def __switchFromInput(self, source, isNew):
+        """ When in the editing state of nickname and psm, change back
+        to the uneditable label state.
+        """
+        if(isNew):
+            if source is self.btnNickname.get_child():
+                newText = source.get_text()
+                strv = StringView()
+                strv.appendText(newText)
+                self._myview.nick = strv
+            elif source is self.btnPsm.get_child():
+                newText = source.get_text()
+                strv = StringView()
+                strv.appendText(newText)
+                self._myview.psm = strv
+        else:
+            if source is self.btnNickname.get_child(): # User discards input
+                newText = self.nicklabel.get_text() # Old nickname
+            elif source is self.btnPsm.get_child():
+                newText = self.psmlabel.get_text()
+
+        parentWidget = source.get_parent()
+        currWidget = parentWidget.get_child()
+        currWidget.disconnect(self.focusOutId) # Else we trigger focus-out-event; segfault.
+
+        parentWidget.remove(currWidget)
+        entry = gtk.Label()
+        entry.set_markup(newText)
+
+        parentWidget.add(entry)
+        entry.show()
+        parentWidget.set_relief(gtk.RELIEF_NONE) # remove cool elevated effect
+        
+    def __onDisplayClicked(self, source):
+        print "Display clicked!"
+        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                    buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+        
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        chooser.add_filter(filter)
+
+        response = chooser.run()
+        if(response == gtk.RESPONSE_OK):
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(chooser.get_filename(), 64, 64)
+            self.display.set_from_pixbuf(pixbuf)
+            del pixbuf
+            gc.collect()
+        elif (response == gtk.RESPONSE_CANCEL):
+            pass
+        chooser.destroy()
+
 
 class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
     def __init__(self, amsn_core, parent):

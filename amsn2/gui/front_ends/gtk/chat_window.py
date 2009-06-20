@@ -245,19 +245,22 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
             entry.grab_focus()
             if (msg == ''): return False
 
-        color = self.button_color.get_color()
-        hex8 = "%.2x%.2x%.2x" % ((color.red/0x101), (color.green/0x101), (color.blue/0x101))
-        style = papyon.TextFormat.NO_EFFECT
-        if self.button_bold.get_active(): style |= papyon.TextFormat.BOLD
-        if self.button_italic.get_active():  style |= papyon.TextFormat.ITALIC
-        if self.button_underline.get_active(): style |= papyon.TextFormat.UNDERLINE
-        if self.button_strikethrough.get_active(): style |= papyon.TextFormat.STRIKETHROUGH
-        font_name = self.button_font.get_font_name()
-        font_family = pango.FontDescription(font_name).get_family()
-        format = papyon.TextFormat(font=font_family, color=hex8, style=style)
-        strv = StringView()
-        strv.appendText(msg)
-        self._amsn_conversation.sendMessage(strv, format)
+            color = self.button_color.get_color()
+            hex8 = "%.2x%.2x%.2x" % ((color.red/0x101), (color.green/0x101), (color.blue/0x101))
+            style = papyon.TextFormat.NO_EFFECT
+            if self.button_bold.get_active(): style |= papyon.TextFormat.BOLD
+            if self.button_italic.get_active():  style |= papyon.TextFormat.ITALIC
+            if self.button_underline.get_active(): style |= papyon.TextFormat.UNDERLINE
+            if self.button_strikethrough.get_active(): style |= papyon.TextFormat.STRIKETHROUGH
+            font_name = self.button_font.get_font_name()
+            font_family = pango.FontDescription(font_name).get_family()
+            format = papyon.TextFormat(font=font_family, color=hex8, style=style)
+            strv = StringView()
+            strv.appendText(msg)
+            self._amsn_conversation.sendMessage(strv, format)
+
+        elif event_keyval == gtk.keysyms.Escape:
+            self._parent.destroy()
 
     def __on_clear_textview(self, widget):
         buffer = self.textview.get_buffer()
