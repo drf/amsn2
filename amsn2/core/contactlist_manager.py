@@ -31,7 +31,7 @@ class aMSNContactListManager:
         #TODO: update the group view
 
     def onContactDPChanged(self, papyon_contact):
-    """ Called when a contact changes its Display Picture. """
+        """ Called when a contact changes its Display Picture. """
 
         #TODO: add local cache for DPs
         #Request the DP...
