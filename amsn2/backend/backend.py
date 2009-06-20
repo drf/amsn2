@@ -9,9 +9,7 @@ except ImportError:
 
 class aMSNBackendManager(object):
     def __init__(self):
-        self.setBackendForFunc('setPassword', 'defaultbackend')
-        self.setBackendForFunc('saveConfig',  'defaultbackend')
-        self.setBackendForFunc('loadConfig',  'defaultbackend')
+        self.switchToBackend('nullbackend')
 
     def setBackendForFunc(self, funcname, backendname):
         try:
@@ -20,18 +18,15 @@ class aMSNBackendManager(object):
             m = __import__('defaultbackend', globals(), locals(), [], -1)
         try:
             f = getattr(m, funcname)
+            self.__setattr__(funcname, f)
         except AttributeError:
-            return
-        self.__setattr__(funcname, f)
+            self.__setattr__(funcname, self.__missingFunc)
 
-    def getPassword(self, passwdElmt):
-        backendname = passwdElmt.attrib['backend']
-        try:
-            m = __import__(backendname, globals(), locals(), [], -1)
-        except ImportError:
-            m = __import__('defaultbackend', globals(), locals(), [], -1)
+    def switchToBackend(self, backend):
+        self.setBackendForFunc('setPassword', backend)
+        self.setBackendForFunc('saveConfig',  backend)
+        self.setBackendForFunc('loadConfig',  backend)
 
-        return m.getPassword(passwdElmt)
-
-
+    def __missingFunc(*args):
+        print 'Function not implemented for this backend'
 
