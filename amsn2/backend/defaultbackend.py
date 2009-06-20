@@ -36,9 +36,8 @@ def saveConfig(account, config, name):
 def loadConfig(account, name):
     if name == 'General':
         c = aMSNConfig()
-        c._config = {"ns_server":'messenger.hotmail.com',
-                     "ns_port":1863,
-                    }
+        c.setKey("ns_server", "messenger.hotmail.com")
+        c.setKey("ns_port", 1863)
         configpath = os.path.join(account.account_dir, "config.xml")
         try:
             configfile = file(configpath, "r")
