@@ -20,7 +20,7 @@ def setPassword(password, root_section):
     return elmt
 
 
-def saveConfig(account, config, name):
+def saveConfig(account, config):
     #TODO: improve
     root_section = Element("aMSNConfig")
     for e in config._config:
