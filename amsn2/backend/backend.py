@@ -23,6 +23,7 @@ class aMSNBackendManager(object):
             self.__setattr__(funcname, self.__missingFunc)
 
     def switchToBackend(self, backend):
+        self.setBackendForFunc('getPassword', backend)
         self.setBackendForFunc('setPassword', backend)
         self.setBackendForFunc('saveConfig',  backend)
         self.setBackendForFunc('loadConfig',  backend)

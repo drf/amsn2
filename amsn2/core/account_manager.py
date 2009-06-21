@@ -163,7 +163,7 @@ class aMSNAccountManager(object):
             if passwordElmt is None:
                 accview.password = None
             else:
-                accview.password = self.core._backend_manager.getPassword(passwordElmt)
+                accview.password = self._core._backend_manager.getPassword(passwordElmt)
             #save_password
             savePassElmt = account.find("save_password")
             if savePassElmt.text == "False":
