@@ -202,10 +202,7 @@ class aMSNAccountManager(object):
         accdir = os.path.join(self._accounts_dir,
                                   accountNameToDirName(accountview.email))
         if accountview.save:
-            # save the backend type in the account?
-            self._core._backend_manager.switchToBackend('defaultbackend')
-            accdir = os.path.join(self._accounts_dir,
-                                  accountNameToDirName(accountview.email))
+            self._core._backend_manager.switchToBackend(accountview.preferred_backend)
         else:
             # TODO: accdir should be a tmp dir
             if os.path.isdir(accdir):

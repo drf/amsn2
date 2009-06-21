@@ -15,6 +15,7 @@ class AccountView:
         self.autologin = False
 
         self.preferred_ui = None
+        self.preferred_backend = 'defaultbackend'
 
     def __str__(self):
         out = "{ email=" + str(self.email) + " presence=" + str(self.presence)
