@@ -28,7 +28,7 @@ import time
 import pango
 from htmltextview import *
 from amsn2.gui import base
-from amsn2.core.views import StringView
+from amsn2.core.views import ContactView, StringView
 import gtk_extras
 import papyon
 
@@ -58,13 +58,14 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
 
 
 class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
-    def __init__(self, amsn_conversation, parent):
+    def __init__(self, amsn_conversation, parent, contacts_uid):
         gtk.VBox.__init__(self, False, 0)
 
         self._parent = parent
         self._amsn_conversation = amsn_conversation
         self._amsn_core = amsn_conversation._core
         self._theme_manager = self._amsn_core._theme_manager
+        self._contactlist_manager = self._amsn_core._contactlist_manager
         self.padding = 4
         self.lastmsg = ''
         self.last_sender = ''
@@ -72,7 +73,9 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.msgstyle = "margin-left:15px"
         self.infostyle = "margin-left:2px; font-style:italic; color:#6d6d6d"
 
-        self.chatheader = aMSNChatHeader()
+        amsncontacts = [self._contactlist_manager.getContact(uid) for uid in contacts_uid]
+        cviews = [ContactView(self._amsn_core, c) for c in amsncontacts]
+        self.chatheader = aMSNChatHeader(cviews)
 
         # Middle
         self.textview = HtmlTextView()
@@ -349,7 +352,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
 
 class aMSNChatHeader(gtk.EventBox):
-    def __init__(self, cview=None):
+    def __init__(self, cviews=None):
         gtk.EventBox.__init__(self)
 
         self.buddy_icon = gtk.Image()
@@ -374,16 +377,22 @@ class aMSNChatHeader(gtk.EventBox):
         self.modify_bg(gtk.STATE_NORMAL, self.title_color)
         self.add(hbox)
 
-        self.update(cview)
+        self.update(cviews)
 
-    def update(self, cview):
-        if cview is None:
-            nickname = 'Me'
-            psm = 'Testing aMSN'
+    def update(self, cviews):
+        """
+        @param cviews: list contacts participating in the conversation.
+        @type cviews: list of ContactView's
+        """
+        #FIXME: Show all users in a multiconversation
+        nickname = cviews[0].name.getTag("nickname")
+        psm = cviews[0].name.getTag("psm")
+        status = cviews[0].name.getTag("status")
 
         title = '<span size="large"><b>%s</b></span>' % (nickname, )
+        title += '<span size="medium">  %s</span>' % (status, )
 
-        if(psm != ''): 
+        if(psm != ''):
             title += '\n<span size="small" foreground="%s">%s</span>' % (
             self.psm_color, psm)
 

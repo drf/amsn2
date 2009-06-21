@@ -50,7 +50,7 @@ class aMSNConversation:
 
         self._win = self._conversation_manager.getConversationWindow(self)
         self._convo_events = conversation.ConversationEvents(self)
-        self._convWidget = core._gui.gui.aMSNChatWidget(self, self._win)
+        self._convWidget = core._gui.gui.aMSNChatWidget(self, self._win, contacts_uid)
         self._win.addChatWidget(self._convWidget)
         self._win.show()
 

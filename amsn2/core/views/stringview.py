@@ -90,7 +90,7 @@ class StringView (object):
             self.resetFont()
 
     def append(self, type, value):
-        self._elements.append(StringElement(type, value))
+        self._elements.append(StringView.StringElement(type, value))
 
     def appendStringView(self, strv):
         #TODO: default (bg)color
@@ -171,6 +171,27 @@ class StringView (object):
 
         print out
         return out
+
+    def getTag(self, tagname):
+
+        for i in range(len(self._elements)):
+            e = self._elements[i]
+            if e.getType() == StringView.OPEN_TAG_ELEMENT and e.getValue() == tagname:
+                begin = i+1
+                break
+
+        sv = StringView()
+
+        #if begin is None, raise exception?
+        if begin is not None:
+            e = self._elements[begin]
+
+            while not (e.getType() == StringView.CLOSE_TAG_ELEMENT and e.getValue() == tagname):
+                sv.append(e.getType(), e.getValue())
+                begin += 1
+                e = self._elements[begin]
+
+        return sv
 
     def __str__(self):
         out = ""
