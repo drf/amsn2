@@ -126,9 +126,12 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.clear()
         strv = StringView()
         strv.appendText(unicode(msg))
+        ## as we send our msg to the conversation:
         self._amsn_conversation.sendMessage(strv)
-        self.ui.textEdit.append("<b>/me says:</b><br>"+unicode(msg)+"")
-
+        # this one will also notify us of our msg.
+        # so no need to do:
+        #self.ui.textEdit.append("<b>/me says:</b><br>"+unicode(msg)+"")
+        
     def __sendNudge(self):
         self._amsn_conversation.sendNudge()
         self.ui.textEdit.append("<b>/me sent a nudge</b>")
