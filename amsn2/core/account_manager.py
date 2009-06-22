@@ -206,10 +206,20 @@ class aMSNAccountManager(object):
         else:
             # TODO: accdir should be a tmp dir
             if os.path.isdir(accdir):
+                for [root, subdirs, subfiles] in os.walk(accdir, False):
+                    for subfile in subfiles:
+                        os.remove(os.path.join(root, subfile))
+                    for subdir in subdirs:
+                        os.rmdir(os.path.join(root, subdir))
                 os.rmdir(accdir)
             self._core._backend_manager.switchToBackend('nullbackend')
             accdir = None
+
         acc = aMSNAccount(self._core, accountview, accdir)
+
+        if accountview.save:
+            acc.save()
+
         acc.lock()
         return acc
 
