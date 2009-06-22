@@ -255,6 +255,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
                 break
         accv.presence = key
 
+        accv.save = self.rememberMe.get_active()
+        accv.save_password = self.rememberPass.get_active()
+        accv.autologin = self.autoLogin.get_active()
+
         self._amsn_core.signinToAccount(self, accv)
         self.timer = gobject.timeout_add(40, self.__animation)
 
