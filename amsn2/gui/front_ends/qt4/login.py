@@ -1,4 +1,5 @@
 from amsn2.gui import base
+from amsn2.core.views import AccountView
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -55,7 +56,6 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         QObject.connect(self.ui.styleRounded, SIGNAL("clicked()"), self.setTestStyle)
         QObject.connect(self.ui.styleWLM, SIGNAL("clicked()"), self.setTestStyle)
         self.setTestStyle()
-        self.switch_to_profile(None)
 
     def setTestStyle(self):
         styleData = QFile()
@@ -75,25 +75,48 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
     def hide(self):
         pass
 
-    def switch_to_profile(self, profile):
-        self._username = ""
-        self._password = ""
-        self.current_profile = profile
-        if self.current_profile is not None:
-            if self.current_profile.username is not None:
-                self._username = self.current_profile.username
-            if self.current_profile.password is not None:
-                self._password = self.current_profile.password
-        self.ui.comboAccount.lineEdit().setText(str(self._username))
-        self.ui.linePassword.setText(str(self._password))
+    def setAccounts(self, accountviews):
+        self._account_views = accountviews
+
+        for accv in self._account_views:
+            self.ui.comboAccount.addItem(accv.email)
+
+        if len(accountviews)>0 :
+            # first in the list, default
+            self.__switch_to_account(self._account_views[0].email)
+
+            if self._account_views[0].autologin:
+                self.signin()
+
+
+    def __switch_to_account(self, email):
+
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
+            accv = AccountView()
+            accv.email = email
+
+        self.ui.comboAccount.setItemText(0, accv.email)
+
+        if accv.password:
+            self.ui.linePassword.clear()
+            self.ui.linePassword.insert(accv.password)
 
     def signin(self):
         self.loginThrobber = LoginThrobber(self)
         self._parent.fadeIn(self.loginThrobber)
-        self.current_profile.username = str(self.ui.comboAccount.currentText())
-        self.current_profile.email = str(self.ui.comboAccount.currentText())
-        self.current_profile.password = str(self.ui.linePassword.text())
-        self._amsn_core.signinToAccount(self, self.current_profile)
+
+        email = self.ui.comboAccount.currentText()
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
+            accv = AccountView()
+            accv.email = email
+
+        accv.password = self.ui.linePassword.text().toLatin1().data()
+
+        self._amsn_core.signinToAccount(self, accv)
 
     def onConnecting(self, progress, message):
         self.loginThrobber.status.setText(str(message))
