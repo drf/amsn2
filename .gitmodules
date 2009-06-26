@@ -1,0 +1,3 @@
+[submodule "papyon"]
+	path = papyon
+	url = git://github.com/Kjir/papyon.git

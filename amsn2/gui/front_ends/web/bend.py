@@ -37,9 +37,9 @@ class Backend(object):
             pass
         # Return true to continue checking events
         return True
-        
+
     def event(self,event,values):
-        # The JS client sent a message to the backend 
+        # The JS client sent a message to the backend
         # select the function to call depending on the type of event
         if self.listeners[event] is not None:
             for func in self.listeners[event]:

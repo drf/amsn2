@@ -3,7 +3,7 @@ class aMSNLoginWindow(object):
         self._main = main
         self._amsn_core = amsn_core
         self.switch_to_profile(None)
-        
+
     def show(self):
         self._main.send("showLogin",[]);
         self._main.addListener("setUsername",self.setUsername)
@@ -30,6 +30,6 @@ class aMSNLoginWindow(object):
         self.current_profile.email = self._username
         self.current_profile.password = self._password
         self._amsn_core.signinToAccount(self, self.current_profile)
-        
+
     def onConnecting(self,mess):
         self._main.send("onConnecting",[mess])

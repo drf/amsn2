@@ -31,6 +31,10 @@ class GroupView:
 """ a view of a contact on the contact list """
 class ContactView:
     def __init__(self, core, amsn_contact):
+        """
+        @type core: aMSNCore
+        @type amsn_contact: aMSNContact
+        """
 
         self.uid = amsn_contact.uid
 
@@ -38,7 +42,6 @@ class ContactView:
         #TODO: apply emblem on dp
         self.dp = amsn_contact.dp.clone()
         self.dp.appendImageView(amsn_contact.emblem)
-        self.name = StringView
         self.name = StringView() # TODO : default colors
         self.name.openTag("nickname")
         self.name.appendStringView(amsn_contact.nickname) # TODO parse

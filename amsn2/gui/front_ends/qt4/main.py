@@ -39,7 +39,7 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
         QObject.connect(self.opaqLayer, SIGNAL("fadeInCompleted()"), self.__activateNewWidget)
         QObject.connect(self.opaqLayer, SIGNAL("fadeOutCompleted()"), self.__fadeIn)
         self.resize(230, 550)
-        
+
     def closeEvent(self, event):
         self._amsn_core.quit()
 
@@ -76,14 +76,14 @@ class aMSNMainWindow(QMainWindow, base.aMSNMainWindow):
 
     def set_view(self, view):
         print "set_view request"
-        
+
     def setMenu(self, menu):
         mb = QMenuBar()
-        
+
         for item in menu.items:
             if item.type == "cascade":
                 menu = mb.addMenu(item.label)
                 for subitem in item.items:
                     menu.addAction(subitem.label)
-                
+
         self.setMenuBar(mb)

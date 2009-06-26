@@ -6,20 +6,24 @@ class aMSNWindow(object):
 
     def show(self):
         """ This launches the window, creates it, etc.."""
+        print "aMSNWindow.show"
         pass
 
     def hide(self):
         """ This should hide the window"""
+        print "aMSNWindow.hide"
         pass
 
     def setTitle(self, text):
         """ This will allow the core to change the current window's title
         @text : a string
         """
+        print "aMSNWindow.setTitle"
         pass
-    
+
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
         """
+        print "aMSNWindow.setMenu"
         pass

@@ -18,13 +18,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from amsn2.protocol import conversation
+from amsn2.protocol.events import conversation
 from amsn2.core.contactlist_manager import *
 from amsn2.core.views import *
-import pymsn
+import papyon
 
 class aMSNConversation:
     def __init__(self, core, conv_manager, conv = None, contacts_uid = None):
+        """
+        @type core: aMSNCore
+        @type conv_manager: aMSNConversationManager
+        @type conv:
+        @type contacts_uid:
+        """
+
         if (contacts_uid is None):
             raise ValueError, InvalidArgument
 
@@ -33,10 +40,10 @@ class aMSNConversation:
         self._contacts_uid = contacts_uid
         if conv is None:
             #New conversation
-            pymsn_contacts = [core._contactlist_manager.getContact(uid) for uid in contacts_uid]
-            pymsn_contacts = [c._pymsn_contact for c in pymsn_contacts if c is not None]
+            papyon_contacts = [core._contactlist_manager.getContact(uid) for uid in contacts_uid]
+            papyon_contacts = [c._papyon_contact for c in papyon_contacts if c is not None]
             #if c was None.... wtf?
-            self._conv = pymsn.Conversation(self._core._profile.client, pymsn_contacts)
+            self._conv = papyon.Conversation(self._core._account.client, papyon_contacts)
         else:
             #From an existing conversation
             self._conv = conv
@@ -71,8 +78,7 @@ class aMSNConversation:
         #TODO: messageView
         mv = MessageView()
         if sender_uid is None:
-            #TODO
-            mv.sender.appendText("/me")
+            mv.sender.appendStringView(self._core._personalinfo_manager._personalinfoview.nick)
         else:
             c = self._core._contactlist_manager.getContact(sender_uid)
             mv.sender_icon = c.icon
@@ -90,7 +96,7 @@ class aMSNConversation:
         # for the moment, no formatting, no smiley substitution... (TODO)
         # peacey: Added formatting of styles
         self.onMessageReceived(msg, formatting=formatting)
-        message = pymsn.ConversationMessage(msg.toString(), formatting)
+        message = papyon.ConversationMessage(str(msg), formatting)
         self._conv.send_text_message(message)
 
     def sendNudge(self):
@@ -105,6 +111,6 @@ class aMSNConversation:
     def inviteContact(self, contact_uid):
         """ contact_uid is the Id of the contact to invite """
         c = self._core._contactlist_manager.getContact(contact_uid)
-        self._conv.invite_user(contact.pymsn_contact)
+        self._conv.invite_user(contact.papyon_contact)
 
     #TODO: ...

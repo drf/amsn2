@@ -1,1 +1,8 @@
-find . -name "*.pyc" | xargs rm
+find . -name "*.pyc" -exec rm '{}' \;
+find . -name "*.pyo" -exec rm '{}' \;
+
+#Remove compiled Qt4 user interfaces
+rm amsn2/gui/front_ends/qt4/ui_login.py
+rm amsn2/gui/front_ends/qt4/ui_contactlist.py
+rm amsn2/gui/front_ends/qt4/ui_chatWindow.py
+

@@ -3,6 +3,10 @@ from conversation import aMSNConversation
 
 class aMSNConversationManager:
     def __init__(self, core):
+        """
+        @type core: aMSNCore
+        """
+
         self._core = core
         self._convs = []
         self._wins = []

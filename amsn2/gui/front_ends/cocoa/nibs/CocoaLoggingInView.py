@@ -12,15 +12,15 @@ def getView():
 class aMSNCocoaLoggingInView(NSView):
     statusText =        IBOutlet('statusText')          # Text field with status text.
     progressIndicator = IBOutlet('progressIndicator')   # Spinner.
-    
+
     def setParent(self, parent):
         self.parent = parent
-    
+
     def awakeFromNib(self):
         global view
         view = self
         self.progressIndicator.startAnimation_(self)
-    
+
     def setStatus(self, newText):
         self.statusText.setStringValue_(newText)
 

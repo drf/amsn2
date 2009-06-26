@@ -1,130 +1,172 @@
+from __future__ import with_statement
 from amsn2.gui import base
-import pymsn
 import curses
+from threading import Thread
+from threading import Condition
+import time
 
-class Contact(object):
-    def __init__(self, name, presence):
-        self.name = name
-        self.presence = presence
-        self.p2s = {pymsn.Presence.ONLINE:"online",
-                    pymsn.Presence.BUSY:"busy",
-                    pymsn.Presence.IDLE:"idle",
-                    pymsn.Presence.AWAY:"away",
-                    pymsn.Presence.BE_RIGHT_BACK:"brb",
-                    pymsn.Presence.ON_THE_PHONE:"phone",
-                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
-                    pymsn.Presence.INVISIBLE:"hidden",
-                    pymsn.Presence.OFFLINE:"offline"}
-        
-
-    def is_online(self):
-        return self.presence != pymsn.Presence.OFFLINE
-
-    def status(self):
-        return self.p2s[self.presence]
-
-class Group(object):
-    def __init__(self, name):
-        self.contacts = {}
-        self.name = name
-
-    def count(self):
-        online = 0
-        total = 0
-        for c in self.contacts:
-            total += 1
-            if self.contacts[c].is_online():
-                online +=1
-
-        return (online, total)
-            
-
-class aMSNContactList(base.aMSNContactList):
-    def __init__(self, amsn_core):
+class aMSNContactListWindow(base.aMSNContactListWindow):
+    def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
-        self.groups = {}
-        self.contacts = {}
-	self._stdscr = self._amsn_core.getMainWindow()._stdscr
-        self._win = curses.newwin(100, 100, 3, 3)
+        self._stdscr = parent._stdscr
+        parent.setFocusedWindow(self)
+        (y,x) = self._stdscr.getmaxyx()
+        # TODO: Use a pad instead
+        self._win = curses.newwin(y, int(0.25*x), 0, 0)
+        self._win.bkgd(curses.color_pair(0))
+        self._win.border()
+        self._clwidget = aMSNContactListWidget(amsn_core, self)
 
     def show(self):
-        pass
+        self._win.refresh()
 
     def hide(self):
-        pass
+        self._stdscr.clear()
+        self._stdscr.refresh()
 
-    def contactStateChange(self, contact):
-        for group in contact.groups:
-            self.groups[group.id].contacts[contact.id].presence = contact.presence
-            
-        self.__update_view()
+    def _on_char_cb(self, ch):
+        import sys
+        print >> sys.stderr, "Length is %d" % len(ch)
+        print >> sys.stderr, "Received %s in Contact List" % ch.encode("UTF-8")
+        if ch == "KEY_UP":
+            self._clwidget.move(-1)
+        elif ch == "KEY_DOWN":
+            self._clwidget.move(1)
+        elif ch == "KEY_NPAGE":
+            self._clwidget.move(10)
+        elif ch == "KEY_PPAGE":
+            self._clwidget.move(-10)
 
-    def contactNickChange(self, contact):
-        pass
-        
-    def contactPSMChange(self, contact):
-        pass
-    
-    def contactAlarmChange(self, contact):
-        pass
+class aMSNContactListWidget(base.aMSNContactListWidget):
 
-    def contactDisplayPictureChange(self, contact):
-        pass
+    def __init__(self, amsn_core, parent):
+        super(aMSNContactListWidget, self).__init__(amsn_core, parent)
+        self._groups_order = []
+        self._groups = {}
+        self._contacts = {}
+        self._win = parent._win
+        self._stdscr = parent._stdscr
+        self._mod_lock = Condition()
+        self._modified = False
+        self._thread = Thread(target=self.__thread_run)
+        self._thread.daemon = True
+        self._thread.setDaemon(True)
+        self._thread.start()
+        self._selected = 1
 
-    def contactSpaceChange(self, contact):
-        pass
-    
-    def contactSpaceFetched(self, contact):
-        pass
+    def move(self, num):
+        self._selected += num
+        if self._selected < 1:
+            self._selected = 1
+        self.__repaint()
 
-    def contactBlocked(self, contact):
-        pass
 
-    def contactUnblocked(self, contact):
-        pass
+    def contactListUpdated(self, clView):
+        # Acquire the lock to do modifications
+        with self._mod_lock:
+            # TODO: Implement it to sort groups
+            for g in self._groups_order:
+                if g not in clView.group_ids:
+                    self._groups.delete(g)
+            for g in clView.group_ids:
+                if not g in self._groups_order:
+                    self._groups[g] = None
+            self._groups_order = clView.group_ids
+            self._modified = True
 
-    def contactMoved(self, from_group, to_group, contact):
-        pass
+            # Notify waiting threads that we modified something
+            self._mod_lock.notify()
 
-    def contactAdded(self, group, contact):
-        self.groups[group.id].contacts[contact.id] = Contact(contact.display_name, contact.presence)
-        self.__update_view()
-    
-    def contactRemoved(self, group, contact):
-        pass
+    def groupUpdated(self, gView):
+        # Acquire the lock to do modifications
+        with self._mod_lock:
+            if self._groups.has_key(gView.uid):
+                if self._groups[gView.uid] is not None:
+                    #Delete contacts
+                    for c in self._groups[gView.uid].contact_ids:
+                        if c not in gView.contact_ids:
+                            if self._contacts[c]['refs'] == 1:
+                                self._contacts.delete(c)
+                            else:
+                                self._contacts[c]['refs'] -= 1
+                #Add contacts
+                for c in gView.contact_ids:
+                    if not self._contacts.has_key(c):
+                        self._contacts[c] = {'cView': None, 'refs': 1}
+                        continue
+                    #If contact wasn't already there, increment reference count
+                    if self._groups[gView.uid] is None or c not in self._groups[gView.uid].contact_ids:
+                        self._contacts[c]['refs'] += 1
+                self._groups[gView.uid] = gView
+                self._modified = True
 
-    def contactRenamed(self, contact):
-        pass
+                # Notify waiting threads that we modified something
+                self._mod_lock.notify()
 
-    def groupRenamed(self, group):
-        pass
+    def contactUpdated(self, cView):
+        # Acquire the lock to do modifications
+        with self._mod_lock:
+            if self._contacts.has_key(cView.uid):
+                self._contacts[cView.uid]['cView'] = cView
+                self._modified = True
 
-    def groupAdded(self, group):
-        self.groups[group.id] = Group(group.name)
-        self.__update_view()
+                # Notify waiting threads that we modified something
+                self._mod_lock.notify()
 
-    def groupRemoved(self, group):
-        pass
+    def __repaint(self):
+        # Acquire the lock to do modifications
+        with self._mod_lock:
+            self._win.clear()
+            (y, x) = self._stdscr.getmaxyx()
+            self._win.move(0,1)
+            available = y
+            gso = []
+            for g in self._groups_order:
+                available -= 1
+                available -= len(self._groups[g].contact_ids)
+                gso.append(g)
+                if available <= 0:
+                    break
+            gso.reverse()
+            available = y
+            i = 0
+            for g in gso:
+                if self._groups[g] is not None:
+                    available -= 1
+                    cids = self._groups[g].contact_ids
+                    cids = cids[:available]
+                    cids.reverse()
+                    for c in cids:
+                        if self._contacts.has_key(c) and self._contacts[c]['cView'] is not None:
+                            if i == y - self._selected:
+                                self._win.bkgdset(curses.color_pair(1))
+                            self._win.insstr(str(self._contacts[c]['cView'].name))
+                            self._win.bkgdset(curses.color_pair(0))
+                            self._win.insch(' ')
+                            self._win.insch(curses.ACS_HLINE)
+                            self._win.insch(curses.ACS_HLINE)
+                            self._win.insch(curses.ACS_LLCORNER)
+                            self._win.insertln()
+                            self._win.bkgdset(curses.color_pair(0))
+                            i += 1
+                    if i == y - self._selected:
+                        self._win.bkgdset(curses.color_pair(1))
+                    self._win.insstr(str(self._groups[g].name))
+                    self._win.bkgdset(curses.color_pair(0))
+                    self._win.insch(' ')
+                    self._win.insch(curses.ACS_LLCORNER)
+                    self._win.insertln()
+                    i += 1
+            self._win.border()
+            self._win.refresh()
+            self._modified = False
 
-    def configure(self, option, value):
-        pass
 
-    def cget(self, option, value):
-        pass
-
-        
-    def __update_view(self):
-        self._win.clear()
-        row = 0
-        for g in self.groups:
-            count = self.groups[g].count()
-            self._win.addstr(row, 0, "%s (%d/%d)" % (self.groups[g].name, count[0], count[1]), curses.A_BOLD | curses.A_UNDERLINE)
-            row += 1
-            for c in self.groups[g].contacts:
-                 self._win.addstr(row, 2, "%s (%s)" % (self.groups[g].contacts[c].name, self.groups[g].contacts[c].status()), curses.A_BOLD)
-                 row += 1
-            row += 1
-
-        self._win.refresh()
-                             
-
+    def __thread_run(self):
+        while True:
+            # We don't want to repaint too often, once every half second is cool
+            time.sleep(0.5)
+            with self._mod_lock:
+                while not self._modified:
+                    self._mod_lock.wait(timeout=1)
+                self.__repaint()

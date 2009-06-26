@@ -140,13 +140,6 @@ class StringView (object):
         # TODO: Not so easy... maybe there is a python HTML parser we can use?
         pass
 
-    def toString(self):
-        out = ""
-        for x in self._elements:
-            if x.getType() == StringView.TEXT_ELEMENT:
-                out += x.getValue()
-        return out
-
     def toHtmlString(self):
         """ This method returns a formatted html string with all
         the data in the stringview """
@@ -180,7 +173,11 @@ class StringView (object):
         return out
 
     def __str__(self):
-        return self.toString()
+        out = ""
+        for x in self._elements:
+            if x.getType() == StringView.TEXT_ELEMENT:
+                out += x.getValue()
+        return out
 
     def __repr__(self):
         out = "{"

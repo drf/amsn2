@@ -13,7 +13,8 @@ class aMSNContactListWindow(object):
     """
 
     def __init__(self, amsn_core, parent):
-        raise NotImplementedError
+        em = amsn_core._event_manager
+        em.register(em.events.PERSONALINFO_UPDATED, self.myInfoUpdated)
 
     def show(self):
         """ Show the contact list window """
@@ -25,30 +26,31 @@ class aMSNContactListWindow(object):
 
     def setTitle(self, text):
         """ This will allow the core to change the current window's title
-        @text : a string
+        @type text: str
         """
         raise NotImplementedError
 
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
-        @menu : a MenuView
+        @type menu: MenuView
         """
         raise NotImplementedError
 
     def myInfoUpdated(self, view):
         """ This will allow the core to change pieces of information about
         ourself, such as DP, nick, psm, the current media being played,...
-        @view: the contactView of the ourself (contains DP, nick, psm,
+        @type view: PersonalInfoView
+        @param view: the PersonalInfoView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
         raise NotImplementedError
 
 class aMSNContactListWidget(object):
     """ This interface implements the contact list of the UI """
     def __init__(self, amsn_core, parent):
-        clm = amsn_core._contactlist_manager
-        clm.register(clm.CLVIEW_UPDATED, self.contactListUpdated)
-        clm.register(clm.GROUPVIEW_UPDATED, self.groupUpdated)
-        clm.register(clm.CONTACTVIEW_UPDATED, self.contactUpdated)
+        em = amsn_core._event_manager
+        em.register(em.events.CLVIEW_UPDATED, self.contactListUpdated)
+        em.register(em.events.GROUPVIEW_UPDATED, self.groupUpdated)
+        em.register(em.events.CONTACTVIEW_UPDATED, self.contactUpdated)
 
     def show(self):
         """ Show the contact list widget """
@@ -65,7 +67,9 @@ class aMSNContactListWidget(object):
         It will be called initially to feed the contact list with the groups
         that the CL should contain.
         It will also be called to remove any group that needs to be removed.
-        @cl : a ContactListView containing the list of groups contained in
+
+        @type clView: ContactListView
+        @param clView : contains the list of groups contained in
         the contact list which will contain the list of ContactViews
         for all the contacts to show in the group."""
         raise NotImplementedError

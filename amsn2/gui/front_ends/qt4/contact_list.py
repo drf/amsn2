@@ -24,7 +24,12 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from contact_model import ContactModel
 from contact_item import ContactItem
-from ui_contactlist import Ui_ContactList
+try:
+    from ui_contactlist import Ui_ContactList
+except ImportError, e:
+    # FIXME: Should do that with logging...
+    print "WARNING: To use the QT4 you need to run the generateFiles.sh, check the README"
+    raise e
 from styledwidget import StyledWidget
 from amsn2.core.views import StringView, ContactView
 from amsn2.gui import base
@@ -38,7 +43,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
     def show(self):
         self._clwidget.show()
-    
+
     def hide(self):
         self._clwidget.hide()
 
@@ -53,8 +58,8 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
 
     def myInfoUpdated(self, view):
         pass #TODO
-    
-            
+
+
 class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
@@ -69,10 +74,10 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         self._proxyModel.setSourceModel(self._model)
         self.ui.cList.setModel(self._proxyModel)
         self._contactDict = dict()
-        
+
         self._proxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self._proxyModel.setFilterKeyColumn(-1)
-        
+
         self.connect(self.ui.searchLine, SIGNAL('textChanged(QString)'),
                      self._proxyModel, SLOT('setFilterFixedString(QString)'))
         QObject.connect(self.ui.nickName, SIGNAL('textChanged(QString)'),
@@ -83,55 +88,55 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
 
     def hide(self):
         pass
-    
+
     def __slotChangeNick(self):
         sv = StringView()
         sv.appendText(str(self.ui.nickName.text()))
         self._amsn_core._profile.client.changeNick(sv)
-        
+
     def contactListUpdated(self, view):
         pass
-    
+
     def contactUpdated(self, contact):
-        print unicode("Contact Updated: " + QString.fromUtf8(contact.name.toString()))
+        print unicode("Contact Updated: " + QString.fromUtf8(str(contact.name)))
         l = self._model.findItems("*", Qt.MatchWildcard | Qt.MatchRecursive)
-        
+
         for itm in l:
-            if itm.data(40).toString() == contact.uid:
-                itm.setText(QString.fromUtf8(contact.name.toString()))
+            if str(itm.data(40)) == contact.uid:
+                itm.setText(QString.fromUtf8(str(contact.name)))
                 break
 
     def groupUpdated(self, group):
         print "GroupUpdated"
         l = self._model.findItems("*", Qt.MatchWildcard)
-        
+
         for itm in l:
-            
-            if itm.data(40).toString() == group.uid:
-                
-                itm.setText(QString.fromUtf8(group.name.toString()))
-            
+
+            if str(itm.data(40)) == group.uid:
+
+                itm.setText(QString.fromUtf8(str(group.name)))
+
                 for contact in group.contacts:
-                    
+
                     for ent in l:
-                        
-                        if ent.data(40).toString() == contact.uid:
-                            itm.setText(QString.fromUtf8(contact.name.toString()))
+
+                        if str(ent.data(40)) == contact.uid:
+                            itm.setText(QString.fromUtf8(str(contact.name)))
                             continue
-                        
-                    print "  * " + contact.name.toString()
-            
+
+                    print "  * " + contact.name
+
                     contactItem = ContactItem()
-                    contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
+                    contactItem.setContactName(QString.fromUtf8(str(contact.name)))
                     contactItem.setData(QVariant(contact.uid), 40)
-            
+
                     itm.appendRow(contactItem)
 
                 break
 
     def groupRemoved(self, group):
         l = self._model.findItems("", Qt.MatchWildcard)
-        
+
         for itm in l:
             if itm.data(40) == group.uid:
                 row = self._model.indexFromItem(itm)
@@ -154,7 +159,7 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
                          self.__slotContactCallback)
 
     def __slotContactCallback(self, index):
-        data = str(index.data(40).toString())
+        data = str(str(index.data(40)))
         if self._callback is not None:
             self._callback(self._contactDict[data])
 
@@ -163,24 +168,24 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
         pass
 
     def groupAdded(self, group):
-        print group.name.toString()
-        
+        print group.name
+
         pi = self._model.invisibleRootItem();
-        
+
         # Adding Group Item
-        
+
         groupItem = QStandardItem()
-        groupItem.setText(QString.fromUtf8(group.name.toString()))
+        groupItem.setText(QString.fromUtf8(str(group.name)))
         groupItem.setData(QVariant(group.uid), 40)
         pi.appendRow(groupItem)
-        
+
         for contact in group.contacts:
-            print "  * " + contact.name.toString()
-            
+            print "  * " + contact.name
+
             contactItem = ContactItem()
-            contactItem.setContactName(QString.fromUtf8(contact.name.toString()))
+            contactItem.setContactName(QString.fromUtf8(str(contact.name)))
             contactItem.setData(QVariant(contact.uid), 40)
-            
+
             groupItem.appendRow(contactItem)
-            
+
             self._contactDict[contact.uid] = contact

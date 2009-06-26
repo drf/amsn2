@@ -20,5 +20,9 @@
 
 class aMSNOIMManager:
     def __init__(self, core):
+        """
+        @type core: aMSNCore
+        """
+
         self._core = core
-        
+

@@ -18,16 +18,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import profile
 from amsn2 import gui
 from amsn2 import protocol
-import pymsn
+from amsn2.backend import aMSNBackendManager
+import papyon
 from views import *
+from account_manager import *
 from contactlist_manager import *
 from conversation_manager import *
 from oim_manager import *
 from theme_manager import *
-
+from personalinfo_manager import *
+from event_manager import *
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -41,39 +43,68 @@ class aMSNCore(object):
            options.front_end = the front end's name to use
            options.debug = whether or not to enable debug output
         """
-        self._profile_manager = profile.aMSNProfileManager()
+        self._event_manager = aMSNEventManager(self)
         self._options = options
-        self._gui_name = self._options.front_end
-        self._gui = gui.GUIManager(self, self._gui_name)
-        self._loop = self._gui.gui.aMSNMainLoop(self)
-        self._main = self._gui.gui.aMSNMainWindow(self)
-        self._skin_manager = self._gui.gui.SkinManager(self)
+
+        self._gui_name = None
+        self._gui = None
+        self._loop = None
+        self._main = None
+        self.loadUI(self._options.front_end)
+
+        self._backend_manager = aMSNBackendManager()
+        self._account_manager = aMSNAccountManager(self, options)
+        self._account = None
         self._theme_manager = aMSNThemeManager()
         self._contactlist_manager = aMSNContactListManager(self)
         self._oim_manager = aMSNOIMManager(self)
         self._conversation_manager = aMSNConversationManager(self)
+        self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
-        self.p2s = {pymsn.Presence.ONLINE:"online",
-                    pymsn.Presence.BUSY:"busy",
-                    pymsn.Presence.IDLE:"idle",
-                    pymsn.Presence.AWAY:"away",
-                    pymsn.Presence.BE_RIGHT_BACK:"brb",
-                    pymsn.Presence.ON_THE_PHONE:"phone",
-                    pymsn.Presence.OUT_TO_LUNCH:"lunch",
-                    pymsn.Presence.INVISIBLE:"hidden",
-                    pymsn.Presence.OFFLINE:"offline"}
 
+        self.p2s = {papyon.Presence.ONLINE:"online",
+                    papyon.Presence.BUSY:"busy",
+                    papyon.Presence.IDLE:"idle",
+                    papyon.Presence.AWAY:"away",
+                    papyon.Presence.BE_RIGHT_BACK:"brb",
+                    papyon.Presence.ON_THE_PHONE:"phone",
+                    papyon.Presence.OUT_TO_LUNCH:"lunch",
+                    papyon.Presence.INVISIBLE:"hidden",
+                    papyon.Presence.OFFLINE:"offline"}
+
+        import logging
         if self._options.debug:
-            import logging
             logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.basicConfig(level=logging.WARNING)
 
     def run(self):
         self._main.show();
         self._loop.run();
 
+    def loadUI(self, ui_name):
+        """
+        @type ui_name: str
+        @param ui_name: The name of the User Interface
+        """
+
+        self._gui_name = ui_name
+        self._gui = gui.GUIManager(self, self._gui_name)
+        self._loop = self._gui.gui.aMSNMainLoop(self)
+        self._main = self._gui.gui.aMSNMainWindow(self)
+        self._skin_manager = self._gui.gui.SkinManager(self)
+
+    def switchToUI(self, ui_name):
+        """
+        @type ui_name: str
+        @param ui_name: The name of the User Interface
+        """
+
+        #TODO: unloadUI + stop loops??? + loadUI + run
+        pass
 
     def mainWindowShown(self):
-        # TODO : load the profiles from disk and all settings
+        # TODO : load the accounts from disk and all settings
         # then show the login window if autoconnect is disabled
 
         self._main.setTitle("aMSN 2 - Loading")
@@ -89,27 +120,7 @@ class aMSNCore(object):
 
         login = self._gui.gui.aMSNLoginWindow(self, self._main)
 
-        profile = None
-        if self._options.account is not None:
-            if self._profile_manager.profileExists(self._options.account):
-                profile = self._profile_manager.getProfile(self._options.account)
-            else:
-                profile = self._profile_manager.addProfile(self._options.account)
-                profile.save = False
-            if self._options.password is not None:
-                profile.password = self._options.password
-
-        else:
-            for prof in self._profile_manager.getAllProfiles():
-                if prof.isLocked() is False:
-                    profile = prof
-                    break
-
-        if profile is None:
-            profile = self._profile_manager.addProfile("")
-            profile.password = ""
-
-        login.switch_to_profile(profile)
+        login.setAccounts(self._account_manager.getAvailableAccountViews())
 
         splash.hide()
         self._main.setTitle("aMSN 2 - Login")
@@ -121,48 +132,68 @@ class aMSNCore(object):
     def getMainWindow(self):
         return self._main
 
-    def addProfile(self, account):
-        return self._profile_manager.addProfile(account)
+    def signinToAccount(self, login_window, accountview):
+        """
+        @type login_window: aMSNLoginWindow
+        @type accountview: AccountView
+        """
 
-    def signinToAccount(self, login_window, profile):
-        print "Signing in to account %s" % (profile.email)
-        profile.login = login_window
-        profile.client = protocol.Client(self, profile)
-        self._profile = profile
-        profile.client.connect()
+        print "Signing in to account %s" % (accountview.email)
+        self._account = self._account_manager.signinToAccount(accountview)
+        self._account.login = login_window
+        self._account.client = protocol.Client(self, self._account)
+        self._account.client.connect(accountview.email, accountview.password)
 
-    def connectionStateChanged(self, profile, state):
+    def connectionStateChanged(self, account, state):
+        """
+        @type account: aMSNAccount
+        @type state: L{papyon.event.ClientState}
+        @param state: New state of the Client.
+        """
 
         status_str = \
         {
-            pymsn.event.ClientState.CONNECTING : 'Connecting to server...',
-            pymsn.event.ClientState.CONNECTED : 'Connected',
-            pymsn.event.ClientState.AUTHENTICATING : 'Authentificating...',
-            pymsn.event.ClientState.AUTHENTICATED : 'Password accepted',
-            pymsn.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
-            pymsn.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully\nHappy Chatting'
+            papyon.event.ClientState.CONNECTING : 'Connecting to server...',
+            papyon.event.ClientState.CONNECTED : 'Connected',
+            papyon.event.ClientState.AUTHENTICATING : 'Authenticating...',
+            papyon.event.ClientState.AUTHENTICATED : 'Password accepted',
+            papyon.event.ClientState.SYNCHRONIZING : 'Please wait while your contact list\nis being downloaded...',
+            papyon.event.ClientState.SYNCHRONIZED : 'Contact list downloaded successfully.\nHappy Chatting'
         }
 
         if state in status_str:
-            profile.login.onConnecting((state + 1)/ 7., status_str[state])
-        elif state == pymsn.event.ClientState.OPEN:
+            account.login.onConnecting((state + 1)/ 7., status_str[state])
+        elif state == papyon.event.ClientState.OPEN:
             clwin = self._gui.gui.aMSNContactListWindow(self, self._main)
-            clwin.profile = profile
-            profile.clwin = clwin
-            profile.login.hide()
+            clwin.account = account
+            account.clwin = clwin
+            account.login.hide()
             self._main.setTitle("aMSN 2")
-            profile.clwin.show()
-            profile.login = None
+            account.clwin.show()
+            account.login = None
 
-            self._contactlist_manager.onCLDownloaded(profile.client.address_book)
+            self._personalinfo_manager.setAccount(account)
+            self._contactlist_manager.onCLDownloaded(account.client.address_book)
 
     def idlerAdd(self, func):
+        """
+        @type func: function
+        """
+
         self._loop.idlerAdd(func)
 
     def timerAdd(self, delay, func):
+        """
+        @type delay: int
+        @param delay: delay in seconds?
+        @type func: function
+        """
+
         self._loop.timerAdd(delay, func)
 
     def quit(self):
+        if self._account is not None:
+            self._account.signOut()
         self._loop.quit()
 
     def createMainMenuView(self):

@@ -31,13 +31,14 @@ class aMSNContactListWindow(object):
         """ This will allow the core to change the current window's title
         @text : a string
         """
-        self._main.send("setTitle",[text])
+        self._main.send("setContactListTitle",[text])
         pass
 
     def setMenu(self, menu):
         """ This will allow the core to change the current window's main menu
         @menu : a MenuView
         """
+        self._main.send("setMenu")
         pass
 
     def myInfoUpdated(self, view):
@@ -45,7 +46,7 @@ class aMSNContactListWindow(object):
         ourself, such as DP, nick, psm, the current media being played,...
         @view: the contactView of the ourself (contains DP, nick, psm,
         currentMedia,...)"""
-        self._main.send("myInfoUpdated",[view.name.toString()])
+        self._main.send("myInfoUpdated",[str(view.name)])
         pass
 
 class aMSNContactListWidget(object):
@@ -53,11 +54,20 @@ class aMSNContactListWidget(object):
     def __init__(self, amsn_core, parent):
         self._main = parent._main
         self.contacts = {}
-        self.groups = []
+        self.groups = {}
+        self._main.addListener("contactClicked",self.contactClicked)
         clm = amsn_core._contactlist_manager
         clm.register(clm.CLVIEW_UPDATED, self.contactListUpdated)
         clm.register(clm.GROUPVIEW_UPDATED, self.groupUpdated)
         clm.register(clm.CONTACTVIEW_UPDATED, self.contactUpdated)
+        
+    def contactClicked(self,uidL):
+        uid = uidL.pop()
+        try:
+            self.contacts[uid].on_click(uid)
+        except Exception, inst:
+            print inst
+        return True
 
     def show(self):
         """ Show the contact list widget """
@@ -90,7 +100,8 @@ class aMSNContactListWidget(object):
         may be changed, in which case the UI should update itself accordingly.
         A contact can also be added or removed from a group using this method
         """
-        self._main.send("groupUpdated",[groupView.uid,",".join(groupView.contact_ids),groupView.name.toString()])
+        self.groups[groupView.uid]=groupView
+        self._main.send("groupUpdated",[groupView.uid,",".join(groupView.contact_ids),str(groupView.name)])
         pass
 
     def contactUpdated(self, contactView):
@@ -103,6 +114,7 @@ class aMSNContactListWidget(object):
         call will be made with the new order of the contacts
         in the affects groups.
         """
-        self._main.send("contactUpdated",[contactView.uid,contactView.name.toString()])
+        self.contacts[contactView.uid]=contactView
+        self._main.send("contactUpdated", [contactView.uid, str(contactView.name)])
         pass
 

@@ -16,7 +16,7 @@ try:
 
     imp.find_module("curses")
     gui.GUIManager.registerFrontEnd("curses", sys.modules[__name__])
-    
+
 except ImportError:
     pass
-        
+

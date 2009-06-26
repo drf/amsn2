@@ -5,6 +5,10 @@ class ImageView(object):
             - Theme
             - None
     """
+
+    FILENAME = "Filename"
+    THEME = "Theme"
+
     def __init__(self, resource_type=None, value=None):
         self.imgs = []
         if resource_type is not None and value is not None:
@@ -30,4 +34,6 @@ class ImageView(object):
     def prependImageView(self, iv):
         self.imgs = iv.imgs[:].extend(self.imgs)
 
+    def reset(self):
+        self.imgs = []
 

@@ -89,7 +89,7 @@ class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
         print "%s is typing" % (contact,)
 
     def onMessageReceived(self, messageview):
-        self.__outputAppendMsg(messageview.toStringView().toString())
+        self.__outputAppendMsg(str(messageview.toStringView()))
 
     def nudge(self):
         #TODO

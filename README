@@ -5,6 +5,9 @@ python-pyopenssl
 python-crypto
 maybe some other stuff...
 
+Before launching amsn2 you have to fetch the submodules (papyon). Instructions can be found on the aMSN forum:
+http://www.amsn-project.net/forums/viewtopic.php?t=5994
+
 If you launch ./amsn2.py and it gives an error, that error probably tells you which dependency you need...
 You can type ./amsn2.py --help for more info... and the front ends can be selected with -f :
 ./amsn2.py -f efl
@@ -21,6 +24,7 @@ Once done, go to ./e17_src/BINDINGS/python and type
 PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig ./build-all.sh /usr
 (this will build and install the python extensions into /usr/python2.X/...)
 Then the efl front end should become available...
+If it's not, fire up a python shell and try to import the ecore module; diagnose from there the problem.
 
 
 If you have the following error with the qt4 front-end:
@@ -31,3 +35,7 @@ If you have the following error with the qt4 front-end:
 	self._loop = self._gui.gui.aMSNMainLoop(self)
 	AttributeError: 'NoneType' object has no attribute 'aMSNMainLoop'
 try moving into the amsn2/gui/front_ends/qt4 directory and calling generateFiles.sh
+
+If the backspace is not working as expected with the ncurses front-end it is probably because your TERM is not set to the correct value. Try to launch amsn2 with some other setting for TERM, like:
+TERM=konsole ./amsn2.py -f curses
+If it works with some other value it means that your terminal emulator is not set correctly.

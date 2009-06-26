@@ -4,11 +4,11 @@ from amsn2.gui import base
 from amsn2.core.views import StringView
 from amsn2.core.views import GroupView
 from amsn2.core.views import ContactView
-            
+
 
 class aMSNContactList(base.aMSNContactListWindow):
     def __init__(self, amsn_core, parent):
-		pass
+        pass
 
     def show(self):
         pass
@@ -17,14 +17,14 @@ class aMSNContactList(base.aMSNContactListWindow):
         pass
 
     def contactStateChange(self, contact):
-		pass
+        pass
 
     def contactNickChange(self, contact):
         pass
-        
+
     def contactPSMChange(self, contact):
         pass
-    
+
     def contactAlarmChange(self, contact):
         pass
 
@@ -33,7 +33,7 @@ class aMSNContactList(base.aMSNContactListWindow):
 
     def contactSpaceChange(self, contact):
         pass
-    
+
     def contactSpaceFetched(self, contact):
         pass
 
@@ -48,7 +48,7 @@ class aMSNContactList(base.aMSNContactListWindow):
 
     def contactAdded(self, group, contact):
         pass
-    
+
     def contactRemoved(self, group, contact):
         pass
 

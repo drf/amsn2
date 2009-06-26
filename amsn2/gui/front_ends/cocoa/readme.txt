@@ -8,12 +8,13 @@ Building
 We use NIB files to build our interface, in order to load the NIB's correctly, we require aMSN 2 to be run from inside an application bundle. To build the bundle you need (from macports):
 
 python25
-py-openssl (see note)
+py25-openssl
 py25-gobject
+py25-crypto
+py25-hashlib
+py25-py2app-devel
 py25-pyobjc2-cocoa
-	- py25-pyobjc2
-	- py25-py2app-devel
-		- py25-py2app (see note)
+
 
 After they have been installed, you will need to run this inside the root folder of amsn2:
 $ /opt/local/bin/python2.5 setupCocoa.py py2app -A
@@ -23,11 +24,11 @@ $ dist/aMSN2.app/Contents/MacOS/aMSN2
 
 py-openssl - Note
 =================
-It is recommended to use the 0.7 version of py-openssl. An updated portfile can be found at: http://hosting.notjustanothermacuser.com/macports/py-openssl/Portfiles/0.7_0.tar.gz
+It is recommended to use the 0.7 version of py-openssl. Last version of Macports is using version 0.7. You can also use an updated portfile that can be found at: http://hosting.notjustanothermacuser.com/macports/py-openssl/Portfiles/0.7_0.tar.gz
 
 py2app - Note
 =============
-The current py2app on mac ports is out of date, they have 0.3.6, while py25-pyobjc2-cooca requires > 0.4.0. No "official" releases of py2app have been made since 0.3.6, however the current trunk from SVN gives version 0.4.2. If you wish to use macports' python25, and you wish to build the bundle then you will need to update the Portfile for py25-py2app. The updated portfile can be found at: http://hosting.notjustanothermacuser.com/macports/py25-py2app/Portfiles/0.4.2_0.tar.gz
+Be sure to use py25-py2app-devel and not py25-py2app from Macports, because py25-py2app is outdated and does not work with pyobjc2-cocoa. 
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 

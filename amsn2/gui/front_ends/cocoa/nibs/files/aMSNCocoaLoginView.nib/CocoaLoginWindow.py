@@ -6,7 +6,7 @@ from objc import *
 from Foundation import *
 from AppKit import *
 
-#import 
+#import
 
 #NibClassBuilder.extractClasses('aMSNCocoaMainWindow')
 
@@ -16,6 +16,6 @@ class aMSNCocoaMainWindow(NSWindow):
         pass
 
     def awakeFromNib_(self):
-	    print 'hello world'
+        print 'hello world'
 
 NSBundle.loadNibNamed_owner_('aMSNCocoaMainWindow.nib', currentBundle())

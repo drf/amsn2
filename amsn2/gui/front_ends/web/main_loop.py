@@ -5,7 +5,7 @@ import gobject
 class aMSNMainLoop(base.aMSNMainLoop):
     def __init__(self, amsn_core):
         self._amsn_core = amsn_core
-    
+
     def run(self):
         self._mainloop = gobject.MainLoop(is_running=True)
         while self._mainloop.is_running():
@@ -14,7 +14,7 @@ class aMSNMainLoop(base.aMSNMainLoop):
             except KeyboardInterrupt:
                 self.quit()
 
-        
+
     def idlerAdd(self, func):
         gobject.idle_add(func)
 
@@ -23,4 +23,4 @@ class aMSNMainLoop(base.aMSNMainLoop):
 
     def quit(self):
         self._mainloop.quit()
-        
+

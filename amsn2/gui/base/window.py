@@ -2,6 +2,10 @@
 class aMSNWindow(object):
     """ This Interface represents a window of the application. Everything will be done from here """
     def __init__(self, amsn_core):
+        """
+        @type amsn_core: aMSNCore
+        """
+
         raise NotImplementedError
 
     def show(self):
@@ -13,13 +17,19 @@ class aMSNWindow(object):
         raise NotImplementedError
 
     def setTitle(self, text):
-        """ This will allow the core to change the current window's title
-        @text : a string
         """
+        This will allow the core to change the current window's title
+
+        @type text: str
+        """
+
         raise NotImplementedError
-    
+
     def setMenu(self, menu):
-        """ This will allow the core to change the current window's main menu
-        @menu : a MenuView
         """
+        This will allow the core to change the current window's main menu
+
+        @type menu: MenuView
+        """
+
         raise NotImplementedError
