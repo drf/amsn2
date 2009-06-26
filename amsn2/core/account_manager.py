@@ -127,9 +127,12 @@ class aMSNAccountManager(object):
             account_dirs = dirs
             break
         for account_dir in account_dirs:
-            accv = self.loadAccount(os.path.join(self._accounts_dir, account_dir))
-            if accv:
-                self.accountviews.append(accv)
+            try:
+                accv = self.loadAccount(os.path.join(self._accounts_dir, account_dir))
+                if accv:
+                    self.accountviews.append(accv)
+            except :
+                pass
 
 
     def loadAccount(self, dir):
