@@ -63,12 +63,12 @@ class aMSNConversation:
         print error
 
     def onUserJoined(self, contact_uid):
-        #TODO
-        pass
+        c = self._core._contactlist_manager.getContact(contact_uid)
+        self._convWidget.onUserJoined(c.nickname)
 
     def onUserLeft(self, contact_uid):
-        #TODO
-        pass
+        c = self._core._contactlist_manager.getContact(contact_uid)
+        self._convWidget.onUserLeft(c.nickname)
 
     def onUserTyping(self, contact_uid):
         c = self._core._contactlist_manager.getContact(contact_uid)
