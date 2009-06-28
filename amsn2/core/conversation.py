@@ -28,8 +28,8 @@ class aMSNConversation:
         """
         @type core: aMSNCore
         @type conv_manager: aMSNConversationManager
-        @type conv:
-        @type contacts_uid:
+        @type conv: papyon.conversation.SwitchboardConversation
+        @type contacts_uid: list of str
         """
 
         if (contacts_uid is None):
