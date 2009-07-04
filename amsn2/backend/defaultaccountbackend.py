@@ -1,3 +1,4 @@
+
 import os
 from amsn2.core.views import AccountView
 import basebackend
@@ -13,6 +14,10 @@ except ImportError:
 import os
 
 class defaultaccountbackend(basebackend.basebackend):
+    """
+    Save/load the account informations, should be used from all the backends.
+    """
+
     def __init__(self):
         if os.name == "posix":
             self.accounts_dir = os.path.join(os.environ['HOME'], ".amsn2")

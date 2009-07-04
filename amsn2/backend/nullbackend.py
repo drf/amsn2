@@ -1,4 +1,3 @@
-""" Backend that will not save anything, used for on-the-fly-sessions """
 
 from amsn2.core.config import aMSNConfig
 import defaultaccountbackend
@@ -16,6 +15,10 @@ except ImportError:
         from elementtree.ElementTree import *
 
 class nullbackend(defaultaccountbackend.defaultaccountbackend):
+    """
+    Backend that will not save anything permanentely, used for on-the-fly-sessions.
+    """
+
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
 

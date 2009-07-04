@@ -31,6 +31,7 @@ class aMSNBackendManager(object):
         self.setBackendForFunc('loadAccounts', self._backend)
         self.setBackendForFunc('saveAccount', self._backend)
         self.setBackendForFunc('removeAccount', self._backend)
+        self.setBackendForFunc('clean', self._backend)
 
     def __missingFunc(*args):
         print 'Function missing for %s' % self.current_backend

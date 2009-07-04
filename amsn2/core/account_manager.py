@@ -24,7 +24,8 @@ class aMSNAccount(object):
 
     def signOut(self):
         if self.do_save:
-            self.backend_manager.saveAccount(self)
+            self.save()
+        self.backend_manager.clean()
         self.unlock()
 
     def lock(self):
@@ -38,6 +39,9 @@ class aMSNAccount(object):
     def load(self):
         #TODO:
         self.config = self.backend_manager.loadConfig(self)
+
+    def save(self):
+        self.backend_manager.saveAccount(self)
 
 class aMSNAccountManager(object):
     """ aMSNAccountManager : The account manager that takes care of storing
@@ -72,17 +76,15 @@ class aMSNAccountManager(object):
         @type accountview: AccountView
         @rtype: aMSNAccount
         """
-        
-        if accountview.save:
-            self._core._backend_manager.switchToBackend(accountview.preferred_backend)
-        else:
-            self._core._backend_manager.removeAccount(accountview.email)
-            self._core._backend_manager.switchToBackend('nullbackend')
 
         acc = aMSNAccount(self._core, accountview)
 
         if accountview.save:
+            self._core._backend_manager.switchToBackend(accountview.preferred_backend)
             acc.backend_manager.saveAccount(acc)
+        else:
+            self._core._backend_manager.removeAccount(accountview.email)
+            self._core._backend_manager.switchToBackend('nullbackend')
 
         acc.lock()
         return acc

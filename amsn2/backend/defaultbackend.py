@@ -1,4 +1,3 @@
-""" Backend used to save the config on the home directory of the user """
 
 from amsn2.core.config import aMSNConfig
 import os
@@ -14,6 +13,10 @@ except ImportError:
         from elementtree.ElementTree import *
 
 class defaultbackend(defaultaccountbackend.defaultaccountbackend):
+    """
+    Backend used to save the config on the home directory of the user.
+    """
+
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
 
@@ -64,4 +67,7 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
                 else:
                     c.setKey(elmt.attrib['name'], elmt.text)
         return c
+
+    def clean(self):
+        pass
 
