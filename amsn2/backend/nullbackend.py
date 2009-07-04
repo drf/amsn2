@@ -3,6 +3,9 @@
 from amsn2.core.config import aMSNConfig
 import defaultaccountbackend
 
+import tempfile
+import os
+
 """ElementTree independent from the available distribution"""
 try:
     from xml.etree.cElementTree import *
@@ -15,6 +18,8 @@ except ImportError:
 class nullbackend(defaultaccountbackend.defaultaccountbackend):
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
+
+        self.config_dir = tempfile.mkdtemp()
 
     def getPassword(self, passwdElmt):
         return passwdElmt.text
@@ -33,5 +38,17 @@ class nullbackend(defaultaccountbackend.defaultaccountbackend):
                        "ns_port":1863,
                      }
         return c
+
+    def clean(self):
+        if os.path.isdir(self.config_dir):
+            for [root, subdirs, subfiles] in os.walk(self.config_dir, False):
+                for subfile in subfiles:
+                    os.remove(os.path.join(root, subfile))
+                for subdir in subdirs:
+                    os.rmdir(os.path.join(root, subdir))
+
+    def __del__(self):
+        self.clean()
+        os.rmdir(self.config_dir)
 
 

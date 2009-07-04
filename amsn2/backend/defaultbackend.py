@@ -17,6 +17,8 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
 
+        self.config_dir = self.accounts_dir
+
     def getPassword(self, passwdElmt):
         return passwdElmt.text
 
@@ -43,7 +45,9 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
         c = aMSNConfig()
         c.setKey("ns_server", "messenger.hotmail.com")
         c.setKey("ns_port", 1863)
-        configpath = os.path.join(self.getAccountDir(account.view.email), "config.xml")
+        
+        self.config_dir = self.getAccountDir(account.view.email)
+        configpath = os.path.join(self.config_dir, "config.xml")
         try:
             configfile = file(configpath, "r")
         except IOError:

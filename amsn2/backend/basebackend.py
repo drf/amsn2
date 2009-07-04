@@ -25,3 +25,6 @@ class basebackend():
     def saveAccount(self, amsn_account):
         raise NotImplementedError
 
+    def clean(self):
+        raise NotImplementedError
+
