@@ -118,11 +118,11 @@ class defaultaccountbackend(basebackend.basebackend):
             presenceElmt.text = amsn_account.view.presence
             #password
             if amsn_account.view.save_password:
-                passwordElmt = amsn_account.backend_manager.setPassword(amsn_account.view.password, root_section)
+                passwdElmt = SubElement(root_section, "password")
+                passwdElmt.text = amsn_account.view.password
             #dp
             #TODO ask the backend
-            dpElmt = SubElement(root_section, "dp",
-                                backend='DefaultBackend')
+            dpElmt = SubElement(root_section, "dp")
             #TODO
 
             #TODO: save or not, preferred_ui

@@ -21,18 +21,10 @@ class nullbackend(defaultaccountbackend.defaultaccountbackend):
 
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
-
         self.config_dir = tempfile.mkdtemp()
 
-    def getPassword(self, passwdElmt):
-        return passwdElmt.text
-
-    def setPassword(self, password, root_section):
-        elmt = SubElement(root_section, "password", backend='NullBackend')
-        elmt.text = password
-        return elmt
-
     def saveConfig(self, account, config):
+        # Is it necessary to temporarily save the config?
         pass
 
     def loadConfig(self, account):

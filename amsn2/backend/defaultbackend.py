@@ -22,14 +22,6 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
 
         self.config_dir = self.accounts_dir
 
-    def getPassword(self, passwdElmt):
-        return passwdElmt.text
-
-    def setPassword(self, password, root_section):
-        elmt = SubElement(root_section, "password", backend='DefaultBackend')
-        elmt.text = password
-        return elmt
-
     def saveConfig(self, account, config):
         #TODO: improve
         root_section = Element("aMSNConfig")

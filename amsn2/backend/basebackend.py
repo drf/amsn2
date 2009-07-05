@@ -5,12 +5,6 @@ class basebackend():
     It contains the functions that should be available for every backend.
     """
 
-    def getPassword(self, passwdElmt):
-        raise NotImplementedError
-
-    def setPassword(self, password, root_section):
-        raise NotImplementedError
-
     def saveConfig(self, amsn_account, config):
         raise NotImplementedError
 
