@@ -35,4 +35,20 @@ class aMSNLoginWindow(object):
         @param message: the message to show while loging in """
         raise NotImplementedError
 
+    def getAccountViewFromEmail(self, email):
+        """
+        Search in the list self._account_views and return the view of the given email
+
+        @type email: str
+        @param email: email to find
+        @rtype: AccountView
+        @return: Returns AccountView if it was found, otherwise return None
+        """
+
+        accv = [accv for accv in self._account_views if accv.email == email]
+
+        if len(accv) == 0:
+            return None
+        else:
+            return accv[0]
 

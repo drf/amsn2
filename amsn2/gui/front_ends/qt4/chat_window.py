@@ -55,7 +55,7 @@ class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
 
 
 class aMSNChatWidget(QWidget, base.aMSNChatWidget):
-    def __init__(self, amsn_conversation, Parent=None):
+    def __init__(self, amsn_conversation, Parent=None, contacts_uid):
         QWidget.__init__(self, Parent)
 
         self._amsn_conversation = amsn_conversation

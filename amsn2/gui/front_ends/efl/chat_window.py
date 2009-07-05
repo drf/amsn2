@@ -29,7 +29,7 @@ class aMSNChatWidgetContainer:
 
 
 class aMSNChatWidget(etk.VPaned, base.aMSNChatWidget):
-    def __init__(self, amsn_conversation, parent):
+    def __init__(self, amsn_conversation, parent, contacts_uid):
         self._parent = parent
         self._amsn_conversation = amsn_conversation
         etk.VPaned.__init__(self)

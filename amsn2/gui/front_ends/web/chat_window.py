@@ -54,7 +54,7 @@ class aMSNChatWindow(object):
 
 class aMSNChatWidget(object):
     """ This interface will present a chat widget of the UI """
-    def __init__(self, amsn_conversation, parent):
+    def __init__(self, amsn_conversation, parent, contacts_uid):
         """ create the chat widget for the 'parent' window, but don't attach to
         it."""
         self._main=parent._main
@@ -62,15 +62,15 @@ class aMSNChatWidget(object):
         self._main.send("newChatWidget",[self._uid])
         self._main.addListener("sendMessage",self.sendMessage)
         self._amsn_conversation=amsn_conversation
-    
+
     def sendMessage(self,smL):
         if smL[0]==self._uid:
             stmess = StringView()
             stmess.appendText(smL[1])
             self._amsn_conversation.sendMessage(stmess)
         return True
-        
-        
+
+
 
     def onMessageReceived(self, messageview):
         """ Called for incoming and outgoing messages

@@ -28,8 +28,8 @@ class aMSNConversation:
         """
         @type core: aMSNCore
         @type conv_manager: aMSNConversationManager
-        @type conv:
-        @type contacts_uid:
+        @type conv: papyon.conversation.SwitchboardConversation
+        @type contacts_uid: list of str
         """
 
         if (contacts_uid is None):
@@ -50,7 +50,7 @@ class aMSNConversation:
 
         self._win = self._conversation_manager.getConversationWindow(self)
         self._convo_events = conversation.ConversationEvents(self)
-        self._convWidget = core._gui.gui.aMSNChatWidget(self, self._win)
+        self._convWidget = core._gui.gui.aMSNChatWidget(self, self._win, contacts_uid)
         self._win.addChatWidget(self._convWidget)
         self._win.show()
 
@@ -63,12 +63,12 @@ class aMSNConversation:
         print error
 
     def onUserJoined(self, contact_uid):
-        #TODO
-        pass
+        c = self._core._contactlist_manager.getContact(contact_uid)
+        self._convWidget.onUserJoined(c.nickname)
 
     def onUserLeft(self, contact_uid):
-        #TODO
-        pass
+        c = self._core._contactlist_manager.getContact(contact_uid)
+        self._convWidget.onUserLeft(c.nickname)
 
     def onUserTyping(self, contact_uid):
         c = self._core._contactlist_manager.getContact(contact_uid)

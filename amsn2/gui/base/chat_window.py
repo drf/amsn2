@@ -15,7 +15,7 @@ class aMSNChatWindow(object):
 
 class aMSNChatWidget(object):
     """ This interface will present a chat widget of the UI """
-    def __init__(self, amsn_conversation, parent):
+    def __init__(self, amsn_conversation, parent, contacts_uid):
         """ create the chat widget for the 'parent' window, but don't attach to
         it."""
         raise NotImplementedError
