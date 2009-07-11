@@ -32,8 +32,8 @@ except ImportError, e:
 from amsn2.core.views import ContactView, StringView
 
 class InputWidget(QTextEdit):
-    def __init__(self, Parent = None):
-        QTextEdit.__init__(self, Parent)
+    def __init__(self, parent=None):
+        QTextEdit.__init__(self, parent)
         self.setTextInteractionFlags(Qt.TextEditorInteraction)
 
     def keyPressEvent(self, event):
@@ -45,8 +45,8 @@ class InputWidget(QTextEdit):
             QTextEdit.keyPressEvent(self, event)
 
 class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
-    def __init__(self, amsn_core, Parent=None):
-        QTabWidget.__init__(self, Parent)
+    def __init__(self, amsn_core, parent=None):
+        QTabWidget.__init__(self, parent)
 
         self._core = amsn_core
 
@@ -55,8 +55,8 @@ class aMSNChatWindow(QTabWidget, base.aMSNChatWindow):
 
 
 class aMSNChatWidget(QWidget, base.aMSNChatWidget):
-    def __init__(self, amsn_conversation, Parent=None, contacts_uid):
-        QWidget.__init__(self, Parent)
+    def __init__(self, amsn_conversation, parent, contacts_uid):
+        QWidget.__init__(self, parent)
 
         self._amsn_conversation = amsn_conversation
         self.ui = Ui_ChatWindow()
