@@ -53,6 +53,12 @@ class defaultaccountbackend(basebackend.basebackend):
             if nickElmt.text:
                 accview.nick.appendText(nickElmt.text)
             #TODO: parse...
+            #psm
+            psmElmt = account.find("psm")
+            if psmElmt is None:
+                return None
+            if psmElmt.text:
+                accview.psm.appendText(psmElmt.text)
             #presence
             presenceElmt = account.find("presence")
             if presenceElmt is None:
@@ -113,6 +119,10 @@ class defaultaccountbackend(basebackend.basebackend):
             nick = str(amsn_account.view.nick)
             nickElmt = SubElement(root_section, "nick")
             nickElmt.text = nick
+            #psm
+            psm = str(amsn_account.view.psm)
+            psmElmt = SubElement(root_section, "psm")
+            psmElmt.text = psm
             #presence
             presenceElmt = SubElement(root_section, "presence")
             presenceElmt.text = amsn_account.view.presence
