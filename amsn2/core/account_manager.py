@@ -17,6 +17,7 @@ class aMSNAccount(object):
         """
 
         self.view = accountview
+        self.personalinfoview = core._personalinfo_manager._personalinfoview
         self.do_save = accountview.save
         self.backend_manager = core._backend_manager
         self.lock()
@@ -41,6 +42,9 @@ class aMSNAccount(object):
         self.config = self.backend_manager.loadConfig(self)
 
     def save(self):
+        self.view.nick = self.personalinfoview.nick
+        self.view.psm = self.personalinfoview.psm
+        self.view.dp = self.personalinfoview.dp
         self.backend_manager.saveAccount(self)
 
 class aMSNAccountManager(object):
