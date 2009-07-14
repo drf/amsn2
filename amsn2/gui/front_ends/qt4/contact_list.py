@@ -170,7 +170,7 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def groupAdded(self, group):
         print group.name
 
-        pi = self._model.invisibleRootItem();
+        pi = self._model.invisibleRootItem()
 
         # Adding Group Item
 

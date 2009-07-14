@@ -79,8 +79,8 @@ class aMSNCore(object):
             logging.basicConfig(level=logging.WARNING)
 
     def run(self):
-        self._main.show();
-        self._loop.run();
+        self._main.show()
+        self._loop.run()
 
     def loadUI(self, ui_name):
         """
