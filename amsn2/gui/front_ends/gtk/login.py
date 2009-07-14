@@ -49,6 +49,21 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         pgAlign = gtk.Alignment(0.5, 0.5)
         pgAlign.add(self.pgbar)
 
+        # language selector
+        path = os.path.join("amsn2", "themes", "default", "images",
+        "login_screen", "language_icon.png")
+        langImg = gtk.Image()
+        langImg.set_from_file(path)
+
+        self.langBtn = gtk.Button("Change Language")
+        self.langBtn.set_relief(gtk.RELIEF_NONE)
+        self.langBtn.set_image(langImg)
+        self.langBtn.set_alignment(0,0)
+        self.langBtn.connect("clicked", self.__on_change_language_request)
+
+        langbox = gtk.HBox()
+        langbox.pack_start(self.langBtn, False, False)
+
         # dp
         _, filename = self._theme_manager.get_dp("dp_amsn")
         dpbox = gtk.HBox()
@@ -160,6 +175,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         login_button.connect('clicked', self.__login_clicked)
         button_box.pack_start(login_button, False, False)
 
+        self.pack_start(langbox, False, False)
         self.pack_start(self.status, True, False)
         self.pack_start(dpbox, False, False)
         self.pack_start(pgAlign, True, False)
@@ -297,4 +313,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             self.autoLogin.set_sensitive(source.get_active())
         elif source is self.autoLogin:
             accv.autologin = source.get_active()
+
+    def __on_change_language_request(self, source):
+        pass
 
