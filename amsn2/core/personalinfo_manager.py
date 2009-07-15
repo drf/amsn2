@@ -16,7 +16,7 @@ class aMSNPersonalInfoManager:
 
         # set nickname at login
         # could be overriden by the one set in the saved account
-        # TODO: add setting display picture and saved personal message
+        # TODO: add setting display picture
         strv = StringView()
         nick = str(amsn_account.view.nick)
         if nick and nick != amsn_account.view.email:
@@ -24,6 +24,12 @@ class aMSNPersonalInfoManager:
         else:
             strv.appendText(self._papyon_profile.display_name)
         self._personalinfoview.nick = strv
+
+        strv = StringView()
+        psm = str(amsn_account.view.psm)
+        if psm:
+            strv.appendText(psm)
+        self._personalinfoview.psm = strv
 
         # set login presence, from this moment the client appears to the others
         self._personalinfoview.presence = amsn_account.view.presence

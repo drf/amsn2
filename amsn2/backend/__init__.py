@@ -1,2 +1,2 @@
 from backend import aMSNBackendManager
-__all__ = ['aMSNBackendManager', 'defaultbackend']
+__all__ = ['aMSNBackendManager']
