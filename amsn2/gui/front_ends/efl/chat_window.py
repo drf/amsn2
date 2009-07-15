@@ -14,7 +14,7 @@ class aMSNChatWindow(window.aMSNWindow, base.aMSNChatWindow):
         self._conversation_manager = conversation_manager
         window.aMSNWindow.__init__(self, conversation_manager._core)
         self._container = aMSNChatWidgetContainer()
-        self.setTitle("aMSN - Chatwindow")
+        self.setTitle(TITLE + " - Chatwindow")
         self.resize(CW_WIDTH, CW_HEIGHT)
 
     def addChatWidget(self, chat_widget):

@@ -26,7 +26,6 @@ class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
         self._clwidget = aMSNContactListWidget(amsn_core, self._parent)
         self.pack_start(self._clwidget)
         self._parent.resize_object_add(self._clwidget)
-        self._parent.resize_object_add(self._clwidget._edje)
         self._clwidget.show()
 
     def setTitle(self, text):
@@ -39,29 +38,28 @@ class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
         pass #TODO
 
 
-class aMSNContactListWidget(elementary.Scroller, base.aMSNContactListWidget):
+class aMSNContactListWidget(elementary.Layout, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
         base.aMSNContactListWidget.__init__(self, amsn_core, parent)
+        elementary.Layout.__init__(self, parent)
         self._core = amsn_core
         self._evas = parent._evas
         self._skin = amsn_core._skin_manager.skin
-        elementary.Scroller.__init__(self, parent)
         self.size_hint_weight_set(1.0, 1.0)
+        self._sc = elementary.Scroller(parent)
+        self._sc.size_hint_weight_set(1.0, 1.0)
+        self.file_set(filename=THEME_FILE,
+                      group="contact_list")
+        self.group_holder = GroupHolder(self._evas, self, self._skin)
 
-        self._edje = elementary.Layout(self)
-        self._edje.file_set(filename=THEME_FILE,
-                            group="contact_list")
-        self.group_holder = GroupHolder(self._evas, self._edje, self._skin)
-
-
-        self._edje.content_set("groups", self.group_holder);
-        self._edje.size_hint_weight_set(1.0, 1.0)
-        self._edje.show()
-        self.content_set(self._edje)
+        self._sc.content_set(self.group_holder)
+        self.content_set("groups", self._sc);
+        self.group_holder.show()
+        self._sc.show()
+        self.show()
 
 
     def contactUpdated(self, contact):
-        print contact
         for gi in self.group_holder.group_items_list:
             if contact.uid in gi.contact_holder.contacts_dict:
                 gi.contact_holder.contact_updated(contact)
@@ -76,7 +74,6 @@ class aMSNContactListWidget(elementary.Scroller, base.aMSNContactListWidget):
 
 
 class ContactHolder(evas.SmartObject):
-
     def __init__(self, ecanvas, parent):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
@@ -123,7 +120,7 @@ class ContactHolder(evas.SmartObject):
             if c.data['on_click'] is not None:
                 c.on_mouse_down_del(c.data['on_click'])
                 c.data['on_click'] = None
-
+        c.show()
 
 
     def groupViewUpdated(self, groupview):
@@ -142,6 +139,7 @@ class ContactHolder(evas.SmartObject):
             if cid not in self.contacts_dict:
                 self.remove_contact(cid)
 
+        self._sizing_eval()
         #Now, we can redraw it
         self.show()
 
@@ -155,6 +153,7 @@ class ContactHolder(evas.SmartObject):
         self.contacts_list.append(new_contact)
         self.contacts_dict[uid] = new_contact
         self.member_add(new_contact)
+
 
     def remove_contact(self, uid):
         try:
@@ -191,7 +190,7 @@ class ContactHolder(evas.SmartObject):
     def update_widget(self, w, h):
         x = self.top_left[0]
         y = self.top_left[1]
-        if len(self.contacts_list) > 0:
+        if self.contacts_list:
             spacing = 5
             total_spacing = spacing * len(self.contacts_list)
             item_height = (h - total_spacing) / len(self.contacts_list)
@@ -199,26 +198,34 @@ class ContactHolder(evas.SmartObject):
                 c.move(x, y)
                 c.size = (w, item_height)
                 y += item_height + spacing
-        self._parent.show()
 
     def num_contacts(self):
         return len(self.contacts_list)
 
-
+    def _sizing_eval(self):
+        height = 0
+        if self.contacts_list:
+            height = (29 + 5) * len(self.contacts_list) - 5
+        self.size_hint_min_set(0, height)
+        self.size_hint_max_set(-1, height)
 
 class GroupItem(edje.Edje):
     def __init__(self, parent, evas_obj, uid):
+        edje.Edje.__init__(self, evas_obj, file=THEME_FILE, group="group_item")
         self.evas_obj = evas_obj
         self._parent = parent
         self._skin = parent._skin
         self.expanded = True
         self.uid = uid
-        self._edje = edje.Edje.__init__(self, self.evas_obj, file=THEME_FILE, group="group_item")
         self.contact_holder = ContactHolder(self.evas_obj, self)
+        self.contact_holder.on_changed_size_hints_add(self._changed_size_hints, self)
         self.part_swallow("contacts", self.contact_holder);
 
         self.signal_callback_add("collapsed", "*", self.__collapsed_cb)
         self.signal_callback_add("expanded", "*", self.__expanded_cb)
+
+    def _changed_size_hints(self, obj, event):
+        self._sizing_eval()
 
     def num_contacts(self):
         if self.expanded == False:
@@ -231,30 +238,28 @@ class GroupItem(edje.Edje):
         self.contact_holder.groupViewUpdated(groupview)
 
     # Private methods
-    def __update_parent(self):
-        self._parent.update_widget(self._parent.size[0], self._parent.size[1])
-
     def __expanded_cb(self, edje_obj, signal, source):
         self.expanded = True
-        self.__update_parent()
+        self.contact_holder.hide()
+        self._sizing_eval()
 
     def __collapsed_cb(self, edje_obj, signal, source):
         self.expanded = False
-        self.__update_parent()
+        self.contact_holder.show()
+        self._sizing_eval()
 
-    def _clip_set(self, obj):
-        self.clip_set(obj)
-        self.contact_holder.clip_set(obj)
-
-    def _clip_unset(self):
-        self.clip_unset()
-        self.contact_holder.clip_unset()
-
-
+    def _sizing_eval(self):
+        if self.expanded:
+            (w,h) = self.contact_holder.size_hint_min_get()
+            self.size_hint_min_set(w, h + 40)
+            (w,h) = self.contact_holder.size_hint_max_get()
+            self.size_hint_max_set(w, h + 40)
+        else:
+            self.size_hint_min_set(0, 40)
+            self.size_hint_max_set(0, 40)
 
 
 class GroupHolder(evas.SmartObject):
-
     def __init__(self, ecanvas, parent, skin):
         evas.SmartObject.__init__(self, ecanvas)
         self.evas_obj = ecanvas
@@ -267,7 +272,11 @@ class GroupHolder(evas.SmartObject):
         new_group = GroupItem(self, self.evas_obj, uid)
         self.group_items_list.append(new_group)
         self.group_items_dict[uid] = new_group
+        new_group.on_changed_size_hints_add(self._changed_size_hints, self)
         self.member_add(new_group)
+
+    def _changed_size_hints(self, obj, event):
+        self._sizing_eval()
 
     def remove_group(self, uid):
         try:
@@ -283,17 +292,13 @@ class GroupHolder(evas.SmartObject):
             pass
 
     def resize(self, w, h):
-        self.update_widget(w, h)
+        if (w != 0 and h != 0):
+            self.update_widget(w, h)
 
     def show(self):
-        """
-        #FIXME:
-        #ugly fix to get the correct clip
-        self.clip_set(self._parent.clip_get())
-        self.update_widget(self.size[0], self.size[1])
-        """
         for g in self.group_items_list:
             g.show()
+
     def hide(self):
         for g in self.group_items_list:
             g.hide()
@@ -315,7 +320,15 @@ class GroupHolder(evas.SmartObject):
                 self.remove_group(gid)
 
         #Now, we can redraw it
-        self.show()
+        #self.show()
+        self._sizing_eval()
+
+    def _sizing_eval(self):
+        height = 0
+        for i in self.group_items_list:
+            (w, h) = i.size_hint_min_get()
+            height += h
+        self.size_hint_min_set(0, height)
 
     def update_widget(self, w, h):
         x = self.top_left[0]
@@ -328,14 +341,16 @@ class GroupHolder(evas.SmartObject):
                 i.move(x, y)
                 i.size = (w, item_height)
                 y += item_height + spacing
-        self._parent.size_hint_request_set(w,y)
 
     def clip_set(self, obj):
+        print "clip set for %s" %(obj,)
         for g in self.group_items_list:
-            g._clip_set(obj)
+            g.clip_set(obj)
 
     def clip_unset(self):
         for g in self.group_items_list:
-            g._clip_unset()
+            g.clip_unset()
 
+    def color_set(self, r, g, b, a):
+        pass
 
