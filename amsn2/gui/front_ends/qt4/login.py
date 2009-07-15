@@ -60,16 +60,15 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
 
         # status list
         self.status_values = {}
-	self.status_dict = {}
+        self.status_dict = {}
         status_n = 0
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
             if (name == 'offline'): continue
             self.status_values[name] = status_n
-	    self.status_dict[str.capitalize(name)] = name 
+            self.status_dict[str.capitalize(name)] = name
             status_n = status_n +1
-	    self.ui.comboStatus.addItem(str.capitalize(name))
-	print self.status_values
+            self.ui.comboStatus.addItem(str.capitalize(name))
 
     def setTestStyle(self):
         styleData = QFile()
@@ -129,7 +128,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
             accv.email = email
 
         accv.password = self.ui.linePassword.text().toLatin1().data()
-	accv.presence = self.status_dict[str(self.ui.comboStatus.currentText())]
+        accv.presence = self.status_dict[str(self.ui.comboStatus.currentText())]
 
         self._amsn_core.signinToAccount(self, accv)
 
