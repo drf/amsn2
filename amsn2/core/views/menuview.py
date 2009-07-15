@@ -51,7 +51,7 @@ class MenuItemView(object):
               checkbox_value is not False or
               icon is not None or
               command is not None))):
-            raise ValueError, InvalidArgument
+            raise ValueError
 
         new_label = label
         if accelerator is None and label is not None:

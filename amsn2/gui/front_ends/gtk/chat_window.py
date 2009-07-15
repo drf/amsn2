@@ -205,12 +205,12 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.entry.connect('key-press-event', self.__on_typing_event)
 
     def __updateTextFormat(self, textbuffer):
-        self.reapply_text_effects();
+        self.reapply_text_effects()
         self.__on_changed_text_color(self.button_color)
         self.__on_changed_text_font(self.button_font)
 
     def __on_changed_text_effect(self, button, tag_type):
-        buffer = self.entry.get_buffer();
+        buffer = self.entry.get_buffer()
         if button.get_active():
             buffer.apply_tag_by_name(tag_type, buffer.get_start_iter(), buffer.get_end_iter())
         else:
@@ -223,13 +223,13 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.__on_changed_text_effect(self.button_strikethrough, "strikethrough")
 
     def __on_changed_text_color(self, button):
-        buffer = self.entry.get_buffer();
+        buffer = self.entry.get_buffer()
         tag = buffer.get_tag_table().lookup("foreground")
         tag.set_property("foreground_gdk", button.get_color())
         buffer.apply_tag_by_name("foreground", buffer.get_start_iter(), buffer.get_end_iter())
 
     def __on_changed_text_font(self, button):
-        buffer = self.entry.get_buffer();
+        buffer = self.entry.get_buffer()
         font_name = self.button_font.get_font_name()
         font_family = pango.FontDescription(font_name).get_family()
         tag = buffer.get_tag_table().lookup("family")
