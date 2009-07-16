@@ -186,6 +186,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.connecting_boxes = [self.status, pgAlign]
 
         self._main_win.set_view(self)
+        
 
     def __animation(self):
         path = os.path.join("amsn2", "themes", "default", "images",
