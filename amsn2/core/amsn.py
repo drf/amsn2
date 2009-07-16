@@ -143,6 +143,9 @@ class aMSNCore(object):
         self._account.login = login_window
         self._account.client = protocol.Client(self, self._account)
         self._account.client.connect(accountview.email, accountview.password)
+        
+    def signOutOfAccount(self):
+        self._account.signOut()
 
     def connectionStateChanged(self, account, state):
         """
@@ -200,7 +203,10 @@ class aMSNCore(object):
         menu = MenuView()
         quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
                                     = self.quit)
+        logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out", 
+                                      command = self.signOutOfAccount)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
+        mainMenu.addItem(logOutMenuItem)
         mainMenu.addItem(quitMenuItem)
 
         menu.addItem(mainMenu)
