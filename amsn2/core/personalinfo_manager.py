@@ -25,6 +25,7 @@ class aMSNPersonalInfoManager:
             strv.appendText(self._papyon_profile.display_name)
         self._personalinfoview.nick = strv
 
+        # TODO: The psm doesn't seem to get fetched from server. Papyon issue?
         strv = StringView()
         psm = str(amsn_account.view.psm)
         if psm:
