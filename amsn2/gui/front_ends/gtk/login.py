@@ -111,7 +111,6 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             self.status_values[name] = status_n
             status_n = status_n +1
             icon = gtk.gdk.pixbuf_new_from_file(path)
-            name = string.capitalize(name)
             status_list.append([icon, name, key])
 
 
