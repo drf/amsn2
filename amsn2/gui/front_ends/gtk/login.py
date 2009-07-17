@@ -43,8 +43,6 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.anim_phase = 1
         self.last_img = None
 
-
-
         # language selector
         path = os.path.join("amsn2", "themes", "default", "images",
         "login_screen", "language_icon.png")
@@ -172,13 +170,21 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         button_box.pack_start(self.login_button, False, False)
         self.login = False
 
-        self.pack_start(langbox, False, False)
+        self.pack_start(langbox, True, False)
         self.pack_start(dpbox, True, False)
         self.pack_start(fields_align, True, False)
         self.pack_start(checkAlign, True, False)
         self.pack_start(button_box, True, False)
-        self.active_boxes = [langbox, fields_align, checkAlign]
+
+        # temporarily not used
+        self.status = gtk.Label('')
+        self.pgbar = gtk.ProgressBar()
+        pgAlign = gtk.Alignment(0.5, 0.5)
+        pgAlign.add(self.pgbar)
+
+        self.input_boxes = [langbox, fields_align, checkAlign]
         self.fixed_boxes = [dpbox, button_box]
+        self.connecting_boxes = [self.status, pgAlign]
 
         self._main_win.set_view(self)
 
@@ -249,8 +255,23 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
                 self.signin()
 
     def signout(self):
+        self.remove(self.connecting_boxes[0])
+        self.remove(self.connecting_boxes[1])
+        for box in self.input_boxes:
+            self.pack_start(box, True, False)
+
+        self.reorder_child(self.fixed_boxes[1], -1)
+        self.reorder_child(self.fixed_boxes[0], 1)
+
         self.login = False
         self.login_button.set_label(gtk.STOCK_CONNECT)
+
+        gobject.source_remove(self.timer)
+        # TODO: set the account's dp
+        _, filename = self._theme_manager.get_dp("dp_amsn")
+        self.dp.set_from_file(filename)
+
+        self._amsn_core.signOutOfAccount()
 
     def signin(self):
 
@@ -279,16 +300,12 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         accv.save_password = self.rememberPass.get_active()
         accv.autologin = self.autoLogin.get_active()
 
-        self.status = gtk.Label('')
-        self.pgbar = gtk.ProgressBar()
-        pgAlign = gtk.Alignment(0.5, 0.5)
-        pgAlign.add(self.pgbar)
-
-        for box in self.active_boxes:
+        for box in self.input_boxes:
             self.remove(box)
 
         self.login = True
         self.status.show()
+        pgAlign = self.pgbar.get_parent()
         pgAlign.show()
         self.pgbar.show()
         self.pack_start(pgAlign, False, False)
