@@ -43,11 +43,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.anim_phase = 1
         self.last_img = None
 
-        self.status = gtk.Label('')
 
-        self.pgbar = gtk.ProgressBar()
-        pgAlign = gtk.Alignment(0.5, 0.5)
-        pgAlign.add(self.pgbar)
 
         # language selector
         path = os.path.join("amsn2", "themes", "default", "images",
@@ -171,17 +167,18 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
         # login button
         button_box = gtk.HButtonBox()
-        login_button = gtk.Button('Login', gtk.STOCK_CONNECT)
-        login_button.connect('clicked', self.__login_clicked)
-        button_box.pack_start(login_button, False, False)
+        self.login_button = gtk.Button('Login', gtk.STOCK_CONNECT)
+        self.login_button.connect('clicked', self.__login_clicked)
+        button_box.pack_start(self.login_button, False, False)
+        self.login = True
 
         self.pack_start(langbox, False, False)
-        self.pack_start(self.status, True, False)
-        self.pack_start(dpbox, False, False)
-        self.pack_start(pgAlign, True, False)
+        self.pack_start(dpbox, True, False)
         self.pack_start(fields_align, True, False)
         self.pack_start(checkAlign, True, False)
         self.pack_start(button_box, True, False)
+        self.active_boxes = [langbox, fields_align, checkAlign]
+        self.fixed_boxes = [dpbox, button_box]
 
         self._main_win.set_view(self)
 
@@ -204,7 +201,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         return True
 
     def __login_clicked(self, *args):
-        self.signin()
+        if self.login:
+            self.signin()
+        else:
+            self.signout()
 
     def show(self):
         if self.user.get_active_text() == "":
@@ -248,6 +248,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             if self._account_views[0].autologin:
                 self.signin()
 
+    def signout(self):
+        self.login = True
+        self.login_button.set_label(gtk.STOCK_CONNECT)
+
     def signin(self):
 
         if self.user.get_active_text() == "":
@@ -274,6 +278,24 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         accv.save = self.rememberMe.get_active()
         accv.save_password = self.rememberPass.get_active()
         accv.autologin = self.autoLogin.get_active()
+
+        self.status = gtk.Label('')
+        self.pgbar = gtk.ProgressBar()
+        pgAlign = gtk.Alignment(0.5, 0.5)
+        pgAlign.add(self.pgbar)
+
+        for box in self.active_boxes:
+            self.remove(box)
+
+        self.login = False
+        self.status.show()
+        pgAlign.show()
+        self.pgbar.show()
+        self.pack_start(pgAlign, False, False)
+        self.pack_start(self.status, False, False)
+        self.login_button.set_label(gtk.STOCK_DISCONNECT)
+        self.reorder_child(self.fixed_boxes[1], -1)
+        self.set_child_packing(self.fixed_boxes[1], True, False, 0, gtk.PACK_START)
 
         self._amsn_core.signinToAccount(self, accv)
         self.timer = gobject.timeout_add(40, self.__animation)
