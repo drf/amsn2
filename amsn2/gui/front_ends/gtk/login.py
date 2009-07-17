@@ -170,7 +170,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.login_button = gtk.Button('Login', gtk.STOCK_CONNECT)
         self.login_button.connect('clicked', self.__login_clicked)
         button_box.pack_start(self.login_button, False, False)
-        self.login = True
+        self.login = False
 
         self.pack_start(langbox, False, False)
         self.pack_start(dpbox, True, False)
@@ -202,9 +202,9 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
     def __login_clicked(self, *args):
         if self.login:
-            self.signin()
-        else:
             self.signout()
+        else:
+            self.signin()
 
     def show(self):
         if self.user.get_active_text() == "":
@@ -249,7 +249,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
                 self.signin()
 
     def signout(self):
-        self.login = True
+        self.login = False
         self.login_button.set_label(gtk.STOCK_CONNECT)
 
     def signin(self):
@@ -287,7 +287,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         for box in self.active_boxes:
             self.remove(box)
 
-        self.login = False
+        self.login = True
         self.status.show()
         pgAlign.show()
         self.pgbar.show()
