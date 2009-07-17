@@ -142,7 +142,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         fields.pack_start(passbox, False, False)
         fields.pack_start(statusbox, False, False)
 
-        fields_align = gtk.Alignment(0.5, 0.5, 0.75, 0.0)
+        fields_align = gtk.Alignment(0.5, 0.5, 0.0, 0.0)
         fields_align.add(fields)
 
         # checkboxes
