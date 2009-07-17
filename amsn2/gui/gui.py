@@ -38,6 +38,3 @@ class GUIManager(object):
     def frontEndExists(front_end):
         return front_end in GUIManager.listFrontEnds()
 
-
-
-

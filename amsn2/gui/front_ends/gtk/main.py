@@ -81,6 +81,7 @@ class aMSNMainWindow(base.aMSNMainWindow):
                 menu.append(it)
             elif item.type is MenuItemView.RADIOBUTTONGROUP:
                 pass
+
     def set_view(self, view):
         inner = self.main_win.get_child()
         chldn = inner.get_children()
