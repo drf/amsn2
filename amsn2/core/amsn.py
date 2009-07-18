@@ -143,7 +143,7 @@ class aMSNCore(object):
         self._account.login = login_window
         self._account.client = protocol.Client(self, self._account)
         self._account.client.connect(accountview.email, accountview.password)
-        
+
     def signOutOfAccount(self):
         self._account.client.logout()
         self._account.signOut()
