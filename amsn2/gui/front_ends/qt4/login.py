@@ -121,11 +121,11 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         self._parent.fadeIn(self.loginThrobber)
 
         email = self.ui.comboAccount.currentText()
-        accv = self.getAccountViewFromEmail(email)
+        accv = self.getAccountViewFromEmail(str(email))
 
         if accv is None:
             accv = AccountView()
-            accv.email = email
+            accv.email = str(email)
 
         accv.password = self.ui.linePassword.text().toLatin1().data()
         accv.presence = self.status_dict[str(self.ui.comboStatus.currentText())]
