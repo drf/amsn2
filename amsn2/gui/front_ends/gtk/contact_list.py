@@ -344,6 +344,33 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
 
         self.set_model(self.model)
         self.connect("row-activated", self.__on_contact_dblclick)
+        self.connect("button-press-event", self.__on_button_click)
+
+    def __on_button_click(self, source, event):
+        # Detect a single right-click
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            treepath = self.get_path_at_pos(event.x, event.y)
+
+            if treepath:
+                path, tree_column, x, y = treepath
+                iter = self._model.get_iter(path)
+                view = self._model.get_value(iter, 1)
+
+                if isinstance(view, ContactView):
+                    pass
+
+                elif isinstance(view, GroupView):
+                    pass
+
+            return True
+
+        # Detect a single left-click, but it is called even when a double-click occours,
+        # so should we detect them or is there a simpler way?
+        #elif event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
+        #    return False
+
+        else:
+            return False
 
     def __on_contact_dblclick(self, widget, path, column):
         model, row = widget.get_selection().get_selected()
