@@ -71,17 +71,17 @@ class aMSNContactListManager:
 
 # actions from user: accept/decline contact invitation - add/remove contact - block/unblock contact - add/remove/rename group - add/remove contact to/from group
 
-    def addContact(self, account, invite_display_name='', 
-            invite_message='', groups=[]):
+    def addContact(self, account, invite_display_name='amsn2', 
+            invite_message='hola', groups=[]):
         
-        self._papyon_addressbook.add_messenger_contact(self, account)
+        self._papyon_addressbook.add_messenger_contact(self, account, invite_display_name)
 
     def onContactAdded(self, contact):
         print 'contact added! %s' % contact
 
     def removeContact(self, account=''):
         account = raw_input('Contact to remove: ')
-        print account
+        # need to find the papyon Contact
         self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
                                                  search_by('account', account)[0])
 

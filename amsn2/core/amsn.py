@@ -203,7 +203,7 @@ class aMSNCore(object):
     def addContact(self):
         # open a window, get the infos and let the contactlist manager work
         account  = raw_input('Contact to add: ')
-        self._contactlist_manager.addContact(account, invite_message='hola')
+        self._contactlist_manager.addContact(account)
 
     def createMainMenuView(self):
         menu = MenuView()
