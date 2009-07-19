@@ -31,7 +31,7 @@ except ImportError, e:
     print "WARNING: To use the QT4 you need to run the generateFiles.sh, check the README"
     raise e
 from styledwidget import StyledWidget
-from amsn2.core.views import StringView, ContactView
+from amsn2.core.views import StringView, ContactView, GroupView, ImageView, PersonalInfoView
 from amsn2.gui import base
 
 class aMSNContactListWindow(base.aMSNContactListWindow):
@@ -40,6 +40,22 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._parent = parent
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         self._clwidget.show()
+        self.__create_contorls()
+
+    def __create_controls(self):
+        # TODO Create and set text/values to controls.
+        #status list
+        self.status_values = {}
+        self.status_dict = {}
+        status_n = 0
+        for key in self._amsn_core.p2s:
+            name = self._amsn_core.p2s[key]
+            if (name == 'offline'): continue
+            self.status_values[name] = status_n
+            self.status_dict[str.capitalize(name)] = name
+            status_n = status_n +1
+        # If we add a combobox like the gtk ui, uncomment this.
+        #self.ui.comboStatus.addItem(str.capitalize(name))
 
     def show(self):
         self._clwidget.show()
@@ -57,8 +73,14 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         pass #TODO
 
     def myInfoUpdated(self, view):
-        pass #TODO
-
+        # TODO image, ...
+        self._myview = view
+        nk = view.nick
+        self.ui.nickName.setText(str(nk))
+        message = str(view.psm)+' '+str(view.current_media)
+        self.ui.statusMessage.setText('<i>'+message+'</i>')
+        # TODO Add a combobox like the gtk ui?
+        #self.ui.statusCombo.currentIndex(self.status_values[view.presence])
 
 class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
     def __init__(self, amsn_core, parent):
