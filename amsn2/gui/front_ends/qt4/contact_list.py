@@ -40,7 +40,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow):
         self._parent = parent
         self._clwidget = aMSNContactListWidget(amsn_core, self)
         self._clwidget.show()
-        self.__create_contorls()
+        self.__create_controls()
 
     def __create_controls(self):
         # TODO Create and set text/values to controls.
