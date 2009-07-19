@@ -66,7 +66,7 @@ class aMSNContactListManager:
                 cviews.append(cv)
 
             cids = [c.id for c in contacts]
-            gv = GroupView(group.id, group.name, cids)
+            gv = GroupView(self._core, group.id, group.name, cids)
             grpviews.append(gv)
             clv.group_ids.append(group.id)
 
@@ -80,7 +80,7 @@ class aMSNContactListManager:
                 no_group_ids.append(contact.id)
 
         if len(no_group_ids) > 0:
-            gv = GroupView(0, "NoGroup", no_group_ids)
+            gv = GroupView(self._core, 0, "NoGroup", no_group_ids)
             grpviews.append(gv)
             clv.group_ids.append(0)
 

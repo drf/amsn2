@@ -1,5 +1,6 @@
 from stringview import *
 from imageview import *
+from menuview import *
 
 class ContactListView:
     def __init__(self):
@@ -8,7 +9,7 @@ class ContactListView:
 
 
 class GroupView:
-    def __init__(self, uid, name, contact_ids=[], active=0):
+    def __init__(self, core, uid, name, contact_ids=[], active=0):
         self.uid = uid
         self.contact_ids = contact_ids
         self.icon = ImageView() # TODO: expanded/collapsed icon
@@ -20,6 +21,7 @@ class GroupView:
 
         self.on_click = None #TODO: collapse, expand
         self.on_double_click = None
+        self.on_right_click_popup_menu = GroupPopupMenu(core)
         self.tooltip = None
         self.context_menu = None
 
@@ -63,7 +65,20 @@ class ContactView:
             core._conversation_manager.newConversation([c_uid])
         self.on_click = startConversation_cb
         self.on_double_click = None
+        self.on_right_click_popup_menu = ContactPopupMenu(core)
         self.tooltip = None
         self.context_menu = None
 
     #TODO: @roproperty: context_menu, tooltip
+
+class ContactPopupMenu(MenuView):
+    def __init__(self, core):
+        MenuView.__init__(self)
+        #remove = MenuItemView(MenuItemView.COMMAND,
+        #                      label="Remove Contact", command= core._contactlist_manager.)
+        #self.add_item(remove)
+
+class GroupPopupMenu(MenuView):
+    def __init__(self, core):
+        MenuView.__init__(self)
+
