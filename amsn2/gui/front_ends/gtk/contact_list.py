@@ -356,11 +356,13 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
                 iter = self._model.get_iter(path)
                 view = self._model.get_value(iter, 1)
 
-                if isinstance(view, ContactView):
-                    pass
-
-                elif isinstance(view, GroupView):
-                    pass
+                if isinstance(view, ContactView) or isinstance(view, GroupView):
+                    self.grab_focus()
+                    self.set_cursor(path, tree_column, 0)
+                    menu = gtk.Menu()
+                    common.createMenuItemsFromView(menu,
+                                view.on_right_click_popup_menu.items)
+                    menu.popup(None, None, None, event.button, event.time)
 
             return True
 

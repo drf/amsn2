@@ -1,7 +1,7 @@
 
 from amsn2.gui import base
-from amsn2.core.views import MenuItemView
 
+import common
 import skins
 import gtk
 
@@ -47,40 +47,8 @@ class aMSNMainWindow(base.aMSNMainWindow):
         if len(chldn) is not 0:
             for chl in chldn:
                 self.main_menu.remove(chl)
-        self._createMenuItemsFromView(self.main_menu, menu.items)
+        common.createMenuItemsFromView(self.main_menu, menu.items)
         self.main_menu.show()
-
-    def _createMenuItemsFromView(self, menu, items):
-        # TODO: images & radio groups, for now only basic representation
-        for item in items:
-            if item.type is MenuItemView.COMMAND:
-                it = gtk.MenuItem(item.label)
-                it.connect("activate", lambda i, item: item.command(), item )
-                it.show()
-                menu.append(it)
-            elif item.type is MenuItemView.CASCADE_MENU:
-                men = gtk.Menu()
-                it = gtk.MenuItem(item.label)
-                self._createMenuItemsFromView(men, item.items)
-                it.set_submenu(men)
-                it.show()
-                menu.append(it)
-            elif item.type is MenuItemView.SEPARATOR:
-                it = gtk.SeperatorMenuItem()
-                it.show()
-                menu.append(it)
-            elif item.type is MenuItemView.CHECKBUTTON:
-                it = gtk.CheckMenuItem(item.label)
-                if item.checkbox:
-                    it.set_active()
-                it.show()
-                menu.append(it)
-            elif item.type is MenuItemView.RADIOBUTTON:
-                it = gtk.RadioMenuItem(item.label)
-                it.show()
-                menu.append(it)
-            elif item.type is MenuItemView.RADIOBUTTONGROUP:
-                pass
 
     def set_view(self, view):
         inner = self.main_win.get_child()
