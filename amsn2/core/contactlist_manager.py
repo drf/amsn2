@@ -55,8 +55,11 @@ class aMSNContactListManager:
 
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
-        c = self.getContact(uid)
-        ##c.dp.load("FileObject", msn_object._data)
+        try:
+            c = self.getContact(uid)
+        except ValueError:
+            return
+        # TODO: use backend and msn_object cache
         (fno, tf) = tempfile.mkstemp()
         f = os.fdopen(fno, 'w+b')
         f.write(msn_object._data.read())
@@ -69,26 +72,34 @@ class aMSNContactListManager:
 
     ''' changes to the address book '''
 
-# actions from user: accept/decline contact invitation - add/remove contact - block/unblock contact - add/remove/rename group - add/remove contact to/from group
+# actions from user: accept/decline contact invitation - block/unblock contact - add/remove/rename group - add/remove contact to/from group
 
     def addContact(self, account, invite_display_name='amsn2', 
             invite_message='hola', groups=[]):
-        
-        self._papyon_addressbook.add_messenger_contact(self, account, invite_display_name)
+        self._papyon_addressbook.add_messenger_contact(account, invite_display_name)
 
     def onContactAdded(self, contact):
+        self.getContact(contact.id, contact)
         print 'contact added! %s' % contact
 
-    def removeContact(self, account=''):
-        account = raw_input('Contact to remove: ')
-        # need to find the papyon Contact
+    def removeContact(self, uid):
         self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
-                                                 search_by('account', account)[0])
+                                                 search_by('id', uid)[0])
 
-    def onContactDeleted(self, contact):
-        print 'contact removed! %s' % contact
+    def onContactRemoved(self, contact):
+        # TODO: Fire up a confirmation window, UImanager?
+        self._removeContactFromGroups(contact.id)
+        del self._contacts[contact.id]
 
     ''' additional methods '''
+
+    # used when a contact is deleted, moved or change status to offline
+    def _removeContactFromGroups(self, cid):
+        groups = self.getGroups(cid)
+        for g in groups:
+            g.contacts.remove(cid)
+            gv = GroupView(self._core, g.id, g.name, g.contacts)
+            self._em.emit(self._em.events.GROUPVIEW_UPDATED, gv)
 
     def onCLDownloaded(self, address_book):
         self._papyon_addressbook = address_book
@@ -109,6 +120,8 @@ class aMSNContactListManager:
             grpviews.append(gv)
             clv.group_ids.append(group.id)
 
+            self.getGroup(group.id, group)
+
         contacts = address_book.contacts.search_by_memberships(papyon.Membership.FORWARD)
         no_group_ids= []
         for contact in contacts:
@@ -122,6 +135,7 @@ class aMSNContactListManager:
             gv = GroupView(self._core, 0, "NoGroup", no_group_ids)
             grpviews.append(gv)
             clv.group_ids.append(0)
+            self.getGroup(0, None, no_group_ids)
 
         #Emit the events
         self._em.emit(self._em.events.CLVIEW_UPDATED, clv)
@@ -151,6 +165,34 @@ class aMSNContactListManager:
             else:
                 raise ValueError
 
+    def getGroup(self, gid, papyon_group = None, cids=[]):
+        """
+        @param gid: uid of the group
+        @type gid: str
+        @param papyon_group:
+        @type papyon_group:
+        @return: aMSNGroup of that group
+        @rtype: aMSNGroup
+        """
+        try:
+            return self._groups[gid]
+        except KeyError:
+            if papyon_group:
+                contacts = self._papyon_addressbook.contacts.search_by_groups(papyon_group)
+                g = aMSNGroup([c.id for c in contacts], papyon_group)
+                self._groups[gid] = g
+                # is AMSNGROUP_UPDATED necessary?
+            elif gid == 0:
+                g = aMSNGroup(cids)
+                self._groups[0] = g
+            else:
+                raise ValueError
+
+    def getGroups(self, uid):
+        # propagate a ValueError
+        return [self.getGroup(gid) for gid in self.getContact(uid).groups]
+            
+
 
 """ A few things used to describe a contact
     They are stored in that structure so that there's no need to create them
@@ -165,6 +207,7 @@ class aMSNContact():
         """
 
         self.uid = papyon_contact.id
+        self.groups = set()
         self.dp = ImageView()
         if papyon_contact.msn_object is None:
             self.dp.load("Theme", "dp_nopic")
@@ -180,6 +223,7 @@ class aMSNContact():
         @type papyon_contact: papyon.profile.Contact
         """
 
+        self.account = papyon_contact.account
         self.icon = ImageView()
         self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
         self.emblem = ImageView()
@@ -197,7 +241,10 @@ class aMSNContact():
         # ro, can be changed indirectly with addressbook's actions
         self.memberships = papyon_contact.memberships
         self.contact_type = papyon_contact.contact_type
-        self.groups = papyon_contact.groups.copy()
+        for g in papyon_contact.groups:
+            self.groups.add(g.id)
+        if len(self.groups) == 0:
+            self.groups.add(0)
         # ro
         self.capabilities = papyon_contact.client_capabilities
         self.infos = papyon_contact.infos.copy()
@@ -206,4 +253,13 @@ class aMSNContact():
         #TODO: getPapyonContact(self, core...) or _papyon_contact?
         self._papyon_contact = papyon_contact
 
+class aMSNGroup():
+    def __init__(self, cids, papyon_group=None):
+        self.contacts = set(cids)
+        if papyon_group:
+            self.name = papyon_group.name
+            self.id = papyon_group.id
+        else:
+            self.name = 'NoGroup'
+            self.id = 0
 

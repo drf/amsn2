@@ -434,12 +434,11 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             cuids = self.contacts[groupview.uid]
         except:
             cuids = []
-        self.contacts[groupview.uid] = []
+        self.contacts[groupview.uid] = groupview.contact_ids.copy()
 
         for cid in groupview.contact_ids:
             if cid not in cuids:
                 giter = self.__search_by_id(groupview.uid)
-                self.contacts[groupview.uid].append(cid)
                 self._model.append(giter, [None, None, cid, cid, True])
 
         # Remove unused contacts
@@ -447,8 +446,6 @@ class aMSNContactListWidget(base.aMSNContactListWidget, gtk.TreeView):
             if cid not in self.contacts[groupview.uid]:
                 citer = self.__search_by_id(cid)
                 self._model.remove(citer)
-                self.contacts[groupview.uid].remove(cid)
-
 
     def contactUpdated(self, contactview):
         """

@@ -31,7 +31,7 @@ class AddressBookEvents(papyon.event.AddressBookEventInterface):
         self._contactlist_manager.onContactAdded(contact)
 
     def on_addressbook_contact_deleted(self, contact):
-        self._contactlist_manager.onContactDeleted(contact)
+        self._contactlist_manager.onContactRemoved(contact)
 
     def on_addressbook_contact_blocked(self, contact):
         pass

@@ -11,7 +11,7 @@ class ContactListView:
 class GroupView:
     def __init__(self, core, uid, name, contact_ids=[], active=0):
         self.uid = uid
-        self.contact_ids = contact_ids
+        self.contact_ids = set(contact_ids)
         self.icon = ImageView() # TODO: expanded/collapsed icon
         self.name = StringView() # TODO: default color from skin/settings
         self.name.appendText(name) #TODO: parse for smileys
@@ -65,18 +65,19 @@ class ContactView:
             core._conversation_manager.newConversation([c_uid])
         self.on_click = startConversation_cb
         self.on_double_click = None
-        self.on_right_click_popup_menu = ContactPopupMenu(core)
+        self.on_right_click_popup_menu = ContactPopupMenu(core, amsn_contact)
         self.tooltip = None
         self.context_menu = None
 
     #TODO: @roproperty: context_menu, tooltip
 
 class ContactPopupMenu(MenuView):
-    def __init__(self, core):
+    def __init__(self, core, amsncontact):
         MenuView.__init__(self)
-        #remove = MenuItemView(MenuItemView.COMMAND,
-        #                      label="Remove Contact", command= core._contactlist_manager.)
-        #self.add_item(remove)
+        remove = MenuItemView(MenuItemView.COMMAND,
+                              label="Remove %s" % amsncontact.account,
+                              command= lambda: core._contactlist_manager.removeContact(amsncontact.uid))
+        self.addItem(remove)
 
 class GroupPopupMenu(MenuView):
     def __init__(self, core):
