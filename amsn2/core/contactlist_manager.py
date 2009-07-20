@@ -74,7 +74,7 @@ class aMSNContactListManager:
 
 # actions from user: accept/decline contact invitation - block/unblock contact - add/remove/rename group - add/remove contact to/from group
 
-    def addContact(self, account, invite_display_name='amsn2', 
+    def addContact(self, account, invite_display_name='amsn2',
             invite_message='hola', groups=[]):
         self._papyon_addressbook.add_messenger_contact(account, invite_display_name)
 
