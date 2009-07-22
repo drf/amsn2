@@ -13,5 +13,7 @@ class aMSNInputWindow(object):
         @param callback: The function that will be called when the view has been filled.
         The prototype is callback(view), where view is the ContactView or the Grouview
         filled, or None if the input has been canceled.
+        @type params: tuple
+        @param params: a list of existing contacts or groups
         """
         raise notImplementedError
