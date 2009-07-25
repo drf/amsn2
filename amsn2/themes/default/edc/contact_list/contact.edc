@@ -27,7 +27,7 @@ group {
           offset: 24 0;
         }
       }
-    } 
+    }
     part {
       name: "contact_data";
       type: TEXTBLOCK;
@@ -44,13 +44,12 @@ group {
           relative: 1.0 1.0;
           offset: 0 0;
         }
-	text {
+        text {
             text:  "";
             style: "contact_data";
             min:   0 0;
-	}
+        }
       }
     }
   }
-    
 }

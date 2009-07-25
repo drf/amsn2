@@ -1,5 +1,5 @@
 CREATE_FRAME("more_frame", "update_frame", 20)
- 
+
 part {
   name: "more_button";
   type: TEXT;

@@ -75,30 +75,30 @@ group {
       description {
         state: "default" 0.0;
         visible: 1;
-	rel1 {
-	  to: "group_box";
-	  relative: 0.0 0.0;
-	  offset: 16 24;
-	}
-	rel2 {
-	  to: "group_box";
-	  relative: 1.0 1.0;
-	  offset: -16 -5;
-	}
+        rel1 {
+          to: "group_box";
+          relative: 0.0 0.0;
+          offset: 16 24;
+        }
+        rel2 {
+          to: "group_box";
+          relative: 1.0 1.0;
+          offset: -16 -5;
+        }
       }
       description {
         state: "collapsed" 0.0;
-	inherit: "default" 0.0;
+        inherit: "default" 0.0;
         visible: 0;
-	rel1 {
-	  to: "group_box";
-	  relative: 0.0 0.0;
-	  offset: 16 24;
-	}
-	rel2 {
-	  relative: 1.0 0.0;
-	  offset: -16 24;
-	}
+        rel1 {
+          to: "group_box";
+          relative: 0.0 0.0;
+          offset: 16 24;
+        }
+        rel2 {
+          relative: 1.0 0.0;
+          offset: -16 24;
+        }
       }
     }
     part {
@@ -107,16 +107,16 @@ group {
       description {
         state: "default" 0.0;
         color: 0 0 0 0;
-	rel1 {
-	  to: "group_button";
-	  relative: 1.0 0.0;
-	  offset: 0 0;
-	}
-	rel2 {
-	  to: "group_button";
-	  relative: 1.0 1.0;
-	  offset: 5 0;
-	}
+        rel1 {
+          to: "group_button";
+          relative: 1.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          to: "group_button";
+          relative: 1.0 1.0;
+          offset: 5 0;
+        }
       }
     }
     part {
@@ -125,84 +125,81 @@ group {
       mouse_events: 1;
       description {
         state: "default" 0.0;
-	rel1 {
-	  to: "group_spacer";
-	  relative: 1.0 0.0;
-	  offset: 0 0;
-	}
-	rel2 {
-	  to_y: "group_spacer";
-	  relative: 1.0 1.0;
-	  offset: -16 0;
-	}
+        rel1 {
+          to: "group_spacer";
+          relative: 1.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          to_y: "group_spacer";
+          relative: 1.0 1.0;
+          offset: -16 0;
+        }
         color: 0 0 0 255;
         color2: 225 225 225 128;
-	text {
-	  align: 0.0 0.5;
-	  font: "VeraBd";
-	  size: 10;
-	  text: "Test Group with very long name";
-	  text_class: "Group Name";
-	  min: 0 0;
-	  elipsis: 0.0;
-	}
+        text {
+          align: 0.0 0.5;
+          font: "VeraBd";
+          size: 10;
+          text: "Test Group with very long name";
+          text_class: "Group Name";
+          min: 0 0;
+          elipsis: 0.0;
+        }
       }
     }
   }
   script {
     public collapsed = 0;
     public hovered = 0;
-    
+
     public hover() {
       if (get_int(collapsed) == 0) {
-	set_state(PART:"group_button", "expanded", 1.0);
+        set_state(PART:"group_button", "expanded", 1.0);
       } else {
-	set_state(PART:"group_button", "collapsed", 1.0);
+        set_state(PART:"group_button", "collapsed", 1.0);
       }
-      
       set_int(hovered, 1);
     }
-    
+
     public stop_hover() {
       if (get_int(collapsed) == 0) {
-	set_state(PART:"group_button", "expanded", 0.0);
+        set_state(PART:"group_button", "expanded", 0.0);
       } else {
-	set_state(PART:"group_button", "collapsed", 0.0);
+        set_state(PART:"group_button", "collapsed", 0.0);
       }
-      
       set_int(hovered, 0);
     }
 
     public collapse() {
       if (get_int(hovered) == 0) {
-	set_state(PART:"group_button", "collapsed", 0.0);
+        set_state(PART:"group_button", "collapsed", 0.0);
       } else {
-	set_state(PART:"group_button", "collapsed", 1.0);
+        set_state(PART:"group_button", "collapsed", 1.0);
       }
       run_program(PROGRAM:"collapse_contacts");
-      
+
       set_int(collapsed, 1);
     }
-    
+
     public expand() {
       if (get_int(hovered) == 0) {
-	set_state(PART:"group_button", "expanded", 0.0);
+        set_state(PART:"group_button", "expanded", 0.0);
       } else {
-	set_state(PART:"group_button", "expanded", 1.0);
+        set_state(PART:"group_button", "expanded", 1.0);
       }
       run_program(PROGRAM:"expand_contacts");
       emit("expanded", "");
 
       set_int(collapsed, 0);
     }
-    
   }
   programs {
     program {
       name: "load";
       signal: "load";
       script {
-	expand();
+        expand();
       }
     }
 #define GROUP_PART(part_name)                       \
@@ -223,35 +220,35 @@ group {
       source: part_name;                            \
       signal: "mouse,clicked,1";                    \
       script {                                      \
-	if (get_int(collapsed) == 0) {              \
-	  run_program(PROGRAM:"collapse_group");    \
+        if (get_int(collapsed) == 0) {              \
+          run_program(PROGRAM:"collapse_group");    \
         } else {                                    \
-	  run_program(PROGRAM:"expand_group");      \
+          run_program(PROGRAM:"expand_group");      \
         }                                           \
       }                                             \
     }
     program {
       name: "hover_group";
       script {
-	hover();
+        hover();
       }
     }
     program {
       name: "unhover_group";
       script {
-	stop_hover();
+        stop_hover();
       }
     }
     program {
       name: "expand_group";
       script {
-	expand();
+        expand();
       }
     }
     program {
       name: "collapse_group";
       script {
-	collapse();
+        collapse();
       }
     }
     program {
@@ -273,7 +270,7 @@ group {
       action: SIGNAL_EMIT "collapsed" "";
     }
 
-    
+
     GROUP_PART("group_button")
     GROUP_PART("group_name")
     GROUP_PART("group_spacer")

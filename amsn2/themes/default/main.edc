@@ -15,9 +15,9 @@ styles {
 }
 
 collections {
-#include "edc/login_screen.edc"
-#include "edc/group.edc"
-#include "edc/contact_list.edc"
-#include "edc/contact.edc"
+#include "edc/login_screen/login_screen.edc"
+#include "edc/contact_list/contact_list.edc"
+#include "edc/contact_list/group.edc"
+#include "edc/contact_list/contact.edc"
 }
 

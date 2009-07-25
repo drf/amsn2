@@ -1,5 +1,5 @@
 images {
-  image: "background.png" LOSSY 90; 
+  image: "background.png" LOSSY 90;
 }
 
 group {
@@ -26,14 +26,14 @@ group {
        }
        fill {
          smooth: 0;
-	 origin {
-	   relative: 0.0 0.0;
-	   offset: 0 0;
-	 }
-	 size {
-	   relative: 0.0 0.0;
-	   offset: 128 128;
-	 }
+         origin {
+           relative: 0.0 0.0;
+           offset: 0 0;
+         }
+         size {
+           relative: 0.0 0.0;
+           offset: 128 128;
+         }
        }
      }
    }
