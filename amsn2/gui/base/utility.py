@@ -49,7 +49,8 @@ class aMSNInputWindow(object):
     """
     def __init__(self, message, type, callback, params):
         """
-        @type message: str
+        @type message: tuple
+        @param message: A tuple with the messages to be shown in the input window.
         @type type: ContactView or GroupView
         @param type: contains the view to fill.
         @type callback: function

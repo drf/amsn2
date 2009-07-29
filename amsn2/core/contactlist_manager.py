@@ -79,17 +79,20 @@ class aMSNContactListManager:
         self._papyon_addressbook.add_messenger_contact(account, invite_display_name)
 
     def onContactAdded(self, contact):
-        self.getContact(contact.id, contact)
-        print 'contact added! %s' % contact
+        c = self.getContact(contact.id, contact)
+        gids = [ g.id for g in self.getGroups(contact.id)]
+        self._addContactToGroups(contact.id, gids)
+        self._core._gui.gui.aMSNNotificationWindow("Contact %s added!" % contact.account)
 
     def removeContact(self, uid):
         self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
                                                  search_by('id', uid)[0])
 
     def onContactRemoved(self, contact):
-        # TODO: Fire up a confirmation window, UImanager?
         self._removeContactFromGroups(contact.id)
         del self._contacts[contact.id]
+        # TODO: Move to the UImanager
+        self._core._gui.gui.aMSNNotificationWindow("Contact %s removed!" % contact.account)
 
     ''' additional methods '''
 
@@ -100,6 +103,17 @@ class aMSNContactListManager:
             g.contacts.remove(cid)
             gv = GroupView(self._core, g.id, g.name, g.contacts)
             self._em.emit(self._em.events.GROUPVIEW_UPDATED, gv)
+
+    def _addContactToGroups(self, cid, gids):
+        for gid in gids:
+            g = self.getGroup(gid)
+            g.contacts.add(cid)
+            gv = GroupView(self._core, g.id, g.name, g.contacts)
+            self._em.emit(self._em.events.GROUPVIEW_UPDATED, gv)
+
+        c = self.getContact(cid)
+        cv = ContactView(self._core, c)
+        self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
 
     def onCLDownloaded(self, address_book):
         self._papyon_addressbook = address_book
@@ -199,21 +213,32 @@ class aMSNContactListManager:
     everytime
 """
 class aMSNContact():
-    def __init__(self, core, papyon_contact):
+    def __init__(self, core, papyon_contact=None):
         """
         @type core: aMSNCore
         @param papyon_contact:
         @type papyon_contact: papyon.profile.Contact
         """
 
-        self.uid = papyon_contact.id
+        self.account  = ''
         self.groups = set()
         self.dp = ImageView()
-        if papyon_contact.msn_object is None:
-            self.dp.load("Theme", "dp_nopic")
+        self.icon = ImageView()
+        self.emblem = ImageView()
+        self.nickname = StringView()
+        self.status = StringView()
+        self.personal_message = StringView()
+        self.current_media = StringView()
+        if papyon_contact:
+            if papyon_contact.msn_object is None:
+                self.dp.load("Theme", "dp_nopic")
+            else:
+                self.dp.load("Theme", "dp_loading")
+            self.fill(core, papyon_contact)
+
         else:
-            self.dp.load("Theme", "dp_loading")
-        self.fill(core, papyon_contact)
+            self.dp.load("Theme", "dp_nopic")
+            self.uid = None
 
     def fill(self, core, papyon_contact):
         """
@@ -223,19 +248,18 @@ class aMSNContact():
         @type papyon_contact: papyon.profile.Contact
         """
 
+        self.uid = papyon_contact.id
         self.account = papyon_contact.account
-        self.icon = ImageView()
         self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
-        self.emblem = ImageView()
         self.emblem.load("Theme", "emblem_" + core.p2s[papyon_contact.presence])
         #TODO: PARSE ONLY ONCE
-        self.nickname = StringView()
+        self.nickname.reset()
         self.nickname.appendText(papyon_contact.display_name)
-        self.personal_message = StringView()
+        self.personal_message.reset()
         self.personal_message.appendText(papyon_contact.personal_message)
-        self.current_media = StringView()
+        self.current_media.reset()
         self.current_media.appendText(papyon_contact.current_media)
-        self.status = StringView()
+        self.status.reset()
         self.status.appendText(core.p2s[papyon_contact.presence])
 
         # ro, can be changed indirectly with addressbook's actions

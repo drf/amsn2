@@ -200,10 +200,26 @@ class aMSNCore(object):
             self._account.signOut()
         self._loop.quit()
 
+    # TODO: move to UImanager
     def addContact(self):
         # open a window, get the infos and let the contactlist manager work
-        account  = raw_input('Contact to add: ')
-        self._contactlist_manager.addContact(account)
+        def contactCB(cv):
+            if cv:
+                self._contactlist_manager.addContact(cv.account, self._account.view.email,
+                                                     invite_message='hola', groups=[])
+        self._gui.gui.aMSNInputWindow('Contact to add: ',
+                                      (ContactView(self, aMSNContact(self)), True),
+                                      contactCB, ())
+
+    def removeContact(self):
+        def contactCB(cv):
+            if cv:
+                papyon_contact = self._contactlist_manager._papyon_addressbook.\
+                                                    contacts.search_by('account', cv.account)[0]
+                self._contactlist_manager.removeContact(papyon_contact.id)
+        self._gui.gui.aMSNInputWindow('Contact to remove: ',
+                                      (ContactView(self, aMSNContact(self)), False),
+                                      contactCB, ())
 
     def createMainMenuView(self):
         menu = MenuView()
@@ -216,8 +232,7 @@ class aMSNCore(object):
         mainMenu.addItem(quitMenuItem)
 
         addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact", command=self.addContact)
-        # only for test purpose, will be called by the contact list
-        removeContact = MenuItemView(MenuItemView.COMMAND, label='remove contact', command=lambda *args: self._contactlist_manager.removeContact())
+        removeContact = MenuItemView(MenuItemView.COMMAND, label='Remove contact', command=self.removeContact)
 
         contactsMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Contacts")
         contactsMenu.addItem(addContactItem)
