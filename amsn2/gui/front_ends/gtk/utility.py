@@ -61,49 +61,27 @@ class aMSNDialogWindow(base.aMSNDialogWindow, gtk.Dialog):
             print "Unknown dialog choice, id %s" % id
         self.destroy()
 
-# TODO: build contactinput, groupinput, contactremove, groupremove instead of one window for all, and change the base API too
-class aMSNInputWindow(base.aMSNInputWindow, gtk.Dialog):
-    def __init__(self, message, type, callback, params):
-        """
-        @type message: str
-        @type type: ContactView or GroupView
-        @param type: contains the view to fill.
-        @type callback: function
-        @param callback: The function that will be called when the view has been filled.
-        The prototype is callback(view), where view is the ContactView or the Grouview
-        filled, or None if the input has been canceled.
-        @type params: tuple
-        @param params: a list of existing contacts or groups
-        """
-        gtk.Dialog.__init__(self, "aMSN Input", None, gtk.DIALOG_NO_SEPARATOR,
+class aMSNContactInputWindow(base.aMSNContactInputWindow, gtk.Dialog):
+    def __init__(self, message, callback, groups):
+        gtk.Dialog.__init__(self, "aMSN Contact Input", None, gtk.DIALOG_NO_SEPARATOR,
                             (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
                              gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
         self._callback = callback
-        self._view , going_to_add = type
 
-        label = gtk.Label(message)
+        label = gtk.Label(message[0])
         self._name = gtk.Entry()
         ca = self.get_content_area()
         ca.set_spacing(5)
         ca.pack_start(label)
         ca.pack_start(self._name)
 
-        # TODO: build list of existing contacts/groups if going_to_add a group or a contact
-        if isinstance(type[0], views.ContactView):
-            if going_to_add:
-                label2 = gtk.Label("Message: ")
-                ca.pack_start(label2)
-                self._message = gtk.Entry()
-                ca.pack_start(self._message)
-                label2.show()
-                self._message.show()
-        elif isinstance(type[0], views.GroupView):
-            pass
-        else:
-            # TODO: get the string from the core
-            aMSNErrorWindow("Can't build an input window of type %s" % type[0])
-            self.destroy()
-            return
+        # TODO: build list of existing groups
+        label2 = gtk.Label(message[1])
+        ca.pack_start(label2)
+        self._message = gtk.Entry()
+        ca.pack_start(self._message)
+        label2.show()
+        self._message.show()
 
         self.connect("response", self.onResponse)
         label.show()
@@ -112,12 +90,100 @@ class aMSNInputWindow(base.aMSNInputWindow, gtk.Dialog):
 
     def onResponse(self, dialog, id):
         if id == gtk.RESPONSE_ACCEPT:
-            self._view.account = self._name.get_text()
-            if self._view.account:
-                self._callback(self._view)
-            else:
-                # TODO: get the string from the core
-                aMSNErrorWindow("The input can't be empty")
+            name = self._name.get_text()
+            msg = self._message.get_text()
+            self._callback(name, msg)
         elif id == gtk.RESPONSE_REJECT:
-            self._callback(None)
+            pass
         self.destroy()
+
+
+class aMSNGroupInputWindow(base.aMSNGroupInputWindow, gtk.Dialog): 
+    def __init__(self, message, callback, contacts):
+        gtk.Dialog.__init__(self, "aMSN Group Input", None, gtk.DIALOG_NO_SEPARATOR,
+                            (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
+                             gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        self._callback = callback
+
+        label = gtk.Label(message[0])
+        self._name = gtk.Entry()
+        ca = self.get_content_area()
+        ca.set_spacing(5)
+        ca.pack_start(label)
+        ca.pack_start(self._name)
+
+        # TODO: build list of existing contacts
+        label2 = gtk.Label(message[1])
+        ca.pack_start(label2)
+        self._message = gtk.Entry()
+        ca.pack_start(self._message)
+        label2.show()
+        self._message.show()
+
+        self.connect("response", self.onResponse)
+        label.show()
+        self._name.show()
+        self.show()
+
+    def onResponse(self, dialog, id):
+        if id == gtk.RESPONSE_ACCEPT:
+            name = self._name.get_text()
+            self._callback(name)
+        elif id == gtk.RESPONSE_REJECT:
+            pass
+        self.destroy()
+
+class aMSNContactDeleteWindow(base.aMSNContactDeleteWindow, gtk.Dialog): 
+    def __init__(self, message, callback, contacts):
+        gtk.Dialog.__init__(self, "aMSN Contact Input", None, gtk.DIALOG_NO_SEPARATOR,
+                            (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
+                             gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        self._callback = callback
+
+        label = gtk.Label(message)
+        self._name = gtk.Entry()
+        ca = self.get_content_area()
+        ca.set_spacing(5)
+        ca.pack_start(label)
+        ca.pack_start(self._name)
+
+        self.connect("response", self.onResponse)
+        label.show()
+        self._name.show()
+        self.show()
+
+    def onResponse(self, dialog, id):
+        if id == gtk.RESPONSE_ACCEPT:
+            name = self._name.get_text()
+            self._callback(name)
+        elif id == gtk.RESPONSE_REJECT:
+            pass
+        self.destroy()
+
+class aMSNGroupDeleteWindow(base.aMSNGroupDeleteWindow, gtk.Dialog): 
+    def __init__(self, message, callback, groups):
+        gtk.Dialog.__init__(self, "aMSN Group Input", None, gtk.DIALOG_NO_SEPARATOR,
+                            (gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
+                             gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+        self._callback = callback
+
+        label = gtk.Label(message)
+        self._name = gtk.Entry()
+        ca = self.get_content_area()
+        ca.set_spacing(5)
+        ca.pack_start(label)
+        ca.pack_start(self._name)
+
+        self.connect("response", self.onResponse)
+        label.show()
+        self._name.show()
+        self.show()
+
+    def onResponse(self, dialog, id):
+        if id == gtk.RESPONSE_ACCEPT:
+            name = self._name.get_text()
+            self._callback(name)
+        elif id == gtk.RESPONSE_REJECT:
+            pass
+        self.destroy()
+

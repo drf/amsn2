@@ -42,23 +42,68 @@ class aMSNDialogWindow(object):
         """
         raise NotImplementedError
 
-class aMSNInputWindow(object): 
+class aMSNContactInputWindow(object): 
     """
-    This Interface represent a window used to get an input,
-    like a new contact or a new group.
+    This Interface represent a window used to get a new contact.
     """
-    def __init__(self, message, type, callback, params):
+    def __init__(self, message, callback, groups):
+        """
+        @type message: tuple
+        @param message: A tuple with the messages to be shown in the input window,
+        of the form (account_string, invite_string).
+        @type callback: function
+        @param callback: The function that will be called when the contact info has been filled.
+        The prototype is callback(email, invite_message, groups).
+        @type groups: tuple
+        @param groups: a list of existing groups
+        """
+        raise notImplementedError
+
+class aMSNGroupInputWindow(object): 
+    """
+    This Interface represent a window used to get a new group.
+    """
+    def __init__(self, message, callback, contacts):
         """
         @type message: tuple
         @param message: A tuple with the messages to be shown in the input window.
-        @type type: ContactView or GroupView
-        @param type: contains the view to fill.
         @type callback: function
-        @param callback: The function that will be called when the view has been filled.
-        The prototype is callback(view), where view is the ContactView or the Grouview
-        filled, or None if the input has been canceled.
-        @type params: tuple
-        @param params: a list of existing contacts or groups
+        @param callback: The function that will be called when the group info has been filled.
+        The prototype is callback(name_group, contacts).
+        @type contacts: tuple
+        @param contacts: a list of existing contacts
+        """
+        raise notImplementedError
+
+class aMSNContactDeleteWindow(object): 
+    """
+    This Interface represent a window used to delete a contact.
+    """
+    def __init__(self, message, callback, contacts):
+        """
+        @type message: tuple
+        @param message: A tuple with the messages to be shown in the window.
+        @type callback: function
+        @param callback: The function that will be called when the account has been entered.
+        The prototype is callback(account), where account is the email of the account to delete.
+        @type contacts: tuple
+        @param contacts: a tuple with all the contacts that can be removed in the AddressBook.
+        """
+        raise notImplementedError
+
+class aMSNGroupDeleteWindow(object): 
+    """
+    This Interface represent a window used to delete a group.
+    """
+    def __init__(self, message, callback, groups):
+        """
+        @type message: tuple
+        @param message: A tuple with the messages to be shown in the window.
+        @type callback: function
+        @param callback: The function that will be called when the group has been entered.
+        The prototype is callback(group), where group is the group name.
+        @type groups: tuple
+        @param groups: a tuple with all the groups that can be deleted.
         """
         raise notImplementedError
 
