@@ -61,11 +61,3 @@ class PersonalInfoView(object):
             self._personalinfo_manager._onPresenceChanged(presence)
         return locals()
 
-    @rw_property
-    def psm_current_media():
-        def fget(self):
-            return (self.psm, self.current_media)
-        def fset(self, psm, artist, song):
-            self._personalinfo_manager._onPSMCMChanged(psm, (artist, song))
-        return locals()
-

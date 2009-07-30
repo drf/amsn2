@@ -59,9 +59,6 @@ class aMSNPersonalInfoManager:
         # TODO: manage msn_objects
         self._papyon_profile.msn_object = new_dp
 
-    def _onPSMCMChanged(self, new_psm, new_media):
-        self._papyon_profile.personal_message_current_media = new_psm, new_media
-
     """ Actions from the core """
     def _onCMChanged(self, new_media):
         self._papyon_profile.current_media = new_media
