@@ -85,8 +85,13 @@ class aMSNContactListManager:
         self._core._gui.gui.aMSNNotificationWindow("Contact %s added!" % contact.account)
 
     def removeContact(self, uid):
-        self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
+        def cb_ok():
+            self._papyon_addressbook.delete_contact(self._papyon_addressbook.contacts.
                                                  search_by('id', uid)[0])
+        # call the UImanager for all the dialogs
+        self._core._gui.gui.aMSNDialogWindow('Are you sure you want to remove the contact %s?'
+                                             % self._papyon_addressbook.contacts.search_by('id', uid)[0].account,
+                                             (('OK', cb_ok), ('Cancel', lambda : '')))
 
     def onContactRemoved(self, contact):
         self._removeContactFromGroups(contact.id)
