@@ -45,19 +45,26 @@ class aMSNDialogWindow(base.aMSNDialogWindow, gtk.Dialog):
         """
         gtk.Dialog.__init__(self, "aMSN Dialog", None, gtk.DIALOG_NO_SEPARATOR, None)
 
+        label = gtk.Label(message)
+        ca = self.get_content_area()
+        ca.pack_start(label)
+
         id = -1
-        for name, cb in actions:
-            dialog.add_button(name, id)
+        self._cbs = {}
+        for act in actions:
+            name, cb = act
+            self.add_button(name, id)
             self._cbs[id] = cb
             id = id - 1
 
         self.connect("response", self.onResponse)
+        label.show()
         self.show()
 
     def onResponse(self, dialog, id):
         try:
             self._cbs[id]()
-        except ValueError:
+        except KeyError:
             print "Unknown dialog choice, id %s" % id
         self.destroy()
 
