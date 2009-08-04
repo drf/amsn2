@@ -348,10 +348,12 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
     def onUserJoined(self, contact):
         print "%s joined the conversation" % (contact,)
         self.__print_info("%s joined the conversation" % (contact,))
+        self.__set_statusbar_text("%s joined the comversation" % (contact,))
 
     def onUserLeft(self, contact):
         print "%s left the conversation" % (contact,)
         self.__print_info("%s left the conversation" % (contact,))
+        self.__set_statusbar_text("%s left the comversation" % (contact,))
         self.__typingStopped()
 
     def onUserTyping(self, contact):
