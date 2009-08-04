@@ -284,6 +284,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
     def __print_chat(self, nick, msg, sender):
         html = '<div>'
+        # TODO: If we have the same nick as our chat buddy, this doesn't work
         if (self.last_sender != sender):
             html += '<span style="%s">%s</span><br/>' % (self.nickstyle,
                 nick)
