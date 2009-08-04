@@ -342,6 +342,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.__print_chat(nick, fmsg, sender)
 
         self.last_sender = sender
+        self.__typingStopped()
 
     def onUserJoined(self, contact):
         print "%s joined the conversation" % (contact,)
@@ -350,6 +351,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
     def onUserLeft(self, contact):
         print "%s left the conversation" % (contact,)
         self.__print_info("%s left the conversation" % (contact,))
+        self.__typingStopped()
 
     def onUserTyping(self, contact):
         """ Set a timer for 10 sec every time a user types. If the user
