@@ -31,6 +31,7 @@ from amsn2.gui import base
 from amsn2.core.views import ContactView, StringView
 import gtk_extras
 import papyon
+import gobject
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -204,6 +205,9 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.entry.connect('mykeypress', self.__on_chat_send)
         self.entry.connect('key-press-event', self.__on_typing_event)
 
+        # timer to display if a user is typing
+        self.typingTimer = None
+
     def __updateTextFormat(self, textbuffer):
         self.reapply_text_effects()
         self.__on_changed_text_color(self.button_color)
@@ -299,6 +303,10 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.statusbar.pop(context)
         self.statusbar.push(context, msg)
 
+    def __typingStopped(self):
+        self.__set_statusbar_text("")
+        return False # To stop gobject timer
+
     def onMessageReceived(self, messageview, formatting=None):
         text = messageview.toStringView().toHtmlString()
         text = self.__clean_string(text)
@@ -344,8 +352,16 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.__print_info("%s left the conversation" % (contact,))
 
     def onUserTyping(self, contact):
+        """ Set a timer for 10 sec every time a user types. If the user
+        continues typing during these 10 sec, kill the timer and start over with
+        10 sec. If the user stops typing; call __typingStopped """
+
         print "%s is typing" % (contact,)
-        #self.__set_statusbar_text("%s is typing" % (contact,))
+        self.__set_statusbar_text("%s is typing" % (contact,))
+        if self.typingTimer != None:
+            gobject.source_remove(self.typingTimer)
+            self.typingTimer = None
+        self.typingTimer = gobject.timeout_add(10000, self.__typingStopped)
 
     def nudge(self):
         self.__print_info('Nudge received')
