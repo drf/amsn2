@@ -45,6 +45,7 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         self.set_position(gtk.WIN_POS_CENTER)
         self._theme_manager = amsn_core._core._theme_manager
 
+        self.set_title("aMSN - Chatwindow")
         #leave
 
     def addChatWidget(self, chat_widget):
