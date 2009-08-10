@@ -32,6 +32,8 @@ from amsn2.core.views import ContactView, StringView
 import gtk_extras
 import papyon
 import gobject
+import os
+from image import Image
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -41,7 +43,7 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         self.showed = False
         self.set_default_size(550, 450)
         self.set_position(gtk.WIN_POS_CENTER)
-        self.set_title("aMSN - Chatwindow")
+        self._theme_manager = amsn_core._core._theme_manager
 
         #leave
 
@@ -76,7 +78,10 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
         amsncontacts = [self._contactlist_manager.getContact(uid) for uid in contacts_uid]
         cviews = [ContactView(self._amsn_core, c) for c in amsncontacts]
-        self.chatheader = aMSNChatHeader(cviews)
+        self.chatheader = aMSNChatHeader(self._theme_manager, cviews)
+
+        # Titlebar
+        parent.set_title("aMSN2 - " + str(cviews[0].name.getTag("nickname")))
 
         # Middle
         self.textview = HtmlTextView()
@@ -353,7 +358,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
     def onUserLeft(self, contact):
         print "%s left the conversation" % (contact,)
         self.__print_info("%s left the conversation" % (contact,))
-        self.__set_statusbar_text("%s left the comversation" % (contact,))
+        self.__set_statusbar_text("%s left the conversation" % (contact,))
         self.__typingStopped()
 
     def onUserTyping(self, contact):
@@ -373,7 +378,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
 
 class aMSNChatHeader(gtk.EventBox):
-    def __init__(self, cviews=None):
+    def __init__(self, theme_manager, cviews=None):
         gtk.EventBox.__init__(self)
 
         self.buddy_icon = gtk.Image()
@@ -381,6 +386,7 @@ class aMSNChatHeader(gtk.EventBox):
         self.dp = gtk.Image()
         self.title_color = gtk.gdk.color_parse('#dadada')
         self.psm_color = '#999999'
+        self.theme_manager = theme_manager
 
         self.title.set_use_markup(True)
         self.title.set_justify(gtk.JUSTIFY_LEFT)
@@ -409,6 +415,10 @@ class aMSNChatHeader(gtk.EventBox):
         nickname = cviews[0].name.getTag("nickname")
         psm = cviews[0].name.getTag("psm")
         status = cviews[0].name.getTag("status")
+
+        #FIXME: Which user do we show in a multiconversation?
+        img = Image(self.theme_manager, cviews[0].dp)
+        self.dp.set_from_pixbuf(img.to_pixbuf(50,50))
 
         title = '<span size="large"><b>%s</b></span>' % (nickname, )
         title += '<span size="medium">  %s</span>' % (status, )
