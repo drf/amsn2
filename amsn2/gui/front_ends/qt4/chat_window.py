@@ -18,7 +18,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import cgi
+import time
+
+import papyon
 from amsn2.gui import base
+from amsn2.core.views import ContactView, StringView
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -29,7 +34,6 @@ except ImportError, e:
     # FIXME: Should do that with logging...
     print "WARNING: To use the QT4 you need to run the generateFiles.sh, check the README"
     raise e
-from amsn2.core.views import ContactView, StringView
 
 class InputWidget(QTextEdit):
     def __init__(self, parent=None):
@@ -65,7 +69,10 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputLayout.addWidget(self.ui.inputWidget)
         self._statusBar = QStatusBar(self)
         self.layout().addWidget(self._statusBar)
-
+        self.last_sender = ''
+        self.nickstyle = "color:#555555; margin-left:2px"
+        self.msgstyle = "margin-left:15px"
+        self.infostyle = "margin-left:2px; font-style:italic; color:#6d6d6d"
         self.loadEmoticonList()
 
         QObject.connect(self.ui.inputWidget, SIGNAL("textChanged()"), self.processInput)
@@ -146,24 +153,60 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         self.ui.inputWidget.textCursor().insertHtml(QString("<img src=\"" + str(image) + "\" />"))
 
     def onUserJoined(self, contact):
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(contact.name))+" "+self.tr("has joined the conversation")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.toHtmlString())+" "+self.tr("has joined the conversation")+("</b>")))
         pass
 
     def onUserLeft(self, contact):
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(contact.name))+" "+self.tr("has left the conversation")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(contact.toHtmlString())+" "+self.tr("has left the conversation")+("</b>")))
         pass
 
     def onUserTyping(self, contact):
-        self._statusBar.showMessage(unicode(QString.fromUtf8(str(contact.name)) + " is typing"), 7000)
+        self._statusBar.showMessage(unicode(QString.fromUtf8(contact.toHtmlString()) + " is typing"), 7000)
 
-    def onMessageReceived(self, sender, message):
+    def onMessageReceived(self, messageview, formatting=None):
         print "Ding!"
-        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(str(sender.name))+" "+self.tr("writes:")+("</b>")))
-        self.ui.textEdit.append(unicode(message.toHtmlString()))
-        pass
+
+        text = unicode(QString.fromUtf8(messageview.toStringView().toHtmlString()))
+        text = cgi.escape(text)
+        nick, msg = text.split('\n', 1)
+        nick = unicode(QString.fromUtf8(nick.replace('\n', '<br/>')))
+        msg = unicode(QString.fromUtf8(msg.replace('\n', '<br/>')))
+        sender = unicode(QString.fromUtf8(messageview.sender.toHtmlString()))
+
+        # peacey: Check formatting of styles and perform the required changes
+        if formatting:
+            fmsg = '''<span style="'''
+            if formatting.font:
+                fmsg += "font-family: %s;" % formatting.font
+            if formatting.color:
+                fmsg += "color: %s;" % ("#"+formatting.color)
+            if formatting.style & papyon.TextFormat.BOLD == papyon.TextFormat.BOLD:
+                fmsg += "font-weight: bold;"
+            if formatting.style & papyon.TextFormat.ITALIC == papyon.TextFormat.ITALIC:
+                fmsg += "font-style: italic;"
+            if formatting.style & papyon.TextFormat.UNDERLINE == papyon.TextFormat.UNDERLINE:
+                fmsg += "text-decoration: underline;"
+            if formatting.style & papyon.TextFormat.STRIKETHROUGH == papyon.TextFormat.STRIKETHROUGH:
+                fmsg += "text-decoration: line-through;"
+            if formatting.right_alignment:
+                fmsg += "text-align: right;"
+            fmsg = fmsg.rstrip(";")
+            fmsg += '''">'''
+            fmsg += msg
+            fmsg += "</span>"
+        else:
+            fmsg = msg
+
+        html = '<div>'
+        if (self.last_sender != sender):
+            html += '<span style="%s">%s</span><br/>' % (self.nickstyle, nick)
+        html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle, time.strftime('%X'), msg)
+
+        self.ui.textEdit.append(html)
+        self.last_sender = sender
 
     def onNudgeReceived(self, sender):
-        self.ui.textEdit.append(unicode("<b>"+str(sender.name)+" "+self.tr("sent you a nudge!")+("</b>")))
+        self.ui.textEdit.append(unicode("<b>"+QString.fromUtf8(sender.toHtmlString())+" "+self.tr("sent you a nudge!")+("</b>")))
         pass
 
 

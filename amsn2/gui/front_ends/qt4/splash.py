@@ -29,6 +29,7 @@ class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
 
     def __init__(self, amsn_core, parent):
         QSplashScreen.__init__(self, parent)
+        self._theme_manager = amsn_core._theme_manager
 
     def show(self):
         self.setVisible(True)
@@ -43,7 +44,6 @@ class aMSNSplashScreen(QSplashScreen, base.aMSNSplashScreen):
         qApp.processEvents()
 
     def setImage(self, image):
-        img = Image()
-        img.loadFromImageView(image)
+        img = Image(self._theme_manager, image)
         self.setPixmap(img)
         qApp.processEvents()

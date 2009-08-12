@@ -11,12 +11,12 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from amsn2.gui import base
 
@@ -25,53 +25,73 @@ from PyQt4.QtGui import *
 from amsn2.core.views import imageview
 
 class Image(QPixmap):
-    def __init__(self):
+    def __init__(self, theme_manager, view):
         QPixmap.__init__(self)
+        self._filename = ""
+        self._theme_manager = theme_manager
+        self.loader(view)
 
-    def load(self, resource_name, value):
-        """ This method is used to load an image using the name of a resource and a value for that resource
-            resource_name can be :
-                - 'File', value is the filename
-                - 'Skin', value is the skin key
-                - some more :)
-        """
-        if resource_name == "File":
-            self._loadFromFilename(value)
-
-    def loadFromImageView(self, view):
+    def loader(self, view):
+        i = 0
         for (resource_type, value) in view.imgs:
             try:
                 loadMethod = getattr(self, "_loadFrom%s" % resource_type)
             except AttributeError, e:
-                print "From append in qt4/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
+                print "From load in qt4/image.py:\n\t(resource_type, value) = (%s, %s)\n\tAttributeError: %s" % (resource_type, value, e)
             else:
-                loadMethod(value)
+                loadMethod(value, view, i)
+                i += 1            
 
-    def getAsFilename(self):
-        return self._fileName
+    def _loadFromFilename(self, filename, view, index):
+        # TODO: Implement support for emblems and other embedded images
+        if (index != 0): return
 
-    def append(self, resource_name, value):
-        """ This method is used to overlap an image on the current image
-            Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
-        """
-        if resource_name == "File":
-            self.load(value)
+        try:
+            self.load(filename)
+            self._filename = filename
+        except Exception, e:
+            print e
+            print "Error loading image %s" % filename
 
-    def prepend(self, resource_name, value):
-        """ This method is used to underlap an image under the current image
-            Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
-        """
-        if resource_name == "File":
-            self.load(value)
+    def _loadFromTheme(self, resource_name, view, index):
+        # TODO: Implement support for emblems and other embedded images
+        if (index != 0): return
 
-    def _loadFromFilename(self, filename):
-        QPixmap.load(self, filename)
-        self._fileName = filename
+        _, filename = self._theme_manager.get_value(resource_name)
 
+        if filename is not None:
+            self._loadFromFilename(filename, view, index)
+        else:
+            print 'Error loading image %s from theme' %resource_name
+
+    def to_size(self, width, height):
+        #print 'image.py -> to_pixbuf: filename=%s' % self._filename
+        try:
+            qpix = self.scaled(width, height)
+            return qpix
+        except:
+            print 'Error converting to qpix image %s' % self._filename
+            return None
+        
     def _loadFromSkin(self, skin):
         pass
 
     def _loadFromFileObject(self, obj):
         pass
 
+    def getAsFilename(self):
+        return self._filename
 
+    def append(self, resource_name, value):
+        """ This method is used to overlap an image on the current image
+        Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
+        """
+        if resource_name == "File":
+            self.loader(value)
+
+    def prepend(self, resource_name, value):
+        """ This method is used to underlap an image under the current image
+        Have a look at the documentation of the 'load' method for the meanings of 'resource_name' and 'value'
+        """
+        if resource_name == "File":
+            self.loader(value)
