@@ -34,6 +34,7 @@ import papyon
 import gobject
 import os
 from image import Image
+import common
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -354,7 +355,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
     def onUserJoined(self, contact):
         print "%s joined the conversation" % (contact,)
         self.__print_info("%s joined the conversation" % (contact,))
-        self.__set_statusbar_text("%s joined the comversation" % (contact,))
+        self.__set_statusbar_text("%s joined the conversation" % (contact,))
 
     def onUserLeft(self, contact):
         print "%s left the conversation" % (contact,)
@@ -363,7 +364,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.__typingStopped()
 
     def onUserTyping(self, contact):
-        """ Set a timer for 10 sec every time a user types. If the user
+        """ Set a timer for 6 sec every time a user types. If the user
         continues typing during these 10 sec, kill the timer and start over with
         10 sec. If the user stops typing; call __typingStopped """
 
@@ -372,7 +373,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         if self.typingTimer != None:
             gobject.source_remove(self.typingTimer)
             self.typingTimer = None
-        self.typingTimer = gobject.timeout_add(10000, self.__typingStopped)
+        self.typingTimer = gobject.timeout_add(6000, self.__typingStopped)
 
     def nudge(self):
         self.__print_info('Nudge received')
@@ -388,6 +389,7 @@ class aMSNChatHeader(gtk.EventBox):
         self.title_color = gtk.gdk.color_parse('#dadada')
         self.psm_color = '#999999'
         self.theme_manager = theme_manager
+        self.cviews = cviews
 
         self.title.set_use_markup(True)
         self.title.set_justify(gtk.JUSTIFY_LEFT)
@@ -395,7 +397,9 @@ class aMSNChatHeader(gtk.EventBox):
         self.title.set_alignment(xalign=0, yalign=0.5)
         self.title.set_padding(xpad=2, ypad=2)
 
-        self.dp.set_size_request(50,50)
+        # Load default dp's size from common
+        self.dp.set_size_request(common.DP_MINI[0],
+                                 common.DP_MINI[1])
 
         hbox = gtk.HBox(False,0)
         hbox.pack_start(self.buddy_icon, False,False,0)
@@ -405,6 +409,7 @@ class aMSNChatHeader(gtk.EventBox):
         self.modify_bg(gtk.STATE_NORMAL, self.title_color)
         self.add(hbox)
 
+        self.connect("button-release-event", self.__dpClicked)
         self.update(cviews)
 
     def update(self, cviews):
@@ -419,7 +424,8 @@ class aMSNChatHeader(gtk.EventBox):
 
         #FIXME: Which user do we show in a multiconversation?
         img = Image(self.theme_manager, cviews[0].dp)
-        self.dp.set_from_pixbuf(img.to_pixbuf(50,50))
+        size = self.dp.get_size_request()
+        self.dp.set_from_pixbuf(img.to_pixbuf(size[0],size[1]))
 
         title = '<span size="large"><b>%s</b></span>' % (nickname, )
         title += '<span size="medium">  %s</span>' % (status, )
@@ -430,3 +436,13 @@ class aMSNChatHeader(gtk.EventBox):
 
         self.title.set_markup(title)
 
+    def __dpClicked(self, source, event):
+        # Called when the display picture of the other person is clicked
+        if source.dp.get_size_request() == common.DP_MINI:
+            source.dp.set_size_request(common.DP_LARGE[0],common.DP_LARGE[1])
+            self.title.set_alignment(xalign = 0, yalign = 0.09)
+        else:
+            source.dp.set_size_request(common.DP_MINI[0],common.DP_MINI[1])
+            self.title.set_alignment(xalign = 0, yalign = 0.5)
+
+        self.update(self.cviews)
