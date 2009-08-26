@@ -7,6 +7,10 @@ import gtk
 
 GUI_FONT = pango.FontDescription('normal 8')
 
+# Sizes of the contacts' display images in different states
+DP_MINI = (50, 50)
+DP_LARGE = (100, 100)
+
 def stringvToHtml(stringv):
     out = ''
     for x in stringv._elements:

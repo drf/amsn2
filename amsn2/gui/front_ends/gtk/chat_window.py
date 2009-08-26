@@ -31,6 +31,10 @@ from amsn2.gui import base
 from amsn2.core.views import ContactView, StringView
 import gtk_extras
 import papyon
+import gobject
+import os
+from image import Image
+import common
 
 class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
     def __init__(self, amsn_core):
@@ -40,8 +44,9 @@ class aMSNChatWindow(base.aMSNChatWindow, gtk.Window):
         self.showed = False
         self.set_default_size(550, 450)
         self.set_position(gtk.WIN_POS_CENTER)
-        self.set_title("aMSN - Chatwindow")
+        self._theme_manager = amsn_core._core._theme_manager
 
+        self.set_title("aMSN - Chatwindow")
         #leave
 
     def addChatWidget(self, chat_widget):
@@ -75,7 +80,10 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
         amsncontacts = [self._contactlist_manager.getContact(uid) for uid in contacts_uid]
         cviews = [ContactView(self._amsn_core, c) for c in amsncontacts]
-        self.chatheader = aMSNChatHeader(cviews)
+        self.chatheader = aMSNChatHeader(self._theme_manager, cviews)
+
+        # Titlebar
+        parent.set_title("aMSN2 - " + str(cviews[0].name.getTag("nickname")))
 
         # Middle
         self.textview = HtmlTextView()
@@ -204,6 +212,9 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.entry.connect('mykeypress', self.__on_chat_send)
         self.entry.connect('key-press-event', self.__on_typing_event)
 
+        # timer to display if a user is typing
+        self.typingTimer = None
+
     def __updateTextFormat(self, textbuffer):
         self.reapply_text_effects()
         self.__on_changed_text_color(self.button_color)
@@ -280,6 +291,7 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
 
     def __print_chat(self, nick, msg, sender):
         html = '<div>'
+        # TODO: If we have the same nick as our chat buddy, this doesn't work
         if (self.last_sender != sender):
             html += '<span style="%s">%s</span><br/>' % (self.nickstyle,
                 nick)
@@ -298,6 +310,10 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         context = self.statusbar.get_context_id('msg')
         self.statusbar.pop(context)
         self.statusbar.push(context, msg)
+
+    def __typingStopped(self):
+        self.__set_statusbar_text("")
+        return False # To stop gobject timer
 
     def onMessageReceived(self, messageview, formatting=None):
         text = messageview.toStringView().toHtmlString()
@@ -334,25 +350,37 @@ class aMSNChatWidget(base.aMSNChatWidget, gtk.VBox):
         self.__print_chat(nick, fmsg, sender)
 
         self.last_sender = sender
+        self.__typingStopped()
 
     def onUserJoined(self, contact):
         print "%s joined the conversation" % (contact,)
         self.__print_info("%s joined the conversation" % (contact,))
+        self.__set_statusbar_text("%s joined the conversation" % (contact,))
 
     def onUserLeft(self, contact):
         print "%s left the conversation" % (contact,)
         self.__print_info("%s left the conversation" % (contact,))
+        self.__set_statusbar_text("%s left the conversation" % (contact,))
+        self.__typingStopped()
 
     def onUserTyping(self, contact):
+        """ Set a timer for 6 sec every time a user types. If the user
+        continues typing during these 10 sec, kill the timer and start over with
+        10 sec. If the user stops typing; call __typingStopped """
+
         print "%s is typing" % (contact,)
-        #self.__set_statusbar_text("%s is typing" % (contact,))
+        self.__set_statusbar_text("%s is typing" % (contact,))
+        if self.typingTimer != None:
+            gobject.source_remove(self.typingTimer)
+            self.typingTimer = None
+        self.typingTimer = gobject.timeout_add(6000, self.__typingStopped)
 
     def nudge(self):
         self.__print_info('Nudge received')
 
 
 class aMSNChatHeader(gtk.EventBox):
-    def __init__(self, cviews=None):
+    def __init__(self, theme_manager, cviews=None):
         gtk.EventBox.__init__(self)
 
         self.buddy_icon = gtk.Image()
@@ -360,6 +388,8 @@ class aMSNChatHeader(gtk.EventBox):
         self.dp = gtk.Image()
         self.title_color = gtk.gdk.color_parse('#dadada')
         self.psm_color = '#999999'
+        self.theme_manager = theme_manager
+        self.cviews = cviews
 
         self.title.set_use_markup(True)
         self.title.set_justify(gtk.JUSTIFY_LEFT)
@@ -367,7 +397,9 @@ class aMSNChatHeader(gtk.EventBox):
         self.title.set_alignment(xalign=0, yalign=0.5)
         self.title.set_padding(xpad=2, ypad=2)
 
-        self.dp.set_size_request(50,50)
+        # Load default dp's size from common
+        self.dp.set_size_request(common.DP_MINI[0],
+                                 common.DP_MINI[1])
 
         hbox = gtk.HBox(False,0)
         hbox.pack_start(self.buddy_icon, False,False,0)
@@ -377,6 +409,7 @@ class aMSNChatHeader(gtk.EventBox):
         self.modify_bg(gtk.STATE_NORMAL, self.title_color)
         self.add(hbox)
 
+        self.connect("button-release-event", self.__dpClicked)
         self.update(cviews)
 
     def update(self, cviews):
@@ -389,6 +422,11 @@ class aMSNChatHeader(gtk.EventBox):
         psm = cviews[0].name.getTag("psm")
         status = cviews[0].name.getTag("status")
 
+        #FIXME: Which user do we show in a multiconversation?
+        img = Image(self.theme_manager, cviews[0].dp)
+        size = self.dp.get_size_request()
+        self.dp.set_from_pixbuf(img.to_pixbuf(size[0],size[1]))
+
         title = '<span size="large"><b>%s</b></span>' % (nickname, )
         title += '<span size="medium">  %s</span>' % (status, )
 
@@ -398,3 +436,13 @@ class aMSNChatHeader(gtk.EventBox):
 
         self.title.set_markup(title)
 
+    def __dpClicked(self, source, event):
+        # Called when the display picture of the other person is clicked
+        if source.dp.get_size_request() == common.DP_MINI:
+            source.dp.set_size_request(common.DP_LARGE[0],common.DP_LARGE[1])
+            self.title.set_alignment(xalign = 0, yalign = 0.09)
+        else:
+            source.dp.set_size_request(common.DP_MINI[0],common.DP_MINI[1])
+            self.title.set_alignment(xalign = 0, yalign = 0.5)
+
+        self.update(self.cviews)
