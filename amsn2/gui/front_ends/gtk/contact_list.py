@@ -295,7 +295,6 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
             if self.status_values[key] == status:
                 break
         # FIXME: changing status to 'offline' will disconnect, so return to login window
-        # also fix papyon, gives an error on setting 'offline'
         if key != self._myview.presence:
             self._myview.presence = key
 
