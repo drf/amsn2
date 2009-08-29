@@ -200,7 +200,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         html = '<div>'
         if (self.last_sender != sender):
             html += '<span style="%s">%s</span><br/>' % (self.nickstyle, nick)
-        html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle, time.strftime('%X'), msg)
+        html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle, time.strftime('%X'), fmsg)
 
         self.ui.textEdit.append(html)
         self.last_sender = sender
