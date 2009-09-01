@@ -21,7 +21,6 @@
 from amsn2 import gui
 from amsn2 import protocol
 from amsn2.backend import aMSNBackendManager
-import papyon
 from views import *
 from account_manager import *
 from contactlist_manager import *
@@ -30,6 +29,13 @@ from oim_manager import *
 from theme_manager import *
 from personalinfo_manager import *
 from event_manager import *
+
+import papyon
+import logging
+
+# Top-level loggers
+papyon_logger = logging.getLogger("papyon")
+logger = logging.getLogger("amsn2")
 
 class aMSNCore(object):
     def __init__(self, options):
@@ -72,11 +78,18 @@ class aMSNCore(object):
                     papyon.Presence.INVISIBLE:"hidden",
                     papyon.Presence.OFFLINE:"offline"}
 
-        import logging
-        if self._options.debug:
-            logging.basicConfig(level=logging.DEBUG)
+        # TODO: redirect the logs somewhere, something like ctrl-s ctrl-d for amsn-0.9x
+        logging.basicConfig(level=logging.WARNING)
+
+        if self._options.debug_protocol:
+            papyon_logger.setLevel(logging.DEBUG)
         else:
-            logging.basicConfig(level=logging.WARNING)
+            papyon_logger.setLevel(logging.WARNING)
+
+        if self._options.debug_amsn2:
+            logger.setLevel(logging.DEBUG)
+        else:
+            logger.setLevel(logging.WARNING)
 
     def run(self):
         self._main.show()
@@ -199,6 +212,7 @@ class aMSNCore(object):
         if self._account is not None:
             self._account.signOut()
         self._loop.quit()
+        logging.shutdown()
 
     # TODO: move to UImanager
     def addContact(self):

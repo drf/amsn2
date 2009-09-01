@@ -21,8 +21,10 @@ if __name__ == '__main__':
                       default=None, help="The account's password to use")
     parser.add_option("-f", "--front-end", dest="front_end",
                       default=default_front_end, help="The frontend to use")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug",
+    parser.add_option("-d", "--debug-protocol", action="store_true", dest="debug_protocol",
                       default=False, help="Show protocol debug")
+    parser.add_option("-D", "--debug-amsn2", action="store_true", dest="debug_amsn2",
+                      default=False, help="Show amsn2 debug")
     (options, args) = parser.parse_args()
     
     amsn = aMSNCore(options)
