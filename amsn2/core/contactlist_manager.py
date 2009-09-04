@@ -49,7 +49,7 @@ class aMSNContactListManager:
 
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
-                self._core._account.client._msn_object_store.request(papyon_contact.msn_object,
+                self._core._account.client.msn_object_store.request(papyon_contact.msn_object,
                                                                      (self.onDPdownloaded,
                                                                       papyon_contact.id))
 
@@ -210,7 +210,6 @@ class aMSNContactListManager:
     def getGroups(self, uid):
         # propagate a ValueError
         return [self.getGroup(gid) for gid in self.getContact(uid).groups]
-            
 
 
 """ A few things used to describe a contact

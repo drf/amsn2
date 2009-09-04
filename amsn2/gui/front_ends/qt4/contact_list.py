@@ -217,8 +217,8 @@ class aMSNContactListWidget(StyledWidget, base.aMSNContactListWidget):
 
         gitem.child(self._model.indexFromItem(citem).row(), 3).setData(QVariant(contact), Qt.DisplayRole)
         cname = StringView()
-        cname = contact.name
-        gitem.child(self._model.indexFromItem(citem).row(), 0).setText(QString.fromUtf8(cname.toHtmlString()))
+        cname = contact.name.toHtmlString()
+        gitem.child(self._model.indexFromItem(citem).row(), 0).setText(QString.fromUtf8(cname))
 
     def groupUpdated(self, group):
         if (group.uid == 0): group.uid = '0'

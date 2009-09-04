@@ -20,6 +20,7 @@
 
 import cgi
 import time
+import sys
 
 import papyon
 from amsn2.gui import base
@@ -84,6 +85,8 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         QObject.connect(self.nudgeShortcut, SIGNAL("activated()"), self.__sendNudge)
         QObject.connect(self.ui.actionNudge, SIGNAL("triggered()"), self.__sendNudge)
 
+        #TODO: remove this when papyon is "fixed"...
+        sys.setappdefaultencoding("utf8")
 
     def processInput(self):
         """ Here we process what is inside the widget... so showing emoticon
@@ -129,10 +132,10 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         strv = StringView()
         strv.appendElementsFromHtml(msg) """
 
-        msg = self.ui.inputWidget.toPlainText()
+        msg = QString.fromUtf8(self.ui.inputWidget.toPlainText())
         self.ui.inputWidget.clear()
         strv = StringView()
-        strv.appendText(unicode(msg))
+        strv.appendText(str(msg))
         ## as we send our msg to the conversation:
         self._amsn_conversation.sendMessage(strv)
         # this one will also notify us of our msg.
@@ -166,12 +169,12 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
     def onMessageReceived(self, messageview, formatting=None):
         print "Ding!"
 
-        text = unicode(QString.fromUtf8(messageview.toStringView().toHtmlString()))
+        text = messageview.toStringView().toHtmlString()
         text = cgi.escape(text)
         nick, msg = text.split('\n', 1)
-        nick = unicode(QString.fromUtf8(nick.replace('\n', '<br/>')))
-        msg = unicode(QString.fromUtf8(msg.replace('\n', '<br/>')))
-        sender = unicode(QString.fromUtf8(messageview.sender.toHtmlString()))
+        nick = nick.replace('\n', '<br/>')
+        msg = msg.replace('\n', '<br/>')
+        sender = messageview.sender.toHtmlString()
 
         # peacey: Check formatting of styles and perform the required changes
         if formatting:
@@ -202,7 +205,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
             html += '<span style="%s">%s</span><br/>' % (self.nickstyle, nick)
         html += '<span style="%s">[%s] %s</span></div>' % (self.msgstyle, time.strftime('%X'), fmsg)
 
-        self.ui.textEdit.append(html)
+        self.ui.textEdit.append(QString.fromUtf8(html))
         self.last_sender = sender
 
     def onNudgeReceived(self, sender):
