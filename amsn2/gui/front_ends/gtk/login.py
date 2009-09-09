@@ -221,7 +221,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.show_all()
 
     def hide(self):
-        if (self.timer is not None):
+        if self.timer is not None:
             gobject.source_remove(self.timer)
 
     def __switch_to_account(self, email):
@@ -266,7 +266,8 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.login = False
         self.login_button.set_label(gtk.STOCK_CONNECT)
 
-        gobject.source_remove(self.timer)
+        if self.timer is not None:
+            gobject.source_remove(self.timer)
         # TODO: set the account's dp
         _, filename = self._theme_manager.get_dp("dp_amsn")
         self.dp.set_from_file(filename)
