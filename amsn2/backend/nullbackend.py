@@ -21,7 +21,13 @@ class nullbackend(defaultaccountbackend.defaultaccountbackend):
 
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
-        self.config_dir = tempfile.mkdtemp()
+        self.config_dir = None
+
+    def setAccount(self, email):
+        dir = tempfile.mkdtemp()
+        self.accounts_dir = dir
+        defaultaccountbackend.defaultaccountbackend.accounts_dir = dir
+        defaultaccountbackend.defaultaccountbackend.setAccount(self, email)
 
     def saveConfig(self, account, config):
         # Is it necessary to temporarily save the config?
@@ -35,7 +41,7 @@ class nullbackend(defaultaccountbackend.defaultaccountbackend):
         return c
 
     def clean(self):
-        if os.path.isdir(self.config_dir):
+        if self.config_dir is not None and os.path.isdir(self.config_dir):
             for [root, subdirs, subfiles] in os.walk(self.config_dir, False):
                 for subfile in subfiles:
                     os.remove(os.path.join(root, subfile))
@@ -43,7 +49,8 @@ class nullbackend(defaultaccountbackend.defaultaccountbackend):
                     os.rmdir(os.path.join(root, subdir))
 
     def __del__(self):
-        self.clean()
-        os.rmdir(self.config_dir)
+        if self.config_dir is not None:
+            self.clean()
+            os.rmdir(self.config_dir)
 
 

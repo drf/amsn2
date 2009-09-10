@@ -20,6 +20,9 @@ class basebackend():
     def saveAccount(self, amsn_account):
         raise NotImplementedError
 
+    def setAccount(self, email):
+        raise NotImplementedError
+
     def clean(self):
         """
         Delete temporary things and prepare the backend to be detached
@@ -27,3 +30,10 @@ class basebackend():
         """
         raise NotImplementedError
 
+
+    """ DPs """
+    def getFileLocationDP(self, email, uid, shaci):
+        raise NotImplementedError
+
+    def getDPs(self, email):
+        raise NotImplementedError
