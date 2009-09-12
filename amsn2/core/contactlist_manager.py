@@ -271,15 +271,16 @@ class aMSNContact():
         self.status.appendText(self._core.p2s[papyon_contact.presence])
 
         #DP:
-        fn = self._core._backend_manager.getFileLocationDP(
-                papyon_contact.account,
-                papyon_contact.id,
-                papyon_contact.msn_object._data_sha)
-        if os.path.exists(fn):
-            self.dp.load("Filename", fn)
-        else:
-            #TODO: request?
-            pass
+        if papyon_contact.msn_object:
+            fn = self._core._backend_manager.getFileLocationDP(
+                    papyon_contact.account,
+                    papyon_contact.id,
+                    papyon_contact.msn_object._data_sha)
+            if os.path.exists(fn):
+                self.dp.load("Filename", fn)
+            else:
+                #TODO: request?
+                pass
         # ro, can be changed indirectly with addressbook's actions
         self.memberships = papyon_contact.memberships
         self.contact_type = papyon_contact.contact_type
