@@ -7,6 +7,8 @@ import elementary
 from amsn2.gui import base
 from amsn2.core.views import accountview
 
+#TODO: del
+#TODO: switch to elm_layout?
 class aMSNLoginWindow(base.aMSNLoginWindow):
     def __init__(self, amsn_core, parent):
         self._amsn_core = amsn_core
@@ -26,20 +28,38 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self._edje.size_hint_weight_set(1.0, 1.0)
         self.show()
 
+        sc = elementary.Scroller(self._edje)
+        sc.content_min_limit(0, 1)
+        sc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
+                      elementary.ELM_SCROLLER_POLICY_OFF);
+        sc.size_hint_weight_set(1.0, 0.0)
+        sc.size_hint_align_set(-1.0, -1.0)
+        self._edje.part_swallow("login_screen.username", sc)
+        self.username = elementary.Entry(self._edje)
+        self.username.single_line_set(1)
+        self.username.size_hint_weight_set(1.0, 0.0)
+        self.username.size_hint_align_set(-1.0, -1.0)
+        sc.content_set(self.username)
+        self.username.show()
+        sc.show()
+
+        sc = elementary.Scroller(self._edje)
+        sc.content_min_limit(0, 1)
+        sc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
+                      elementary.ELM_SCROLLER_POLICY_OFF);
+        sc.size_hint_weight_set(1.0, 0.0)
+        sc.size_hint_align_set(-1.0, -1.0)
+        self._edje.part_swallow("login_screen.password", sc)
         self.password = elementary.Entry(self._edje)
         self.password.single_line_set(1)
         self.password.password_set(1)
         self.password.size_hint_weight_set(1.0, 1.0)
+        self.password.size_hint_align_set(-1.0, -1.0)
+        sc.content_set(self.password)
         self.password.show()
-        self._edje.part_swallow("login_screen.password", self.password)
-        self.password.show()
+        sc.show()
 
         #TODO: login_screen.status
-
-        self.username = elementary.Entry(self._edje)
-        self.username.single_line_set(1)
-        self.username.show()
-        self._edje.part_swallow("login_screen.username", self.username)
 
         if self._edje.part_exists("login_screen.signin"):
            self.signin_b = elementary.Button(self._edje)
