@@ -54,7 +54,7 @@ CREATE_FRAME("fields_frame", "dp_frame", 126)
 
 CREATE_FIELD("login_screen.username", 3, "Username")
 CREATE_FIELD("login_screen.password", 43, "Password")
-CREATE_FIELD("login_screen.status", 83, "Sign-in status")
+CREATE_FIELD("login_screen.presence", 83, "Sign-in Presence")
 
 part {
   name: "arrow";

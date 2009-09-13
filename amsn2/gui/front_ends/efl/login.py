@@ -11,7 +11,7 @@ from amsn2.core.views import accountview
 #TODO: switch to elm_layout?
 class aMSNLoginWindow(base.aMSNLoginWindow):
     def __init__(self, amsn_core, parent):
-        self._amsn_core = amsn_core
+        self._core = amsn_core
         self._evas = parent._evas
         self._parent = parent
         self._account_views = []
@@ -59,7 +59,17 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         self.password.show()
         sc.show()
 
-        #TODO: login_screen.status
+        self.presence = elementary.Hoversel(self._edje)
+        self.presence.hover_parent_set(self._parent)
+        for key in self._core.p2s:
+            name = self._core.p2s[key]
+            _, path = self._core._theme_manager.get_statusicon("buddy_%s" % name)
+            if (name == 'offline'): continue
+            self.presence.item_add(name, path, elementary.ELM_ICON_FILE, None)
+        self.presence.size_hint_weight_set(0.0, 0.0)
+        self.presence.size_hint_align_set(0.5, 0.5)
+        self._edje.part_swallow("login_screen.presence", self.presence)
+        self.presence.show()
 
         self.save = elementary.Check(self._edje)
         self.save.label_set("Remember Me")
@@ -130,11 +140,13 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             accv = accv[0]
         accv.password = password
 
+        #TODO: presence
+
         accv.save = self.save.state_get()
         accv.save_password = self.save_password.state_get()
         accv.autologin = self.autologin.state_get()
 
-        self._amsn_core.signinToAccount(self, accv)
+        self._core.signinToAccount(self, accv)
 
     def onConnecting(self, progress, message):
         self._edje.signal_emit("connecting", "")
