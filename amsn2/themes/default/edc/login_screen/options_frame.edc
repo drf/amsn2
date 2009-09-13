@@ -3,7 +3,7 @@ CREATE_FRAME("options_frame", "fields_frame", 76)
 #define CREATE_OPTION(NAME, OFFSET)                \
   part {                                           \
     name: NAME;                                    \
-    type: TEXT;                                    \
+    type: SWALLOW;                                 \
     clip_to: "options_frame";                      \
     description {                                  \
       min: 50 20;                                  \
@@ -18,14 +18,6 @@ CREATE_FRAME("options_frame", "fields_frame", 76)
         to: "options_frame";                       \
         relative: 0.8 0.0;                         \
         offset: 0 (OFFSET+20);                     \
-      }                                            \
-      text {                                       \
-        align: 0.0 0.5;                            \
-        font: "VeraBd";                            \
-        size: 10;                                  \
-        text: NAME;                                \
-        min: 0 0;                                  \
-        elipsis: 0.0;                              \
       }                                            \
     }                                              \
   }

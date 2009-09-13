@@ -61,6 +61,22 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         #TODO: login_screen.status
 
+        self.save = elementary.Check(self._edje)
+        self.save.label_set("Remember Me")
+        self._edje.part_swallow("login_screen.remember_me", self.save)
+        self.save.show()
+
+        self.save_password = elementary.Check(self._edje)
+        self.save_password.label_set("Remember Password")
+        self._edje.part_swallow("login_screen.remember_password",
+                                self.save_password)
+        self.save_password.show()
+
+        self.autologin = elementary.Check(self._edje)
+        self.autologin.label_set("Auto Login")
+        self._edje.part_swallow("login_screen.auto_login", self.autologin)
+        self.autologin.show()
+
         if self._edje.part_exists("login_screen.signin"):
            self.signin_b = elementary.Button(self._edje)
            self.signin_b.label_set("Sign in")
@@ -96,6 +112,10 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             acc = accountviews[0]
             self.username.entry_set(acc.email)
             self.password.entry_set(acc.password)
+            #TODO: presence
+            self.save.state_set(acc.save)
+            self.save_password.state_set(acc.save_password)
+            self.autologin.state_set(acc.autologin)
 
 
     def signin(self):
@@ -109,6 +129,10 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         else:
             accv = accv[0]
         accv.password = password
+
+        accv.save = self.save.state_get()
+        accv.save_password = self.save_password.state_get()
+        accv.autologin = self.autologin.state_get()
 
         self._amsn_core.signinToAccount(self, accv)
 
