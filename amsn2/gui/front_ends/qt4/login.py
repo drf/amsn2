@@ -158,23 +158,26 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
 
         sender = self.sender().objectName()
         #just like wlm :)
-        if sender == "checkRememberMe" and bool == True:
-            accv.save = True
-        if sender == "checkRememberMe" and bool == False:
-            if self.ui.checkRememberPass.isChecked():
-                self.ui.checkRememberPass.setChecked(False)
-            if self.ui.checkSignInAuto.isChecked():
-                self.ui.checkSignInAuto.setChecked(False)
-        if sender == "checkRememberPass" and bool == True:
-            accv.save_password = True
-            if self.ui.checkRememberMe.isChecked() == False:
-                self.ui.checkRememberMe.setChecked(True)
-        if sender == "checkRememberPass" and bool == False:
-            if self.ui.checkSignInAuto.isChecked():
-                self.ui.checkSignInAuto.setChecked(False)
-        if sender == "checkSignInAuto" and bool == True:
-            accv.autologin = True
-            if self.ui.checkRememberMe.isChecked() == False:
-                self.ui.checkRememberMe.setChecked(True)
-            if self.ui.checkRememberPass.isChecked() == False:
-                self.ui.checkRememberPass.setChecked(True)
+        if sender == "checkRememberMe":
+            if bool == True:
+                accv.save = True
+            else:
+                if self.ui.checkRememberPass.isChecked():
+                    self.ui.checkRememberPass.setChecked(False)
+                if self.ui.checkSignInAuto.isChecked():
+                    self.ui.checkSignInAuto.setChecked(False)
+        elif sender == "checkRememberPass":
+            if bool == True:
+                accv.save_password = True
+                if self.ui.checkRememberMe.isChecked() == False:
+                    self.ui.checkRememberMe.setChecked(True)
+            else:
+                if self.ui.checkSignInAuto.isChecked():
+                    self.ui.checkSignInAuto.setChecked(False)
+        elif sender == "checkSignInAuto":
+            if bool == True:
+                accv.autologin = True
+                if self.ui.checkRememberMe.isChecked() == False:
+                    self.ui.checkRememberMe.setChecked(True)
+                if self.ui.checkRememberPass.isChecked() == False:
+                    self.ui.checkRememberPass.setChecked(True)
