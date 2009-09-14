@@ -351,21 +351,27 @@ color: white;
            </item>
            <item>
             <widget class="QCheckBox" name="checkRememberMe">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>Remember me</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QCheckBox" name="checkRememberPass">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>Remember my password</string>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
             </widget>
            </item>

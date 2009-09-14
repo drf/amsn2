@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from amsn2.gui import base
-from amsn2.core.views import AccountView
+from amsn2.core.views import AccountView, ImageView
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -55,6 +55,9 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         QObject.connect(self.ui.styleDesktop, SIGNAL("clicked()"), self.setTestStyle)
         QObject.connect(self.ui.styleRounded, SIGNAL("clicked()"), self.setTestStyle)
         QObject.connect(self.ui.styleWLM, SIGNAL("clicked()"), self.setTestStyle)
+        QObject.connect(self.ui.checkRememberMe, SIGNAL("toggled(bool)"), self.__on_toggled_cb)
+        QObject.connect(self.ui.checkRememberPass, SIGNAL("toggled(bool)"), self.__on_toggled_cb)
+        QObject.connect(self.ui.checkSignInAuto, SIGNAL("toggled(bool)"), self.__on_toggled_cb)
         self.setTestStyle()
 
         # status list
@@ -115,6 +118,10 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
             self.ui.linePassword.clear()
             self.ui.linePassword.insert(accv.password)
 
+        self.ui.checkRememberMe.setChecked(accv.save)
+        self.ui.checkRememberPass.setChecked(accv.save_password)
+        self.ui.checkSignInAuto.setChecked(accv.autologin)
+
     def signin(self):
         self.loginThrobber = LoginThrobber(self)
         self._parent.fadeIn(self.loginThrobber)
@@ -129,7 +136,45 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         accv.password = self.ui.linePassword.text().toLatin1().data()
         accv.presence = self.status_dict[str(self.ui.comboStatus.currentText())]
 
+        accv.save = self.ui.checkRememberMe.isChecked()
+        accv.save_password = self.ui.checkRememberPass.isChecked()
+        accv.autologin = self.ui.checkSignInAuto.isChecked()
+
         self._amsn_core.signinToAccount(self, accv)
 
     def onConnecting(self, progress, message):
         self.loginThrobber.status.setText(str(message))
+
+    def __on_toggled_cb(self, bool):
+        email = str(self.ui.comboAccount.currentText())
+        accv = self.getAccountViewFromEmail(email)
+
+        if accv is None:
+            accv = AccountView()
+            accv.email = email
+            accv.save = False
+            accv.save_password = False
+            accv.autologin = False
+
+        sender = self.sender().objectName()
+        #just like wlm :)
+        if sender == "checkRememberMe" and bool == True:
+            accv.save = True
+        if sender == "checkRememberMe" and bool == False:
+            if self.ui.checkRememberPass.isChecked():
+                self.ui.checkRememberPass.setChecked(False)
+            if self.ui.checkSignInAuto.isChecked():
+                self.ui.checkSignInAuto.setChecked(False)
+        if sender == "checkRememberPass" and bool == True:
+            accv.save_password = True
+            if self.ui.checkRememberMe.isChecked() == False:
+                self.ui.checkRememberMe.setChecked(True)
+        if sender == "checkRememberPass" and bool == False:
+            if self.ui.checkSignInAuto.isChecked():
+                self.ui.checkSignInAuto.setChecked(False)
+        if sender == "checkSignInAuto" and bool == True:
+            accv.autologin = True
+            if self.ui.checkRememberMe.isChecked() == False:
+                self.ui.checkRememberMe.setChecked(True)
+            if self.ui.checkRememberPass.isChecked() == False:
+                self.ui.checkRememberPass.setChecked(True)
