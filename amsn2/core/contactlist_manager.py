@@ -25,7 +25,7 @@ class aMSNContactListManager:
 
         #1st/ update the aMSNContact object
         c = self.getContact(papyon_contact.id, papyon_contact)
-        c.fill(self._core, papyon_contact)
+        c.fill(papyon_contact)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
         self._em.emit(self._em.events.CONTACTVIEW_UPDATED, cv)
@@ -35,7 +35,6 @@ class aMSNContactListManager:
     def onContactDPChanged(self, papyon_contact):
         """ Called when a contact changes its Display Picture. """
 
-        #TODO: add local cache for DPs
         #Request the DP...
         c = self.getContact(papyon_contact.id, papyon_contact)
         if ("Theme", "dp_nopic") in c.dp.imgs:
@@ -49,9 +48,9 @@ class aMSNContactListManager:
 
         if (papyon_contact.presence is not papyon.Presence.OFFLINE and
             papyon_contact.msn_object):
-                self._core._account.client.msn_object_store.request(papyon_contact.msn_object,
-                                                                     (self.onDPdownloaded,
-                                                                      papyon_contact.id))
+            self._core._account.client.msn_object_store.request(papyon_contact.msn_object,
+                                                                (self.onDPdownloaded,
+                                                                 papyon_contact.id))
 
     def onDPdownloaded(self, msn_object, uid):
         #1st/ update the aMSNContact object
@@ -59,12 +58,17 @@ class aMSNContactListManager:
             c = self.getContact(uid)
         except ValueError:
             return
-        # TODO: use backend and msn_object cache
-        (fno, tf) = tempfile.mkstemp()
-        f = os.fdopen(fno, 'w+b')
-        f.write(msn_object._data.read())
-        f.close()
-        c.dp.load("Filename", tf)
+        fn = self._core._backend_manager.getFileLocationDP(c.account, uid,
+                                                           msn_object._data_sha)
+        try:
+            f = open(fn, 'w+b', 0700)
+            try:
+                f.write(msn_object._data.read())
+            finally:
+                f.close()
+        except IOError:
+            return
+        c.dp.load("Filename", fn)
         self._em.emit(self._em.events.AMSNCONTACT_UPDATED, c)
         #2nd/ update the ContactView
         cv = ContactView(self._core, c)
@@ -223,6 +227,7 @@ class aMSNContact():
         @param papyon_contact:
         @type papyon_contact: papyon.profile.Contact
         """
+        self._core = core
 
         self.account  = ''
         self.groups = set()
@@ -238,24 +243,23 @@ class aMSNContact():
                 self.dp.load("Theme", "dp_nopic")
             else:
                 self.dp.load("Theme", "dp_loading")
-            self.fill(core, papyon_contact)
+            self.fill(papyon_contact)
 
         else:
             self.dp.load("Theme", "dp_nopic")
             self.uid = None
 
-    def fill(self, core, papyon_contact):
+    def fill(self, papyon_contact):
         """
         Fills the aMSNContact structure.
 
-        @type core: aMSNCore
         @type papyon_contact: papyon.profile.Contact
         """
 
         self.uid = papyon_contact.id
         self.account = papyon_contact.account
-        self.icon.load("Theme","buddy_" + core.p2s[papyon_contact.presence])
-        self.emblem.load("Theme", "emblem_" + core.p2s[papyon_contact.presence])
+        self.icon.load("Theme","buddy_" + self._core.p2s[papyon_contact.presence])
+        self.emblem.load("Theme", "emblem_" + self._core.p2s[papyon_contact.presence])
         #TODO: PARSE ONLY ONCE
         self.nickname.reset()
         self.nickname.appendText(papyon_contact.display_name)
@@ -264,8 +268,19 @@ class aMSNContact():
         self.current_media.reset()
         self.current_media.appendText(papyon_contact.current_media)
         self.status.reset()
-        self.status.appendText(core.p2s[papyon_contact.presence])
+        self.status.appendText(self._core.p2s[papyon_contact.presence])
 
+        #DP:
+        if papyon_contact.msn_object:
+            fn = self._core._backend_manager.getFileLocationDP(
+                    papyon_contact.account,
+                    papyon_contact.id,
+                    papyon_contact.msn_object._data_sha)
+            if os.path.exists(fn):
+                self.dp.load("Filename", fn)
+            else:
+                #TODO: request?
+                pass
         # ro, can be changed indirectly with addressbook's actions
         self.memberships = papyon_contact.memberships
         self.contact_type = papyon_contact.contact_type

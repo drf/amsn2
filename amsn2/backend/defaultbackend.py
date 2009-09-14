@@ -20,8 +20,6 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
     def __init__(self):
         defaultaccountbackend.defaultaccountbackend.__init__(self)
 
-        self.config_dir = self.accounts_dir
-
     def saveConfig(self, account, config):
         #TODO: improve
         root_section = Element("aMSNConfig")
@@ -32,7 +30,8 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
                               name=str(e))
             elmt.text = str(val)
 
-        accpath = os.path.join(self.getAccountDir(account.view.email), "config.xml")
+        accpath = os.path.join(self.accounts_dir, self._getDir(account.view.email),
+                               "config.xml")
         xml_tree = ElementTree(root_section)
         xml_tree.write(accpath, encoding='utf-8')
 
@@ -40,9 +39,10 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
         c = aMSNConfig()
         c.setKey("ns_server", "messenger.hotmail.com")
         c.setKey("ns_port", 1863)
-        
-        self.config_dir = self.getAccountDir(account.view.email)
-        configpath = os.path.join(self.config_dir, "config.xml")
+
+        configpath = os.join(self.accounts_dir,
+                                  self._getDir(account.view.email),
+                                  "config.xml")
         try:
             configfile = file(configpath, "r")
         except IOError:

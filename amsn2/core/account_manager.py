@@ -89,6 +89,7 @@ class aMSNAccountManager(object):
         else:
             self._core._backend_manager.removeAccount(accountview.email)
             self._core._backend_manager.switchToBackend('nullbackend')
+        acc.backend_manager.setAccount(accountview.email)
 
         acc.lock()
         return acc

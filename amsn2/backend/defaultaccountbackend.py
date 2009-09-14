@@ -33,8 +33,8 @@ class defaultaccountbackend(basebackend.basebackend):
 
     def loadAccount(self, email):
         accview = None
-        accdir = self.getAccountDir(email)
-        accpath = os.path.join(accdir, "account.xml")
+        self.createAccountFileTree(email)
+        accpath = os.path.join(self.account_dir, "account.xml")
         accfile = file(accpath, "r")
         root_tree = ElementTree(file=accfile)
         accfile.close()
@@ -90,6 +90,7 @@ class defaultaccountbackend(basebackend.basebackend):
             #TODO: preferred_ui ?
 
             accview.save = True
+
         return accview
 
     def loadAccounts(self):
@@ -104,63 +105,78 @@ class defaultaccountbackend(basebackend.basebackend):
                 accountviews.append(accv)
         return accountviews
 
+    def createAccountFileTree(self, email):
+        self.account_dir = os.path.join(self.accounts_dir, self._getDir(email))
+        if not os.path.isdir(self.account_dir):
+                os.makedirs(self.account_dir, 0700)
+        self.dps_dir = os.path.join(self.account_dir, "displaypics")
+        if not os.path.isdir(self.dps_dir):
+                os.makedirs(self.dps_dir, 0700)
+
+    def setAccount(self, email):
+        self.createAccountFileTree(email)
+
     def saveAccount(self, amsn_account):
-        accdir = self.getAccountDir(amsn_account.view.email)
-        if not os.path.isdir(accdir):
-                os.makedirs(accdir, 0700)
+        if amsn_account.view is None or amsn_account.view.email is None:
+            return false
+
+        self.createAccountFileTree(amsn_account.view.email)
         amsn_account.backend_manager.saveConfig(amsn_account, amsn_account.config)
         #TODO: integrate with personnalinfo
-        if amsn_account.view is not None and amsn_account.view.email is not None:
-            root_section = Element("aMSNAccount")
-            #email
-            emailElmt = SubElement(root_section, "email")
-            emailElmt.text = amsn_account.view.email
-            #nick
-            nick = str(amsn_account.view.nick)
-            nickElmt = SubElement(root_section, "nick")
-            nickElmt.text = nick
-            #psm
-            psm = str(amsn_account.view.psm)
-            psmElmt = SubElement(root_section, "psm")
-            psmElmt.text = psm
-            #presence
-            presenceElmt = SubElement(root_section, "presence")
-            presenceElmt.text = amsn_account.view.presence
-            #password
-            if amsn_account.view.save_password:
-                passwdElmt = SubElement(root_section, "password")
-                passwdElmt.text = amsn_account.view.password
-            #dp
-            #TODO ask the backend
-            dpElmt = SubElement(root_section, "dp")
-            #TODO
+        root_section = Element("aMSNAccount")
+        #email
+        emailElmt = SubElement(root_section, "email")
+        emailElmt.text = amsn_account.view.email
+        #nick
+        nick = str(amsn_account.view.nick)
+        nickElmt = SubElement(root_section, "nick")
+        nickElmt.text = nick
+        #psm
+        psm = str(amsn_account.view.psm)
+        psmElmt = SubElement(root_section, "psm")
+        psmElmt.text = psm
+        #presence
+        presenceElmt = SubElement(root_section, "presence")
+        presenceElmt.text = amsn_account.view.presence
+        #password
+        if amsn_account.view.save_password:
+            passwdElmt = SubElement(root_section, "password")
+            passwdElmt.text = amsn_account.view.password
+        #dp
+        #TODO ask the backend
+        dpElmt = SubElement(root_section, "dp")
+        #TODO
 
-            #TODO: save or not, preferred_ui
-            #
-            #save password
-            savePassElmt = SubElement(root_section, "save_password")
-            savePassElmt.text = str(amsn_account.view.save_password)
-            #autologin
-            autologinElmt = SubElement(root_section, "autoconnect")
-            autologinElmt.text = str(amsn_account.view.autologin)
-            #TODO: backend for config/logs/...
+        #TODO: save or not, preferred_ui
+        #
+        #save password
+        savePassElmt = SubElement(root_section, "save_password")
+        savePassElmt.text = str(amsn_account.view.save_password)
+        #autologin
+        autologinElmt = SubElement(root_section, "autoconnect")
+        autologinElmt.text = str(amsn_account.view.autologin)
+        #TODO: backend for config/logs/...
 
-            accpath = os.path.join(accdir, "account.xml")
-            xml_tree = ElementTree(root_section)
-            xml_tree.write(accpath, encoding='utf-8')
+        accpath = os.path.join(self.account_dir, "account.xml")
+        xml_tree = ElementTree(root_section)
+        xml_tree.write(accpath, encoding='utf-8')
 
     def removeAccount(self, email):
-        accdir = self.getAccountDir(email)
+        accdir = os.path.join(self.accounts_dir, self._getDir(email))
         if os.path.isdir(accdir):
-                for [root, subdirs, subfiles] in os.walk(accdir, False):
-                    for subfile in subfiles:
-                        os.remove(os.path.join(root, subfile))
-                    for subdir in subdirs:
-                        os.rmdir(os.path.join(root, subdir))
-                os.rmdir(accdir)
+            for [root, subdirs, subfiles] in os.walk(accdir, False):
+                for subfile in subfiles:
+                    os.remove(os.path.join(root, subfile))
+                for subdir in subdirs:
+                    os.rmdir(os.path.join(root, subdir))
+            os.rmdir(accdir)
 
-    def getAccountDir(self, email):
-        return os.path.join(self.accounts_dir,
-                            email.lower().strip().replace("@","_at_"))
+    """ DPs """
+    def getFileLocationDP(self, email, uid, shac):
+        dir = os.path.join(self.dps_dir, self._getDir(email))
+        if not os.path.isdir(self.dps_dir):
+            os.makedirs(self.dps_dir, 0700)
+        return os.path.join(dir, shac+".img")
 
-
+    def _getDir(self, email):
+        return email.lower().strip().replace("@","_at_")

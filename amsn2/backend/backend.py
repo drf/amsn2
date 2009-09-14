@@ -31,8 +31,12 @@ class aMSNBackendManager(object):
         self.setBackendForFunc('loadAccount', self._backend)
         self.setBackendForFunc('loadAccounts', self._backend)
         self.setBackendForFunc('saveAccount', self._backend)
+        self.setBackendForFunc('setAccount', self._backend)
         self.setBackendForFunc('removeAccount', self._backend)
         self.setBackendForFunc('clean', self._backend)
+
+        # DP
+        self.setBackendForFunc('getFileLocationDP', self._backend)
 
         # Logs management methods
         # MSNObjects cache methods (Smileys, DPs, ...)
