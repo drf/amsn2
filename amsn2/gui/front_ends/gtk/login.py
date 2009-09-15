@@ -25,9 +25,12 @@ import os
 import gtk
 import gobject
 import string
+import logging
 
 from image import *
 from amsn2.core.views import AccountView, ImageView
+
+logger = logging.getLogger('amsn2.gtk.login')
 
 class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
@@ -225,7 +228,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             gobject.source_remove(self.timer)
 
     def __switch_to_account(self, email):
-        print "Switching to account", email
+        logger.info("Switching to account %s", email)
 
         accv = self.getAccountViewFromEmail(email)
 

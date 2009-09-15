@@ -242,18 +242,52 @@ class aMSNCore(object):
 
         self._gui.gui.aMSNContactDeleteWindow('Contact to remove: ', contactCB, ())
 
+    def changeDP(self):
+        def set_dp(view):
+            path = view.imgs[0][1]
+            f = open(path)
+            dp_obj = papyon.p2p.MSNObject(self._account.client.profile,
+                                          os.path.getsize(path),
+                                          papyon.p2p.MSNObjectType.DISPLAY_PICTURE,
+                                          f.name, f.name, data=f)
+            self._account.client.msn_object_store.publish(dp_obj)
+            self._personalinfo_manager._personalinfoview.dp = dp_obj
+
+        def open_file():
+            def update_dplist(file_path):
+                # TODO: fire up a window to choose the dp size and a friendly name
+                # TODO: save the new image in a local cache
+                dp_view = ImageView('Filename', file_path)
+                dpwin.update_dp_list((dp_view, ))
+            filters = {'Image files':("*.png", "*.jpeg", "*.jpg", "*.gif", "*.bmp"),
+                       'All files':('*.*')}
+            directory = os.path.join("amsn2", "themes", "displaypic", "default")
+            self._gui.gui.aMSNFileChooserWindow(filters, directory, update_dplist)
+
+        def capture():
+            pass
+
+        default_dps = ('dp_amsn', 'dp_female', 'dp_male', 'dp_nopic')
+        user_dps = [ImageView('Filename', self._theme_manager.get_dp(dp)[1]) for dp in default_dps]
+        dpwin = self._gui.gui.aMSNDPChooserWindow(user_dps,
+                                                  (('Capture', capture),
+                                                   ('Open file', open_file)),
+                                                  set_dp)
+
     def createMainMenuView(self):
         menu = MenuView()
-        quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
-                                    = self.quit)
+        quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit",
+                                    command = self.quit)
         logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out", 
                                       command = self.signOutOfAccount)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
         mainMenu.addItem(logOutMenuItem)
         mainMenu.addItem(quitMenuItem)
 
-        addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact", command=self.addContact)
-        removeContact = MenuItemView(MenuItemView.COMMAND, label='Remove contact', command=self.removeContact)
+        addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact",
+                                      command=self.addContact)
+        removeContact = MenuItemView(MenuItemView.COMMAND, label='Remove contact',
+                                     command=self.removeContact)
 
         contactsMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Contacts")
         contactsMenu.addItem(addContactItem)

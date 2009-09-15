@@ -55,9 +55,8 @@ class aMSNPersonalInfoManager:
         # TODO: tell the core to invoke a file chooser and change DP
         pass
 
-    def _onDPChanged(self, new_dp):
-        # TODO: manage msn_objects
-        self._papyon_profile.msn_object = new_dp
+    def _onDPChanged(self, dp_msnobj):
+        self._papyon_profile.msn_object = dp_msnobj
 
     """ Actions from the core """
     def _onCMChanged(self, new_media):
@@ -78,7 +77,8 @@ class aMSNPersonalInfoManager:
 
     def onDPUpdated(self, dp):
         self._personalinfoview._image.reset()
-        self._personalinfoview._image.load(dp)
+        # TODO: use backend manager
+        #self._personalinfoview._image.load(dp)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
     def onPresenceUpdated(self, presence):

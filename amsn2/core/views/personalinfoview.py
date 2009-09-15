@@ -41,8 +41,8 @@ class PersonalInfoView(object):
     def dp():
         def fget(self):
             return self._image
-        def fset(self, imagev):
-            self._personalinfo_manager._onDPChanged(imagev)
+        def fset(self, dp_msnobj):
+            self._personalinfo_manager._onDPChanged(dp_msnobj)
         return locals()
 
     @rw_property
