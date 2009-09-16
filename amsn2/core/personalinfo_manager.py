@@ -51,10 +51,6 @@ class aMSNPersonalInfoManager:
                 break
         self._papyon_profile.presence = key
 
-    def _onDPChangeRequest(self):
-        # TODO: tell the core to invoke a file chooser and change DP
-        pass
-
     def _onDPChanged(self, dp_msnobj):
         self._papyon_profile.msn_object = dp_msnobj
 
@@ -75,10 +71,10 @@ class aMSNPersonalInfoManager:
         self._personalinfoview._psm.appendText(psm)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
-    def onDPUpdated(self, dp):
+    def onDPUpdated(self, dp_msnobj):
         self._personalinfoview._image.reset()
         # TODO: use backend manager
-        #self._personalinfoview._image.load(dp)
+        self._personalinfoview._image.load('Filename', dp_msnobj._data.name)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
     def onPresenceUpdated(self, presence):

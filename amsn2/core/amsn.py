@@ -278,7 +278,7 @@ class aMSNCore(object):
         menu = MenuView()
         quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit",
                                     command = self.quit)
-        logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out", 
+        logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out",
                                       command = self.signOutOfAccount)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
         mainMenu.addItem(logOutMenuItem)

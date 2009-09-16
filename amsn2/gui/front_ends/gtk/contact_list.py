@@ -269,6 +269,10 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         message = str(psm)+' '+str(cm)
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
+        imview = self._myview.dp
+        if len(imview.imgs) > 0:
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(imview.imgs[0][1], 64, 64)
+            self.display.set_from_pixbuf(pixbuf)
 
     def onStatusChanged(self, combobox):
         status = combobox.get_active()
