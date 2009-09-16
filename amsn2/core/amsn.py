@@ -33,6 +33,9 @@ from event_manager import *
 import papyon
 import logging
 
+import Image
+import tempfile
+
 # Top-level loggers
 papyon_logger = logging.getLogger("papyon")
 logger = logging.getLogger("amsn2")
@@ -256,8 +259,12 @@ class aMSNCore(object):
         def open_file():
             def update_dplist(file_path):
                 # TODO: fire up a window to choose the dp size and a friendly name
-                # TODO: save the new image in a local cache
-                dp_view = ImageView('Filename', file_path)
+                # TODO: save the new image in a local cache instead of a temp file
+                im = Image.open(file_path)
+                im.resize((96, 96), Image.BILINEAR)
+                fd, path = tempfile.mkstemp()
+                im.save(path, "PNG")
+                dp_view = ImageView('Filename', path)
                 dpwin.update_dp_list((dp_view, ))
             filters = {'Image files':("*.png", "*.jpeg", "*.jpg", "*.gif", "*.bmp"),
                        'All files':('*.*')}
