@@ -18,6 +18,11 @@ class aMSNWindow(elementary.Window, base.aMSNWindow):
         self.name_class_set = (WM_NAME, WM_CLASS)
         #self._has_menu = False
 
+        self._bg = elementary.Background(self)
+        self.resize_object_add(self._bg)
+        self._bg.size_hint_weight_set(1.0, 1.0)
+        self._bg.show()
+
     @property
     def _evas(self):
         return self.canvas
@@ -29,12 +34,6 @@ class aMSNWindow(elementary.Window, base.aMSNWindow):
         self.title_set(text)
 
     def setMenu(self, menu):
-        pass
-
-    def setChild(self, child):
-        pass
-
-    def getChild(self):
         pass
 
     def toggleMenu(self):
