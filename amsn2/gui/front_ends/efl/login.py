@@ -97,17 +97,35 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         self.save = elementary.Check(self._edje)
         self.save.label_set("Remember Me")
+        def cb(obj, event_info, data):
+            if obj.state_get():
+                self.save_password.disabled_set(False)
+            else:
+                self.save_password.disabled_set(True)
+                self.save_password.state_set(False)
+                self.autologin.disabled_set(True)
+                self.autologin.state_set(False)
+        self.save._callback_add("changed", cb)
         self._edje.part_swallow("login_screen.remember_me", self.save)
         self.save.show()
 
         self.save_password = elementary.Check(self._edje)
         self.save_password.label_set("Remember Password")
+        self.save_password.disabled_set(True)
+        def cb(obj, event_info, data):
+            if obj.state_get():
+                self.autologin.disabled_set(False)
+            else:
+                self.autologin.disabled_set(True)
+                self.autologin.state_set(False)
+        self.save_password._callback_add("changed", cb)
         self._edje.part_swallow("login_screen.remember_password",
                                 self.save_password)
         self.save_password.show()
 
         self.autologin = elementary.Check(self._edje)
         self.autologin.label_set("Auto Login")
+        self.autologin.disabled_set(True)
         self._edje.part_swallow("login_screen.auto_login", self.autologin)
         self.autologin.show()
 
@@ -159,7 +177,15 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             ic.show()
 
             self.save.state_set(acc.save)
+            if acc.save:
+                self.save_password.disabled_set(False)
+            else:
+                self.save_password.disabled_set(True)
             self.save_password.state_set(acc.save_password)
+            if acc.save_password:
+                self.autologin.disabled_set(False)
+            else:
+                self.autologin.disabled_set(True)
             self.autologin.state_set(acc.autologin)
 
 
