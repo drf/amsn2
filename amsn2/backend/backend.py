@@ -1,7 +1,8 @@
 
 class aMSNBackendManager(object):
-    def __init__(self):
+    def __init__(self, core):
         self._backend = None
+        self._core = core
         self.switchToBackend('nullbackend')
 
     def setBackendForFunc(self, funcname, backend):
@@ -21,6 +22,7 @@ class aMSNBackendManager(object):
 
         del self._backend
         self._backend = backend_class()
+        self._backend._core = self._core
         self.current_backend = backend
 
         # Config management methods

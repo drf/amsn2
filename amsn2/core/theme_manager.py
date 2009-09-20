@@ -24,7 +24,8 @@
 import os
 
 class aMSNThemeManager:
-    def __init__(self):
+    def __init__(self, core):
+        self._core = core
         self._buttons = {}
         self._statusicons = {}
         self._displaypic = {}
