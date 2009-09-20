@@ -64,8 +64,32 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         for key in self._core.p2s:
             name = self._core.p2s[key]
             _, path = self._core._theme_manager.get_statusicon("buddy_%s" % name)
-            if (name == 'offline'): continue
-            self.presence.item_add(name, path, elementary.ELM_ICON_FILE, None)
+            if name == 'offline': continue
+            def cb(data, hoversel, it):
+                hoversel.label_set(it.label_get())
+                (icon_file, icon_group, icon_type) = it.icon_get()
+                ic = elementary.Icon(hoversel)
+                ic.scale_set(0, 1)
+                if icon_type == elementary.ELM_ICON_FILE:
+                    ic.file_set(icon_file, icon_group)
+                else:
+                    ic.standart_set(icon_file)
+                hoversel.icon_set(ic)
+                ic.show()
+                self.presence_key = data
+
+            self.presence.item_add(name, path, elementary.ELM_ICON_FILE, cb,
+                                   key)
+
+        self.presence_key = self._core.Presence.ONLINE
+        self.presence.label_set(self._core.p2s[self.presence_key])
+        ic = elementary.Icon(self.presence)
+        ic.scale_set(0, 1)
+        _, path = self._core._theme_manager.get_statusicon("buddy_%s" %
+                            self._core.p2s[self.presence_key])
+        ic.file_set(path)
+        self.presence.icon_set(ic)
+        ic.show()
         self.presence.size_hint_weight_set(0.0, 0.0)
         self.presence.size_hint_align_set(0.5, 0.5)
         self._edje.part_swallow("login_screen.presence", self.presence)
@@ -116,13 +140,24 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
 
     def setAccounts(self, accountviews):
+        #TODO: support more than just 1 account...
         self._account_views = accountviews
         if accountviews:
             #Only select the first one
             acc = accountviews[0]
             self.username.entry_set(acc.email)
             self.password.entry_set(acc.password)
-            #TODO: presence
+
+            self.presence_key = acc.presence
+            self.presence.label_set(self._core.p2s[self.presence_key])
+            ic = elementary.Icon(self.presence)
+            ic.scale_set(0, 1)
+            _, path = self._core._theme_manager.get_statusicon("buddy_%s" %
+                                self._core.p2s[self.presence_key])
+            ic.file_set(path)
+            self.presence.icon_set(ic)
+            ic.show()
+
             self.save.state_set(acc.save)
             self.save_password.state_set(acc.save_password)
             self.autologin.state_set(acc.autologin)
@@ -140,7 +175,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             accv = accv[0]
         accv.password = password
 
-        #TODO: presence
+        accv.presence = self.presence_key
 
         accv.save = self.save.state_get()
         accv.save_password = self.save_password.state_get()
