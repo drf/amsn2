@@ -20,8 +20,7 @@ try:
     imp.find_module("evas")
     imp.find_module("edje")
     imp.find_module("ecore")
-    #TODO FIXME
-    #imp.find_module("elementary")
+    imp.find_module("elementary")
 
     gui.GUIManager.registerFrontEnd("efl", sys.modules[__name__])
 
