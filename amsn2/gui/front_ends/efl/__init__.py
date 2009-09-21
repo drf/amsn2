@@ -1,6 +1,7 @@
 
 from amsn2 import gui
 import sys
+import traceback
 
 # Here we load the actual front end.
 # We need to import the front end module and return it
@@ -9,7 +10,9 @@ def load():
     try:
         import efl
         return efl
-    except ImportError:
+    except ImportError, e:
+        etype, value, tb = sys.exc_info()
+        traceback.print_exception(etype, value, tb.tb_next)
         return None
 
 
