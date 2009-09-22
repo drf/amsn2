@@ -7,6 +7,7 @@ class aMSNPersonalInfoManager:
         """
 
         self._core = core
+        self._backend_manager = core._backend_manager
         self._em = core._event_manager
         self._personalinfoview = PersonalInfoView(self)
         self._papyon_profile = None
@@ -73,8 +74,10 @@ class aMSNPersonalInfoManager:
 
     def onDPUpdated(self, dp_msnobj):
         self._personalinfoview._image.reset()
-        # TODO: use backend manager
-        self._personalinfoview._image.load('Filename', dp_msnobj._data.name)
+        path = self._backend_manager.getFileLocationDP(self._papyon_profile.account,
+                                                       self._papyon_profile.id,
+                                                       dp_msnobj._data_sha)
+        self._personalinfoview._image.load('Filename', path)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
     def onPresenceUpdated(self, presence):

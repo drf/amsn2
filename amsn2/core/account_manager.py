@@ -1,7 +1,12 @@
 import os
+import Image
+import logging
+import papyon
 import __builtin__
 from views import AccountView
 from views import StringView
+
+logger = logging.getLogger('amsn2.core.account_manager')
 
 class aMSNAccount(object):
     """ aMSNAccount : a Class to represent an aMSN account
@@ -20,6 +25,7 @@ class aMSNAccount(object):
         self.personalinfoview = core._personalinfo_manager._personalinfoview
         self.do_save = accountview.save
         self.backend_manager = core._backend_manager
+        self.client = None
         self.lock()
         self.load()
 
@@ -46,6 +52,41 @@ class aMSNAccount(object):
         self.view.psm = self.personalinfoview.psm
         self.view.dp = self.personalinfoview.dp
         self.backend_manager.saveAccount(self)
+
+    def set_dp(self, path):
+        if path:
+            try:
+                im = Image.open(path)
+                im.resize((96, 96), Image.BILINEAR)
+
+                # Write the file and rename it instead of creating a tmpfile
+                profile = self.client.profile
+                dp_path_tmp = self.backend_manager.getFileLocationDP(self.view.email, profile.id, 'tmp')
+                im.save(dp_path_tmp, "PNG")
+                f = open(dp_path_tmp)
+                dp_object = papyon.p2p.MSNObject(self.client.profile,
+                                                 os.path.getsize(dp_path_tmp),
+                                                 papyon.p2p.MSNObjectType.DISPLAY_PICTURE,
+                                                 os.path.basename(path),
+                                                 os.path.basename(path),
+                                                 data=f)
+                f.close()
+
+                dp_path = self.backend_manager.getFileLocationDP(self.view.email, profile.id, dp_object._data_sha)
+                os.rename(dp_path_tmp, dp_path)
+
+            except OSError, e:
+                # FIXME: on Windows, it's raised if dp_path already exists
+                # http://docs.python.org/library/os.html#os.rename
+                logger.error('Trying to overwrite a saved dp')
+                return
+
+            except IOError, e:
+                logger.error(e)
+                return
+
+            self.client.msn_object_store.publish(dp_object)
+            self.personalinfoview.dp = dp_object
 
 class aMSNAccountManager(object):
     """ aMSNAccountManager : The account manager that takes care of storing

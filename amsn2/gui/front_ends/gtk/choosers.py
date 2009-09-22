@@ -10,12 +10,13 @@ class aMSNFileChooserWindow(base.aMSNFileChooserWindow, gtk.FileChooserDialog):
                                     buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                              gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-        for name in filters.keys():
-            filefilter = gtk.FileFilter()
-            filefilter.set_name(name)
-            for ext in filters[name]:
-                filefilter.add_pattern(ext)
-            self.add_filter(filefilter)
+        if filters:
+            for name in filters.keys():
+                filefilter = gtk.FileFilter()
+                filefilter.set_name(name)
+                for ext in filters[name]:
+                    filefilter.add_pattern(ext)
+                self.add_filter(filefilter)
 
         toggle = gtk.CheckButton("Show hidden files")
         toggle.show()
@@ -28,7 +29,8 @@ class aMSNFileChooserWindow(base.aMSNFileChooserWindow, gtk.FileChooserDialog):
 
         self.callback = callback
         #self.set_size_request(500, 400)
-        self.set_current_folder_uri(directory)
+        if directory:
+            self.set_current_folder_uri(directory)
 
         self.connect('selection-changed', self.activatePreview)
         self.connect('response', self.onResponse)
@@ -56,7 +58,7 @@ class aMSNFileChooserWindow(base.aMSNFileChooserWindow, gtk.FileChooserDialog):
         
 
 class aMSNDPChooserWindow(base.aMSNDPChooserWindow, gtk.Window):
-    def __init__(self, default_dps, actions, callback):
+    def __init__(self, callback, backend_manager):
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
         self.showed = False
         self.set_default_size(550, 450)
@@ -64,13 +66,21 @@ class aMSNDPChooserWindow(base.aMSNDPChooserWindow, gtk.Window):
         self.set_title("aMSN - Choose a Display Picture")
         self.callback = callback
         self.view = None
-
         self.child = None
+
+        actions = (('Open file', self._open_file), )
+        default_dps = []
         self._setup_boxes(actions)
-        self.update_dp_list(default_dps)
+        for dp in default_dps:
+            self._update_dp_list(default_dps)
 
         self.show()
         self.show_all()
+
+    def _open_file(self):
+        filters = {'Image files':("*.png", "*.jpeg", "*.jpg", "*.gif", "*.bmp"),
+                   'All files':('*.*')}
+        aMSNFileChooserWindow(filters, None, self._update_dp_list)
 
     def _setup_boxes(self, actions):
         tscroll = gtk.ScrolledWindow()
@@ -136,9 +146,14 @@ class aMSNDPChooserWindow(base.aMSNDPChooserWindow, gtk.Window):
         else:
             return False
 
-    def update_dp_list(self, default_dps):
-        for dp in default_dps:
-            im = image.Image(None, dp)
-            self._model.append((im.to_pixbuf(96, 96), dp))
-
+    def _update_dp_list(self, dp_path):
+        im = gtk.Image()
+        try:
+            im.set_from_file(dp_path)
+        except:
+            return
+        self._model.prepend((gtk.gdk.pixbuf_new_from_file_at_size(dp_path, 96, 96), dp_path))
+        path = self._model.get_path(self._model.get_iter_first())
+        self.iconview.select_path(path)
+        self.iconview.grab_focus()
 
