@@ -34,7 +34,7 @@ class aMSNPersonalInfoManager:
         self._personalinfoview.psm = strv
 
         # set login presence, from this moment the client appears to the others
-        self._personalinfoview.presence = amsn_account.view.presence
+        self._personalinfoview.presence = self._core.p2s[amsn_account.view.presence]
 
     """ Actions from ourselves """
     def _onNickChanged(self, new_nick):
