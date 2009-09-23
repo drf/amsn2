@@ -49,25 +49,6 @@ class aMSNCore(object):
            options.front_end = the front end's name to use
            options.debug = whether or not to enable debug output
         """
-        self._event_manager = aMSNEventManager(self)
-        self._options = options
-
-        self._gui_name = None
-        self._gui = None
-        self._loop = None
-        self._main = None
-        self.loadUI(self._options.front_end)
-
-        self._backend_manager = aMSNBackendManager()
-        self._account_manager = aMSNAccountManager(self, options)
-        self._account = None
-        self._theme_manager = aMSNThemeManager()
-        self._contactlist_manager = aMSNContactListManager(self)
-        self._oim_manager = aMSNOIMManager(self)
-        self._conversation_manager = aMSNConversationManager(self)
-        self._personalinfo_manager = aMSNPersonalInfoManager(self)
-
-
         self.p2s = {papyon.Presence.ONLINE:"online",
                     papyon.Presence.BUSY:"busy",
                     papyon.Presence.IDLE:"idle",
@@ -77,6 +58,25 @@ class aMSNCore(object):
                     papyon.Presence.OUT_TO_LUNCH:"lunch",
                     papyon.Presence.INVISIBLE:"hidden",
                     papyon.Presence.OFFLINE:"offline"}
+        self.Presence = papyon.Presence
+
+        self._event_manager = aMSNEventManager(self)
+        self._options = options
+
+        self._gui_name = None
+        self._gui = None
+        self._loop = None
+        self._main = None
+        self._account = None
+        self.loadUI(self._options.front_end)
+
+        self._backend_manager = aMSNBackendManager(self)
+        self._account_manager = aMSNAccountManager(self, options)
+        self._theme_manager = aMSNThemeManager(self)
+        self._contactlist_manager = aMSNContactListManager(self)
+        self._oim_manager = aMSNOIMManager(self)
+        self._conversation_manager = aMSNConversationManager(self)
+        self._personalinfo_manager = aMSNPersonalInfoManager(self)
 
         # TODO: redirect the logs somewhere, something like ctrl-s ctrl-d for amsn-0.9x
         logging.basicConfig(level=logging.WARNING)
@@ -103,6 +103,9 @@ class aMSNCore(object):
 
         self._gui_name = ui_name
         self._gui = gui.GUIManager(self, self._gui_name)
+        if not self._gui.gui:
+            print "Unable to load UI %s" %(self._gui_name,)
+            self.quit()
         self._loop = self._gui.gui.aMSNMainLoop(self)
         self._main = self._gui.gui.aMSNMainWindow(self)
         self._skin_manager = self._gui.gui.SkinManager(self)
@@ -209,10 +212,12 @@ class aMSNCore(object):
         self._loop.timerAdd(delay, func)
 
     def quit(self):
-        if self._account is not None:
+        if self._account:
             self._account.signOut()
-        self._loop.quit()
+        if self._loop:
+            self._loop.quit()
         logging.shutdown()
+        exit(0)
 
     # TODO: move to UImanager
     def addContact(self):
