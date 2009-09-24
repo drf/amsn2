@@ -85,8 +85,9 @@ class aMSNAccount(object):
                 logger.error(e)
                 return
 
-            self.client.msn_object_store.publish(dp_object)
-            self.personalinfoview.dp = dp_object
+            else:
+                self.client.msn_object_store.publish(dp_object)
+                self.personalinfoview.dp = dp_object
 
 class aMSNAccountManager(object):
     """ aMSNAccountManager : The account manager that takes care of storing
