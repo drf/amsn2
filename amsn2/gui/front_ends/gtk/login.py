@@ -230,7 +230,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(email)
 
         if accv is None:
-            accv = AccountView()
+            accv = AccountView(self._amsn_core)
             accv.email = email
 
         self.user.get_children()[0].set_text(accv.email)
@@ -287,7 +287,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(email)
 
         if accv is None:
-            accv = AccountView()
+            accv = AccountView(self._amsn_core)
             accv.email = email
 
         accv.password = self.password.get_text()
@@ -341,7 +341,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(email)
 
         if accv is None:
-            accv = AccountView()
+            accv = AccountView(self._amsn_core)
             accv.email = email
 
         if source is self.rememberMe:
