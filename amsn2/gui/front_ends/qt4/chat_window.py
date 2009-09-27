@@ -21,6 +21,7 @@
 import cgi
 import time
 import sys
+reload(sys)
 
 import papyon
 from amsn2.gui import base
@@ -86,7 +87,7 @@ class aMSNChatWidget(QWidget, base.aMSNChatWidget):
         QObject.connect(self.ui.actionNudge, SIGNAL("triggered()"), self.__sendNudge)
 
         #TODO: remove this when papyon is "fixed"...
-        sys.setappdefaultencoding("utf8")
+        sys.setdefaultencoding("utf8")
 
     def processInput(self):
         """ Here we process what is inside the widget... so showing emoticon
