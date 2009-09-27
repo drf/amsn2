@@ -237,26 +237,7 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         parentWidget.set_relief(gtk.RELIEF_NONE)        # remove cool elevated effect
         
     def __onDisplayClicked(self, source):
-        print "Display clicked!"
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                    buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
-        
-        chooser.set_default_response(gtk.RESPONSE_OK)
-        
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        chooser.add_filter(filter)
-
-        response = chooser.run()
-        if(response == gtk.RESPONSE_OK):
-            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(chooser.get_filename(), 64, 64)
-            self.display.set_from_pixbuf(pixbuf)
-            del pixbuf
-            gc.collect()
-        elif (response == gtk.RESPONSE_CANCEL):
-            pass
-        chooser.destroy()
+        self._amsn_core.changeDP()
 
     def show(self):
         pass
@@ -288,6 +269,10 @@ class aMSNContactListWindow(base.aMSNContactListWindow, gtk.VBox):
         message = str(psm)+' '+str(cm)
         self.psmlabel.set_markup('<i>'+message+'</i>')
         self.status.set_active(self.status_values[view.presence])
+        imview = self._myview.dp
+        if len(imview.imgs) > 0:
+            pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(imview.imgs[0][1], 64, 64)
+            self.display.set_from_pixbuf(pixbuf)
 
     def onStatusChanged(self, combobox):
         status = combobox.get_active()

@@ -3,6 +3,7 @@ TEMPORARY README:
 In theory, you don't need much... 
 python-pyopenssl
 python-crypto
+python-imaging
 maybe some other stuff...
 
 Before launching amsn2 you have to fetch the submodules (papyon). Instructions can be found on the aMSN forum:

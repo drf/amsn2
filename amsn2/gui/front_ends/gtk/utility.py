@@ -2,6 +2,9 @@
 from amsn2.gui import base
 from amsn2.core import views
 import gtk
+import logging
+
+logger = logging.getLogger('amsn2.gtk.utility')
 
 class aMSNErrorWindow(base.aMSNErrorWindow, gtk.Dialog):
     def __init__(self, error_text):
@@ -33,16 +36,6 @@ class aMSNNotificationWindow(base.aMSNNotificationWindow, gtk.Dialog):
 
 class aMSNDialogWindow(base.aMSNDialogWindow, gtk.Dialog):
     def __init__(self, message, actions):
-        """
-        @type message: str
-        @type actions: tuple
-        @param actions: A tuple containing the options between
-        which the user can choose. Every option is a tuple itself, of the form (name, callback),
-        where callback is the function that will be called if the option is selected.
-
-        This will eventually call the related show() method, so the window is
-        displayed when created.
-        """
         gtk.Dialog.__init__(self, "aMSN Dialog", None, gtk.DIALOG_NO_SEPARATOR, None)
 
         label = gtk.Label(message)
@@ -65,7 +58,7 @@ class aMSNDialogWindow(base.aMSNDialogWindow, gtk.Dialog):
         try:
             self._cbs[id]()
         except KeyError:
-            print "Unknown dialog choice, id %s" % id
+            logger.warning("Unknown dialog choice, id %s" % id)
         self.destroy()
 
 class aMSNContactInputWindow(base.aMSNContactInputWindow, gtk.Dialog):

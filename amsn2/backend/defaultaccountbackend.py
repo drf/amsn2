@@ -174,8 +174,8 @@ class defaultaccountbackend(basebackend.basebackend):
     """ DPs """
     def getFileLocationDP(self, email, uid, shac):
         dir = os.path.join(self.dps_dir, self._getDir(email))
-        if not os.path.isdir(self.dps_dir):
-            os.makedirs(self.dps_dir, 0700)
+        if not os.path.isdir(dir):
+            os.makedirs(dir, 0700)
         return os.path.join(dir, shac+".img")
 
     def _getDir(self, email):

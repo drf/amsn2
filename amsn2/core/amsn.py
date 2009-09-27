@@ -242,18 +242,23 @@ class aMSNCore(object):
 
         self._gui.gui.aMSNContactDeleteWindow('Contact to remove: ', contactCB, ())
 
+    def changeDP(self):
+        self._gui.gui.aMSNDPChooserWindow(self._account.set_dp ,self._backend_manager)
+
     def createMainMenuView(self):
         menu = MenuView()
-        quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit", command
-                                    = self.quit)
-        logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out", 
+        quitMenuItem = MenuItemView(MenuItemView.COMMAND, label="Quit",
+                                    command = self.quit)
+        logOutMenuItem = MenuItemView(MenuItemView.COMMAND, label="Log out",
                                       command = self.signOutOfAccount)
         mainMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Main")
         mainMenu.addItem(logOutMenuItem)
         mainMenu.addItem(quitMenuItem)
 
-        addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact", command=self.addContact)
-        removeContact = MenuItemView(MenuItemView.COMMAND, label='Remove contact', command=self.removeContact)
+        addContactItem = MenuItemView(MenuItemView.COMMAND, label="Add Contact",
+                                      command=self.addContact)
+        removeContact = MenuItemView(MenuItemView.COMMAND, label='Remove contact',
+                                     command=self.removeContact)
 
         contactsMenu = MenuItemView(MenuItemView.CASCADE_MENU, label="Contacts")
         contactsMenu.addItem(addContactItem)

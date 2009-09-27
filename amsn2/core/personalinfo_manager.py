@@ -7,6 +7,7 @@ class aMSNPersonalInfoManager:
         """
 
         self._core = core
+        self._backend_manager = core._backend_manager
         self._em = core._event_manager
         self._personalinfoview = PersonalInfoView(self)
         self._papyon_profile = None
@@ -33,7 +34,7 @@ class aMSNPersonalInfoManager:
         self._personalinfoview.psm = strv
 
         # set login presence, from this moment the client appears to the others
-        self._personalinfoview.presence = amsn_account.view.presence
+        self._personalinfoview.presence = self._core.p2s[amsn_account.view.presence]
 
     """ Actions from ourselves """
     def _onNickChanged(self, new_nick):
@@ -51,13 +52,8 @@ class aMSNPersonalInfoManager:
                 break
         self._papyon_profile.presence = key
 
-    def _onDPChangeRequest(self):
-        # TODO: tell the core to invoke a file chooser and change DP
-        pass
-
-    def _onDPChanged(self, new_dp):
-        # TODO: manage msn_objects
-        self._papyon_profile.msn_object = new_dp
+    def _onDPChanged(self, dp_msnobj):
+        self._papyon_profile.msn_object = dp_msnobj
 
     """ Actions from the core """
     def _onCMChanged(self, new_media):
@@ -76,9 +72,12 @@ class aMSNPersonalInfoManager:
         self._personalinfoview._psm.appendText(psm)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
-    def onDPUpdated(self, dp):
+    def onDPUpdated(self, dp_msnobj):
         self._personalinfoview._image.reset()
-        self._personalinfoview._image.load(dp)
+        path = self._backend_manager.getFileLocationDP(self._papyon_profile.account,
+                                                       self._papyon_profile.id,
+                                                       dp_msnobj._data_sha)
+        self._personalinfoview._image.load('Filename', path)
         self._em.emit(self._em.events.PERSONALINFO_UPDATED, self._personalinfoview)
 
     def onPresenceUpdated(self, presence):

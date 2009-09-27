@@ -25,9 +25,12 @@ import os
 import gtk
 import gobject
 import string
+import logging
 
 from image import *
 from amsn2.core.views import AccountView, ImageView
+
+logger = logging.getLogger('amsn2.gtk.login')
 
 class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
 
@@ -107,8 +110,8 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         for key in self._amsn_core.p2s:
             name = self._amsn_core.p2s[key]
             _, path = self._theme_manager.get_statusicon("buddy_%s" % name)
-            if (name == 'offline'): continue
-            self.status_values[name] = status_n
+            if (key == self._amsn_core.Presence.OFFLINE): continue
+            self.status_values[key] = status_n
             status_n = status_n +1
             icon = gtk.gdk.pixbuf_new_from_file(path)
             status_list.append([icon, name, key])
@@ -122,7 +125,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         # status combobox
         self.statusCombo = gtk.ComboBox()
         self.statusCombo.set_model(status_list)
-        self.statusCombo.set_active(4) # Set status to 'online'
+        self.statusCombo.set_active(7) # Set status to 'online'
         self.statusCombo.pack_start(iconCell, False)
         self.statusCombo.pack_start(txtCell, False)
         self.statusCombo.add_attribute(iconCell, 'pixbuf',0)
@@ -225,7 +228,7 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             gobject.source_remove(self.timer)
 
     def __switch_to_account(self, email):
-        print "Switching to account", email
+        logger.info("Switching to account %s", email)
 
         accv = self.getAccountViewFromEmail(email)
 
@@ -236,6 +239,8 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
         self.user.get_children()[0].set_text(accv.email)
         if accv.password:
             self.password.set_text(accv.password)
+
+        self.statusCombo.set_active(self.status_values[accv.presence])
 
         self.rememberMe.set_active(accv.save)
         self.rememberPass.set_active(accv.save_password)
@@ -291,11 +296,10 @@ class aMSNLoginWindow(gtk.VBox, base.aMSNLoginWindow):
             accv.email = email
 
         accv.password = self.password.get_text()
-        status = self.statusCombo.get_active()
-        for key in self.status_values:
-            if self.status_values[key] == status:
-                break
-        accv.presence = key
+        iter = self.statusCombo.get_active_iter()
+        model = self.statusCombo.get_model()
+        status = model.get_value(iter, 2)
+        accv.presence = status
 
         accv.save = self.rememberMe.get_active()
         accv.save_password = self.rememberPass.get_active()
