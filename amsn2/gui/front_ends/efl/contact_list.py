@@ -13,20 +13,36 @@ from amsn2.gui import base
 import papyon
 
 class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
-    def __init__(self, amsn_core, parent):
-        self._core = amsn_core
+    def __init__(self, core, parent):
+        base.aMSNContactListWindow.__init__(self, core, parent)
+        self._core = core
         self._evas = parent._evas
         self._parent = parent
-        self._skin = amsn_core._skin_manager.skin
+        self._skin = core._skin_manager.skin
         elementary.Box.__init__(self, parent)
-        self._parent.resize_object_add(self)
         self.size_hint_weight_set(1.0, 1.0)
+        self.size_hint_align_set(-1.0, -1.0)
+        self.homogenous_set(False)
+        self._parent.resize_object_add(self)
         self.show()
 
-        self._clwidget = aMSNContactListWidget(amsn_core, self._parent)
-        self.pack_start(self._clwidget)
-        self._parent.resize_object_add(self._clwidget)
+        """ Personal Info """
+        self._personal_info = PersonalInfoWidget(self._core, self._parent)
+        self._personal_info.size_hint_weight_set(1.0, 0.0)
+        self._personal_info.size_hint_align_set(-1.0, 1.0)
+        self.pack_start(self._personal_info)
+        self._personal_info.show()
+
+        """ ContactList Widget """
+        self._clwidget = aMSNContactListWidget(self._core, self._parent)
+        self._clwidget.size_hint_weight_set(1.0, 1.0)
+        self._clwidget.size_hint_align_set(-1.0, -1.0)
+        self.pack_end(self._clwidget)
         self._clwidget.show()
+
+        self._parent.show()
+        print self._personal_info.size_hint_min_get()
+        print self._personal_info.size_hint_max_get()
 
     def setTitle(self, text):
         self._parent.setTitle(text)
@@ -35,25 +51,128 @@ class aMSNContactListWindow(elementary.Box, base.aMSNContactListWindow):
         self._parent.setMenu(menu)
 
     def myInfoUpdated(self, view):
-        pass #TODO
+        self._personal_info.myInfoUpdated(view)
 
 
-class aMSNContactListWidget(elementary.Layout, base.aMSNContactListWidget):
+class PersonalInfoWidget(elementary.Layout):
     def __init__(self, amsn_core, parent):
-        base.aMSNContactListWidget.__init__(self, amsn_core, parent)
-        elementary.Layout.__init__(self, parent)
         self._core = amsn_core
-        self._evas = parent._evas
-        self._skin = amsn_core._skin_manager.skin
-        self.size_hint_weight_set(1.0, 1.0)
-        self._sc = elementary.Scroller(parent)
-        self._sc.size_hint_weight_set(1.0, 1.0)
+        self._parent = parent
+        self._personal_info_view = None
+        elementary.Layout.__init__(self, self._parent)
         self.file_set(filename=THEME_FILE,
-                      group="contact_list")
+                      group="personal_info")
+
+        self._dp = elementary.Button(self._parent)
+        self._dp.label_set("pouet")
+        self._dp.size_hint_weight_set(1.0, 1.0)
+        self.content_set("dp", self._dp);
+        self._dp.show()
+
+        self._presence = elementary.Hoversel(self._parent)
+        self._presence.hover_parent_set(self._parent)
+        for key in self._core.p2s:
+            name = self._core.p2s[key]
+            _, path = self._core._theme_manager.get_statusicon("buddy_%s" % name)
+            if name == 'offline': continue
+            def cb(data, hoversel, it):
+                hoversel.label_set(it.label_get())
+                (icon_file, icon_group, icon_type) = it.icon_get()
+                ic = elementary.Icon(hoversel)
+                ic.scale_set(0, 1)
+                if icon_type == elementary.ELM_ICON_FILE:
+                    ic.file_set(icon_file, icon_group)
+                else:
+                    ic.standart_set(icon_file)
+                hoversel.icon_set(ic)
+                ic.show()
+                #TODO
+            self._presence.item_add(name, path, elementary.ELM_ICON_FILE, cb,
+                                   key)
+        self.content_set("presence", self._presence);
+        self._presence.show()
+
+        sc = elementary.Scroller(self._parent)
+        sc.content_min_limit(0, 1)
+        sc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
+                      elementary.ELM_SCROLLER_POLICY_OFF);
+        sc.size_hint_weight_set(1.0, 0.0)
+        sc.size_hint_align_set(-1.0, 0.0)
+        self.content_set("nick", sc)
+        self._nick = elementary.Entry(self._parent)
+        self._nick.single_line_set(True)
+        self._nick.size_hint_weight_set(1.0, 0.0)
+        self._nick.size_hint_align_set(-1.0, 0.0)
+        sc.content_set(self._nick)
+        self._nick.show()
+        sc.show()
+
+        sc = elementary.Scroller(self._parent)
+        sc.content_min_limit(0, 1)
+        sc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
+                      elementary.ELM_SCROLLER_POLICY_OFF);
+        sc.size_hint_weight_set(1.0, 0.0)
+        sc.size_hint_align_set(-1.0, -1.0)
+        self.content_set("psm", sc);
+        self._psm = elementary.Entry(self._parent)
+        self._psm.single_line_set(True)
+        self._psm.size_hint_weight_set(1.0, 0.0)
+        self._psm.size_hint_align_set(-1.0, -1.0)
+        sc.content_set(self._psm)
+        self._psm.show()
+        sc.show()
+
+        sc = elementary.Scroller(self._parent)
+        sc.content_min_limit(0, 1)
+        sc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
+                      elementary.ELM_SCROLLER_POLICY_OFF)
+        sc.size_hint_weight_set(1.0, 0.0)
+        sc.size_hint_align_set(-1.0, -1.0)
+        self.content_set("current_media", sc)
+        self._cm = elementary.Entry(self._parent)
+        self._cm.single_line_set(True)
+        self._cm.size_hint_weight_set(1.0, 0.0)
+        self._cm.size_hint_align_set(-1.0, -1.0)
+        sc.content_set(self._cm)
+        self._cm.show()
+        sc.show()
+
+    def myInfoUpdated(self, view):
+        print "myInfoUpdated: view=%s" %(view,)
+        self._personal_info_view = view
+
+        #TODO
+        self._dp.show()
+        self._presence.show()
+
+        self._nick.entry_set("nick is"+str(view.nick));
+        self._nick.show()
+
+        self._psm.entry_set("psm is "+str(view.psm));
+        self._psm.show()
+
+        self._cm.entry_set("cm is "+str(view.current_media));
+        self._cm.show()
+
+        self.show()
+
+class aMSNContactListWidget(elementary.Box, base.aMSNContactListWidget):
+    def __init__(self, core, parent):
+        base.aMSNContactListWidget.__init__(self, core, parent)
+        elementary.Box.__init__(self, parent)
+        self._core = core
+        self._evas = parent._evas
+        self._skin = core._skin_manager.skin
+        self.homogenous_set(False)
+        self.size_hint_weight_set(1.0, 1.0)
+        self.size_hint_align_set(-1.0, -1.0)
+        self._sc = elementary.Scroller(parent)
+        self.pack_start(self._sc)
+        self._sc.size_hint_weight_set(1.0, 1.0)
+        self._sc.size_hint_align_set(-1.0, -1.0)
         self.group_holder = GroupHolder(self._evas, self, self._skin)
 
         self._sc.content_set(self.group_holder)
-        self.content_set("groups", self._sc);
         self.group_holder.show()
         self._sc.show()
         self.show()

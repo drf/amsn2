@@ -19,5 +19,6 @@ collections {
 #include "edc/contact_list/contact_list.edc"
 #include "edc/contact_list/group.edc"
 #include "edc/contact_list/contact.edc"
+#include "edc/contact_list/personal_info.edc"
 }
 

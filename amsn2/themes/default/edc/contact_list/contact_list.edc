@@ -7,7 +7,7 @@ group {
 
  parts {
    part {
-     name: "background"; 
+     name: "background";
      type: IMAGE;
      mouse_events: 0;
      description {

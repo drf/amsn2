@@ -1,0 +1,145 @@
+images {
+  image: "contact_list/dp_border.png" COMP;
+}
+
+group {
+  name: "personal_info";
+  parts {
+    part {
+      name: "dp_border";
+      type: IMAGE;
+      mouse_events: 0;
+      description {
+        state: "default" 0.0;
+        rel1 {
+          relative: 0.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 0.0 0.0;
+          offset: 70 70;
+        }
+        image {
+          normal: "contact_list/dp_border.png";
+          border: 11 11 11 11;
+        }
+      }
+    }
+    part {
+      name: "dp";
+      type: SWALLOW;
+      mouse_events: 1;
+      repeat_events: 1;
+      description {
+        state: "default" 0.0;
+        rel1 {
+          to: "dp_border";
+          relative: 0.0 0.0;
+          offset: 11 11;
+        }
+        rel2 {
+          to: "dp_border";
+          relative: 1.0 1.0;
+          offset: -11 -11;
+        }
+      }
+    }
+    part {
+      name: "presence";
+      type: SWALLOW;
+      mouse_events: 1;
+      repeat_events: 1;
+      description {
+        state: "default" 0.0;
+        rel1 {
+          to: "dp_border";
+          relative: 1.0 0.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+      }
+    }
+    part {
+      name: "nick";
+      type: SWALLOW;
+      mouse_events: 1;
+      repeat_events: 1;
+      description {
+        state: "default" 0.0;
+        fixed: 1 1;
+        rel1 {
+          to: "presence";
+          relative: 0.0 1.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+      }
+    }
+    part {
+      name: "psm";
+      type: SWALLOW;
+      mouse_events: 1;
+      repeat_events: 1;
+      description {
+        state: "default" 0.0;
+        fixed: 1 1;
+        rel1 {
+          to: "nick";
+          relative: 0.0 1.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+      }
+    }
+    part {
+      name: "current_media";
+      type: SWALLOW;
+      mouse_events: 1;
+      repeat_events: 1;
+      description {
+        state: "default" 0.0;
+        fixed: 1 1;
+        rel1 {
+          to: "psm";
+          relative: 0.0 1.0;
+          offset: 0 0;
+        }
+        rel2 {
+          relative: 1.0 1.0;
+          offset: 0 0;
+        }
+      }
+    }
+  }
+}
+
+
+
+
+#if 0
+
++--------------++-----------------------------------------+
+|              ||+---------------------------------------+|
+|              |||             PRESENCE                  ||
+|@============@||+---------------------------------------+|
+|[+----------+]||+---------------------------------------+|
+|[|          |]|||               NICK                    ||
+|[|          |]||+---------------------------------------+|
+|[|   DP     |]||+---------------------------------------+|
+|[|          |]|||               PSM                     ||
+|[|          |]||+---------------------------------------+|
+|[+----------+]||+---------------------------------------+|
+|@============@|||          CURRENT_MEDIA                ||
+|              ||+---------------------------------------+|
++--------------++-----------------------------------------+
+
+#endif
