@@ -25,7 +25,7 @@ class aMSNWindow(elementary.Window, base.aMSNWindow):
 
     @property
     def _evas(self):
-        return self.canvas
+        return self.evas_get()
 
     def hide(self):
         pass
