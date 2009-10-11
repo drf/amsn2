@@ -9,6 +9,7 @@ class aMSNMainLoop(base.aMSNMainLoop):
         elementary.init()
 
     def run(self):
+        #ecore.main_loop_glib_integrate()
         mainloop = gobject.MainLoop(is_running=True)
         context = mainloop.get_context()
 
@@ -16,6 +17,7 @@ class aMSNMainLoop(base.aMSNMainLoop):
             iters = 0
             while iters < 10 and context.pending():
                 context.iteration()
+                iters += 1
             return True
 
         # Every 100ms, call an iteration of the glib main context loop
