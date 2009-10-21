@@ -155,5 +155,6 @@ class aMSNDPChooserWindow(base.aMSNDPChooserWindow, gtk.Window):
         self._model.prepend((gtk.gdk.pixbuf_new_from_file_at_size(dp_path, 96, 96), dp_path))
         path = self._model.get_path(self._model.get_iter_first())
         self.iconview.select_path(path)
-        self.iconview.grab_focus()
+        iter = self._model.get_iter(path)
+        self.view = self._model.get_value(iter, 1)
 
