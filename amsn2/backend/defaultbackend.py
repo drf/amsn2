@@ -40,7 +40,7 @@ class defaultbackend(defaultaccountbackend.defaultaccountbackend):
         c.setKey("ns_server", "messenger.hotmail.com")
         c.setKey("ns_port", 1863)
 
-        configpath = os.join(self.accounts_dir,
+        configpath = os.path.join(self.accounts_dir,
                                   self._getDir(account.view.email),
                                   "config.xml")
         try:
