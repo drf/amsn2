@@ -3,9 +3,9 @@ from imageview import *
 from stringview import *
 
 class AccountView:
-    def __init__(self, core):
+    def __init__(self, core, email):
         self._core = core
-        self.email = None
+        self.email = email
         self.password = None
         self.nick = StringView()
         self.psm = StringView()

@@ -109,8 +109,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(email)
 
         if accv is None:
-            accv = AccountView()
-            accv.email = email
+            accv = AccountView(self._amsn_core, email)
 
         self.ui.comboAccount.setItemText(0, accv.email)
 
@@ -130,8 +129,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(str(email))
 
         if accv is None:
-            accv = AccountView()
-            accv.email = str(email)
+            accv = AccountView(self._amsn_core, str(email))
 
         accv.password = self.ui.linePassword.text().toLatin1().data()
         accv.presence = self.status_dict[str(self.ui.comboStatus.currentText())]
@@ -150,11 +148,7 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         accv = self.getAccountViewFromEmail(email)
 
         if accv is None:
-            accv = AccountView()
-            accv.email = email
-            accv.save = False
-            accv.save_password = False
-            accv.autologin = False
+            accv = AccountView(self._amsn_core, email)
 
         sender = self.sender().objectName()
         #just like wlm :)
@@ -181,3 +175,4 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
                     self.ui.checkRememberMe.setChecked(True)
                 if self.ui.checkRememberPass.isChecked() == False:
                     self.ui.checkRememberPass.setChecked(True)
+

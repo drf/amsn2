@@ -40,12 +40,11 @@ class defaultaccountbackend(basebackend.basebackend):
         accfile.close()
         account = root_tree.getroot()
         if account.tag == "aMSNAccount":
-            accview = AccountView(self._core)
             #email
             emailElmt = account.find("email")
             if emailElmt is None:
                 return None
-            accview.email = emailElmt.text
+            accview = AccountView(self._core, emailElmt.text)
             #nick
             nickElmt = account.find("nick")
             if nickElmt is None:

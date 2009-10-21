@@ -103,8 +103,7 @@ class aMSNAccountManager(object):
                 pv = pv[0]
                 self.accountviews.remove(pv)
             else:
-                pv = AccountView()
-                pv.email = options.account
+                pv = AccountView(core, options.account)
                 pv.password = options.password
             self.accountviews.insert(0, pv)
 
