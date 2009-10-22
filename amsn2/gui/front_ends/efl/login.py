@@ -229,5 +229,5 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()
 
-    def __signin_button_cb(self, button, event, data):
+    def __signin_button_cb(self, button, event, *args, **kargs):
         self.signin()
