@@ -13,7 +13,7 @@ If you launch ./amsn2.py and it gives an error, that error probably tells you wh
 You can type ./amsn2.py --help for more info... and the front ends can be selected with -f :
 ./amsn2.py -f efl
 ./amsn2.py -f gtk
-./amsn2.py -f qt4 
+./amsn2.py -f qt4
 for gtk, you need python-gtk... and for efl, you need the EFL, the python-efl and python-etk
 
 
@@ -26,6 +26,7 @@ PKG_CONFIG_PATH=/opt/e17/lib/pkgconfig ./build-all.sh /usr
 (this will build and install the python extensions into /usr/python2.X/...)
 Then the efl front end should become available...
 If it's not, fire up a python shell and try to import the ecore module; diagnose from there the problem.
+You'll need to run the script build.sh in amsn2/themes/default.
 
 
 If you have the following error with the qt4 front-end:
