@@ -11,6 +11,10 @@ group {
       mouse_events: 0;
       description {
         state: "default" 0.0;
+        fixed: 1.0 0.0;
+        min: 70 70;
+        align: 0.0 0.5;
+        /*
         rel1 {
           relative: 0.0 0.0;
           offset: 0 0;
@@ -19,6 +23,7 @@ group {
           relative: 0.0 0.0;
           offset: 70 70;
         }
+        */
         image {
           normal: "contact_list/dp_border.png";
           border: 11 11 11 11;
@@ -52,13 +57,12 @@ group {
       description {
         state: "default" 0.0;
         rel1 {
-          to: "dp_border";
-          relative: 1.0 0.0;
-          offset: 0 0;
+          relative: 0.0 0.0;
+          offset: 70 0;
         }
         rel2 {
-          relative: 1.0 1.0;
-          offset: 0 0;
+          relative: 1.0 0.25;
+          offset: -1 -1;
         }
       }
     }
@@ -69,15 +73,14 @@ group {
       repeat_events: 1;
       description {
         state: "default" 0.0;
-        fixed: 1 1;
         rel1 {
           to: "presence";
           relative: 0.0 1.0;
           offset: 0 0;
         }
         rel2 {
-          relative: 1.0 1.0;
-          offset: 0 0;
+          relative: 1.0 0.5;
+          offset: -1 -1;
         }
       }
     }
@@ -88,15 +91,14 @@ group {
       repeat_events: 1;
       description {
         state: "default" 0.0;
-        fixed: 1 1;
         rel1 {
           to: "nick";
           relative: 0.0 1.0;
           offset: 0 0;
         }
         rel2 {
-          relative: 1.0 1.0;
-          offset: 0 0;
+          relative: 1.0 0.75;
+          offset: -1 -1;
         }
       }
     }
@@ -115,7 +117,7 @@ group {
         }
         rel2 {
           relative: 1.0 1.0;
-          offset: 0 0;
+          offset: -1 -1;
         }
       }
     }
