@@ -232,6 +232,7 @@ class ContactHolder(elementary.Box):
             if c.data['on_click'] is not None:
                 c.on_mouse_down_del(c.data['on_click'])
                 c.data['on_click'] = None
+        c.size_hint_min_set(26, 26)
         c.show()
         print c.size_hint_min_get()
 
@@ -260,8 +261,10 @@ class ContactHolder(elementary.Box):
         self.contacts_list.append(new_contact)
         self.contacts_dict[uid] = new_contact
         self.pack_end(new_contact)
+        new_contact.size_hint_min_set(26, 26)
         new_contact.size_hint_weight_set(1.0, 1.0)
         new_contact.size_hint_align_set(-1.0, -1.0)
+        print new_contact.size_hint_min_get()
 
 
     def remove_contact(self, uid):
@@ -297,7 +300,7 @@ class GroupItem(elementary.Layout):
         self.edj.signal_callback_add("expanded", "*", self.__expanded_cb)
 
         self.size_hint_weight_set(1.0, 0.0)
-        self.size_hint_align_set(-1.0, -1.0)
+        self.size_hint_align_set(-1.0, 0.0)
 
     def num_contacts(self):
         if self.expanded == False:
@@ -315,6 +318,8 @@ class GroupItem(elementary.Layout):
         print "expand"
         print self.size_hint_min_get()
         print self.contact_holder.size_hint_min_get()
+        for c in self.contact_holder.contacts_list:
+            print c.size_hint_min_get()
         self.contact_holder.hide()
 
     def __collapsed_cb(self, edje_obj, signal, source):
@@ -322,6 +327,8 @@ class GroupItem(elementary.Layout):
         print "collapse"
         print self.size_hint_min_get()
         print self.contact_holder.size_hint_min_get()
+        for c in self.contact_holder.contacts_list:
+            print c.size_hint_min_get()
         self.contact_holder.show()
 
 class GroupHolder(elementary.Box):
@@ -331,8 +338,8 @@ class GroupHolder(elementary.Box):
         self.group_items_dict = {}
         self._parent = parent
         self._skin = skin
-        self.size_hint_weight_set(1.0, 1.0)
-        self.size_hint_align_set(-1.0, -1.0)
+        self.size_hint_weight_set(1.0, 0.0)
+        self.size_hint_align_set(-1.0, 0.0)
 
     def add_group(self, uid):
         new_group = GroupItem(self, uid)
