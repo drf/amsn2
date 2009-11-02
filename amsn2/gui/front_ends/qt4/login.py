@@ -150,29 +150,22 @@ class aMSNLoginWindow(StyledWidget, base.aMSNLoginWindow):
         if accv is None:
             accv = AccountView(self._amsn_core, email)
 
-        sender = self.sender().objectName()
+        sender = self.sender()
         #just like wlm :)
-        if sender == "checkRememberMe":
-            if bool == True:
-                accv.save = True
+        if sender == self.ui.checkRememberMe:
+            accv.save = bool
+            if not bool:
+                self.ui.checkRememberPass.setChecked(False)
+                self.ui.checkSignInAuto.setChecked(False)
+        elif sender == self.ui.checkRememberPass:
+            accv.save_password = bool
+            if bool:
+                self.ui.checkRememberMe.setChecked(True)
             else:
-                if self.ui.checkRememberPass.isChecked():
-                    self.ui.checkRememberPass.setChecked(False)
-                if self.ui.checkSignInAuto.isChecked():
-                    self.ui.checkSignInAuto.setChecked(False)
-        elif sender == "checkRememberPass":
-            if bool == True:
-                accv.save_password = True
-                if self.ui.checkRememberMe.isChecked() == False:
-                    self.ui.checkRememberMe.setChecked(True)
-            else:
-                if self.ui.checkSignInAuto.isChecked():
-                    self.ui.checkSignInAuto.setChecked(False)
-        elif sender == "checkSignInAuto":
-            if bool == True:
-                accv.autologin = True
-                if self.ui.checkRememberMe.isChecked() == False:
-                    self.ui.checkRememberMe.setChecked(True)
-                if self.ui.checkRememberPass.isChecked() == False:
-                    self.ui.checkRememberPass.setChecked(True)
+                self.ui.checkSignInAuto.setChecked(False)
+        elif sender == self.ui.checkSignInAuto:
+            accv.autologin = bool
+            if bool:
+                self.ui.checkRememberMe.setChecked(True)
+                self.ui.checkRememberPass.setChecked(True)
 
