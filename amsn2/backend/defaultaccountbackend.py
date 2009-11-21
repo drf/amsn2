@@ -170,12 +170,16 @@ class defaultaccountbackend(basebackend.basebackend):
                     os.rmdir(os.path.join(root, subdir))
             os.rmdir(accdir)
 
-    """ DPs """
+    """ 
+    Get location of display picture. A SHA sum is included in the filename,
+    this is converted to hex.
+    @return: string with filename.
+    """
     def getFileLocationDP(self, email, uid, shac):
         dir = os.path.join(self.dps_dir, self._getDir(email))
         if not os.path.isdir(dir):
             os.makedirs(dir, 0700)
-        return os.path.join(dir, shac+".img")
+        return os.path.join(dir, shac.encode("hex")+".img")
 
     def _getDir(self, email):
         return email.lower().strip().replace("@","_at_")
