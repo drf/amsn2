@@ -65,7 +65,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
             name = self._core.p2s[key]
             _, path = self._core._theme_manager.get_statusicon("buddy_%s" % name)
             if name == 'offline': continue
-            def cb(data, hoversel, it):
+            def cb(hoversel, it, key):
                 hoversel.label_set(it.label_get())
                 (icon_file, icon_group, icon_type) = it.icon_get()
                 ic = elementary.Icon(hoversel)
@@ -97,7 +97,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
 
         self.save = elementary.Check(self._edje)
         self.save.label_set("Remember Me")
-        def cb(obj, event_info, data):
+        def cb(obj):
             if obj.state_get():
                 self.save_password.disabled_set(False)
             else:
@@ -105,20 +105,20 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
                 self.save_password.state_set(False)
                 self.autologin.disabled_set(True)
                 self.autologin.state_set(False)
-        self.save._callback_add("changed", cb)
+        self.save.callback_changed_add(cb)
         self._edje.part_swallow("login_screen.remember_me", self.save)
         self.save.show()
 
         self.save_password = elementary.Check(self._edje)
         self.save_password.label_set("Remember Password")
         self.save_password.disabled_set(True)
-        def cb(obj, event_info, data):
+        def cb(obj):
             if obj.state_get():
                 self.autologin.disabled_set(False)
             else:
                 self.autologin.disabled_set(True)
                 self.autologin.state_set(False)
-        self.save_password._callback_add("changed", cb)
+        self.save_password.callback_changed_add(cb)
         self._edje.part_swallow("login_screen.remember_password",
                                 self.save_password)
         self.save_password.show()
@@ -132,7 +132,7 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
         if self._edje.part_exists("login_screen.signin"):
            self.signin_b = elementary.Button(self._edje)
            self.signin_b.label_set("Sign in")
-           self.signin_b.clicked = self.__signin_button_cb
+           self.signin_b.callback_clicked_add(self.__signin_button_cb)
            self.signin_b.show()
            self._edje.part_swallow("login_screen.signin", self.signin_b)
         else:
@@ -228,5 +228,5 @@ class aMSNLoginWindow(base.aMSNLoginWindow):
     def __signin_cb(self, edje_obj, signal, source):
         self.signin()
 
-    def __signin_button_cb(self, button, event, *args, **kargs):
+    def __signin_button_cb(self, bt):
         self.signin()

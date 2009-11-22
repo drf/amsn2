@@ -10,7 +10,7 @@ from amsn2.core.views import MenuView, MenuItemView
 class aMSNMainWindow(window.aMSNWindow, base.aMSNMainWindow):
     def __init__(self, amsn_core):
         window.aMSNWindow.__init__(self, amsn_core)
-        self.destroy = self.__on_delete_request
+        self.callback_destroy_add(self.__on_delete_request)
         self.on_show_add(self.__on_show)
         self.on_key_down_add(self.__on_key_down)
 
@@ -21,7 +21,7 @@ class aMSNMainWindow(window.aMSNWindow, base.aMSNMainWindow):
     def __on_show(self, evas_obj):
         self._amsn_core.mainWindowShown()
 
-    def __on_delete_request(self, evas_obj, emission, data):
+    def __on_delete_request(self, win):
         self._amsn_core.quit()
 
     def __on_key_down(self, obj, event):

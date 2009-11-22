@@ -72,7 +72,7 @@ class PersonalInfoWidget(elementary.Layout):
             name = self._core.p2s[key]
             _, path = self._core._theme_manager.get_statusicon("buddy_%s" % name)
             if name == 'offline': continue
-            def cb(data, hoversel, it):
+            def cb(hoversel, it, key):
                 hoversel.label_set(it.label_get())
                 (icon_file, icon_group, icon_type) = it.icon_get()
                 ic = elementary.Icon(hoversel)

@@ -120,16 +120,23 @@ class aMSNChatWidget(elementary.Box, base.aMSNChatWidget):
                     return False
             return True
         self._input.on_key_down(editor_key_down)
+        """
 
     def __sendButton_cb(self, button):
+        pass
+        """
         msg = self.__input_tb.text_get(0)
         self.__input_tb.clear()
         strv = StringView()
         strv.appendText(msg)
         self._amsn_conversation.sendMessage(strv)
+        """
 
     def __outputAppendMsg(self, msg):
+        pass
+        """
         self.__output_tb.insert(self.__iter_out, msg)
+        """
 
 
     def onUserJoined(self, contact):
@@ -142,9 +149,11 @@ class aMSNChatWidget(elementary.Box, base.aMSNChatWidget):
         print "%s is typing" % (contact,)
 
     def onMessageReceived(self, messageview):
+        pass
+        """
         self.__outputAppendMsg(str(messageview.toStringView()))
+        """
 
     def nudge(self):
         #TODO
         print "Nudge received!!!"
-        """
