@@ -93,8 +93,7 @@ class aMSNConversation:
     """ Actions from ourselves """
     def sendMessage(self, msg, formatting=None):
         """ msg is a StringView """
-        # for the moment, no formatting, no smiley substitution... (TODO)
-        # peacey: Added formatting of styles
+        # for the moment, no smiley substitution... (TODO)
         self.onMessageReceived(msg, formatting=formatting)
         message = papyon.ConversationMessage(str(msg), formatting)
         self._conv.send_text_message(message)

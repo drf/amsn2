@@ -1,7 +1,6 @@
 from constants import *
+import evas
 import ecore
-import ecore.evas
-import ecore.x
 import elementary
 import skins
 import window
@@ -17,12 +16,13 @@ class aMSNChatWindow(window.aMSNWindow, base.aMSNChatWindow):
         self.setTitle(TITLE + " - Chatwindow")
         self.resize(CW_WIDTH, CW_HEIGHT)
 
-        #TODO:
         self.autodel_set(True)
 
     def addChatWidget(self, chat_widget):
-        #TODO: use the container
-        self.child = chat_widget
+        self.resize_object_add(chat_widget)
+        chat_widget.show()
+        print chat_widget.ine.geometry
+        print chat_widget.insc.geometry
 
 #TODO: ChatWidgetContainer
 class aMSNChatWidgetContainer:
@@ -35,19 +35,20 @@ class aMSNChatWidget(elementary.Box, base.aMSNChatWidget):
     def __init__(self, amsn_conversation, parent, contacts_uid):
         self._parent = parent
         elementary.Box.__init__(self, parent)
-        self.size_hint_weight_set(1.0, 1.0)
-        self.size_hint_align_set(-1.0, -1.0)
+        self.size_hint_weight_set(evas.EVAS_HINT_EXPAND, evas.EVAS_HINT_EXPAND)
+        self.size_hint_align_set(evas.EVAS_HINT_FILL, evas.EVAS_HINT_FILL)
         self.homogenous_set(False)
         self._parent.resize_object_add(self)
         self.show()
         self._amsn_conversation = amsn_conversation
 
-
         self.outsc = elementary.Scroller(parent)
-        self.outsc.size_hint_weight_set(1.0, 1.0)
-        self.outsc.size_hint_align_set(-1.0, -1.0)
-        self.outsc.policy_set(elementary.ELM_SCROLLER_POLICY_ON,
-                      elementary.ELM_SCROLLER_POLICY_ON)
+        self.outsc.size_hint_weight_set(evas.EVAS_HINT_EXPAND,
+                                        evas.EVAS_HINT_EXPAND)
+        self.outsc.size_hint_align_set(evas.EVAS_HINT_FILL,
+                                       evas.EVAS_HINT_FILL)
+        self.outsc.policy_set(elementary.ELM_SCROLLER_POLICY_AUTO,
+                      elementary.ELM_SCROLLER_POLICY_AUTO)
         self.outsc.bounce_set(False, True)
         self.pack_end(self.outsc)
 
@@ -59,70 +60,39 @@ class aMSNChatWidget(elementary.Box, base.aMSNChatWidget):
         self.inbx = elementary.Box(parent)
         self.inbx.horizontal_set(True)
         self.inbx.homogenous_set(False)
+        self.inbx.size_hint_weight_set(evas.EVAS_HINT_EXPAND,
+                                       0.0)
+        self.inbx.size_hint_align_set(evas.EVAS_HINT_FILL,
+                                      0.5)
         self.pack_end(self.inbx)
 
         self.insc = elementary.Scroller(parent)
         self.insc.content_min_limit(0, 1)
         self.insc.policy_set(elementary.ELM_SCROLLER_POLICY_OFF,
-                             elementary.ELM_SCROLLER_POLICY_OFF);
-        self.insc.size_hint_weight_set(1.0, 0.0)
-        self.insc.size_hint_align_set(-1.0, -1.0)
+                             elementary.ELM_SCROLLER_POLICY_OFF)
+        self.insc.size_hint_weight_set(evas.EVAS_HINT_EXPAND,
+                                       evas.EVAS_HINT_EXPAND)
+        self.insc.size_hint_align_set(evas.EVAS_HINT_FILL, evas.EVAS_HINT_FILL)
+        self.inbx.pack_end(self.insc)
+
         self.ine = elementary.Entry(parent)
-        self.ine.size_hint_weight_set(1.0, 1.0)
-        self.ine.size_hint_align_set(-1.0, -1.0)
-        self.inbx.pack_end(self.ine)
+        self.ine.size_hint_weight_set(evas.EVAS_HINT_EXPAND,
+                                      evas.EVAS_HINT_EXPAND)
+        self.ine.size_hint_align_set(evas.EVAS_HINT_FILL, evas.EVAS_HINT_FILL)
         self.insc.content_set(self.ine)
         self.ine.show()
         self.insc.show()
 
         self.inb = elementary.Button(parent)
         self.inb.label_set("Send")
+        self.inb.callback_clicked_add(self.__sendButton_cb, self.ine)
         self.inbx.pack_end(self.inb)
         self.inb.show()
         self.inbx.show()
 
-
         self.show()
 
-        """
-        etk.VPaned.__init__(self)
-        self._input = etk.TextView()
-        self._input.size_request_set(CW_IN_MIN_WIDTH, CW_IN_MIN_HEIGHT)
-        self.__input_tb = self._input.textblock_get()
-
-
-
-        self._input_container = etk.HBox()
-        self.child2_set(self._input_container, 0)
-        self._send_button = etk.Button(label="Send")
-        self._send_button.on_clicked(self.__sendButton_cb)
-        self._input_container.append(self._input, etk.HBox.START, etk.HBox.EXPAND_FILL, 0)
-        self._input_container.append(self._send_button, etk.HBox.START, etk.HBox.NONE, 0)
-
-
-        self._output = etk.TextView()
-        self._output.size_request_set(CW_OUT_MIN_WIDTH, CW_OUT_MIN_HEIGHT)
-        self.child1_set(self._output, 1)
-        self.__output_tb = self._output.textblock_get()
-        self.__iter_out = etk.TextblockIter(self.__output_tb)
-        self.__iter_out.forward_end()
-        self._output.pass_mouse_events_set(1) #not focusable
-
-        def editor_key_down(obj, event):
-            if event.keyname in ("Return", "KP_Enter"):
-                if event.modifiers is etk.c_etk.EventEnums.MODIFIER_NONE:
-                    self.__sendButton_cb(self._send_button)
-                    return False
-                elif event.modifiers is etk.c_etk.EventEnums.MODIFIER_SHIFT:
-                    iter = etk.TextblockIter(self.__input_tb)
-                    iter.forward_end()
-                    self.__input_tb.insert(iter, '\n')
-                    return False
-            return True
-        self._input.on_key_down(editor_key_down)
-        """
-
-    def __sendButton_cb(self, button):
+    def __sendButton_cb(self, button, entry):
         pass
         """
         msg = self.__input_tb.text_get(0)
@@ -148,7 +118,7 @@ class aMSNChatWidget(elementary.Box, base.aMSNChatWidget):
     def onUserTyping(self, contact):
         print "%s is typing" % (contact,)
 
-    def onMessageReceived(self, messageview):
+    def onMessageReceived(self, messageview, formatting=None):
         pass
         """
         self.__outputAppendMsg(str(messageview.toStringView()))
